@@ -1,0 +1,13 @@
+Syntax for templates:
+
+1. \ is the escape character
+2. $java-identifier$ ==> replaced by value of java-identifier in the current scope
+3. $java-identifier { ... }$ ==> Expects the value of java-identifier to be a map/collection
+4. $with java-identifier { ... }$ ==> Evaluates the block in the context of the value of java-identifier
+5. $with java-identifier as alias { }$ ==> Evaluates the block in the context of the value of java-identifier referred by alias
+6. $set java-identifier to alias$ ==> Evaluates the rest of the block in the context of the value of java-identifier referred by alias
+7. ${ opens up a plain block
+8. $\<with|set> uses the with and set as plain variables rather than keywords
+9. While iterating a Collection ==> $index0$, $index1$ refers to the index counting from 0 and 1 And $it$ refers to the object itself
+10. While iterating a Map ==> $index0$, $index1$ refers to the index counting from 0 and 1 And $key$, $value$ refers to the key and value respectively.
+11. All java-identifiers can be suffixed with indexing. The index values can be plain integers, strings(for maps) or other java-identifiers.
