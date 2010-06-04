@@ -1,303 +1,325 @@
 package com.jaliansystems.simpletemplate.reader;
 
 import java.io.IOException;
-import java.io.PushbackReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import com.jaliansystems.simpletemplate.templates.CompositeTemplate;
-import com.jaliansystems.simpletemplate.templates.ITemplateElement;
 import com.jaliansystems.simpletemplate.templates.IfTemplate;
 import com.jaliansystems.simpletemplate.templates.IndexedAccessTemplate;
+import com.jaliansystems.simpletemplate.templates.LiteralBooleanTemplate;
 import com.jaliansystems.simpletemplate.templates.LiteralIntegerTemplate;
 import com.jaliansystems.simpletemplate.templates.LiteralTextTemplate;
 import com.jaliansystems.simpletemplate.templates.LoopTemplate;
+import com.jaliansystems.simpletemplate.templates.ObjectScopeTemplate;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 import com.jaliansystems.simpletemplate.templates.VariableScopeTemplate;
 import com.jaliansystems.simpletemplate.templates.VariableTemplate;
 import com.jaliansystems.simpletemplate.templates.WithTemplate;
 
-public class TemplateReader {
+public class TemplateReader implements ITemplateReader {
 
-	private PushbackReader reader;
-	private String lineno;
-	private String position;
+	private static final TokenType[] TEXT_LEXER_TYPES = new TokenType[] {
+			TokenType.TT_TEXT, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_EOF };
 
-	private static class Identifier {
-		public String text;
-		public boolean isEscaped;
-		public List<TemplateElement> indices = new ArrayList<TemplateElement>();
+	private static final TokenType[] CBLOCK_START_TYPES = new TokenType[] {
+			TokenType.TT_TEXT, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_BLOCK_END };
+
+	private static final TokenType[] BLOCK_START_TYPES = new TokenType[] {
+			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
+			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_BLOCK_END };
+
+	private static final TokenType[] START_ID_TYPES = new TokenType[] {
+			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
+			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_CBLOCK_START };
+
+	private static final TokenType[] IF_TYPES = new TokenType[] {
+			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
+			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_IDENTIFIER };
+
+	private static final TokenType[] IF_TEMPLATE_TYPES = new TokenType[] {
+			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
+			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_CBLOCK_START };
+
+	private static final TokenType[] WITH_TEMPLATE_TYPES = new TokenType[] {
+			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
+			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_CBLOCK_START };
+
+	private final LexerReader in;
+	private final TextLexer textLexer;
+	private final TemplateLexer templateLexer;
+	private ILexer currentLexer;
+
+	public TemplateReader(Reader in) {
+		this(in, null);
 	}
 
-	public TemplateReader(Reader reader) {
-		this.reader = new PushbackReader(reader, 1024);
-	}
-
-	public ITemplateElement readTemplate(boolean isBlock) throws IOException {
-		CompositeTemplate ct = new CompositeTemplate();
-		int c;
-		while ((c = reader.read()) != -1) {
-			if (isBlock && c == '}') {
-				int c1 = reader.read();
-				if (c1 == '$' || c1 == -1)
-					break;
-				reader.unread(c1);
-				isBlock = false;
+	public TemplateReader(Reader in, String fileName) {
+		this.in = new LexerReader(in, fileName);
+		textLexer = new TextLexer(this.in);
+		templateLexer = new TemplateLexer(this.in);
+		currentLexer = textLexer;
+		TokenType.TT_BLOCK_START.setExtractTemplate(new IExtractTemplate() {
+			public TemplateElement extract(Token t) throws IOException,
+					LexerException, ParserException {
+				return createBlockTemplateWithTemplateLexer(BLOCK_START_TYPES);
 			}
-			if (c != '$') {
-				reader.unread(c);
-				LiteralTextTemplate ltt = readTextTemplate(isBlock);
-				ct.add(ltt);
-			} else {
-				c = reader.read();
-				if (c == '{') {
-					ITemplateElement ct1 = readTemplate(true);
-					ct.add(ct1);
-				} else {
-					reader.unread(c);
-					Identifier identifier = readIdentifier();
-					c = reader.read();
-					if (c == -1)
-						break;
-					if (c == '$') {
-						ct.add(createIdElement(identifier));
-					} else {
-						reader.unread(c);
-						if (identifier.isEscaped) {
-							ct.add(createLoopElement(identifier));
-						} else if (identifier.text.equals("if")) {
-							ct.add(createIfElement());
-						} else if (identifier.text.equals("with")) {
-							ct.add(createWithElement());
-						} else if (identifier.text.equals("set")) {
-							ct.add(createSetElement());
-						} else {
-							ct.add(createLoopElement(identifier));
-						}
+		});
+		TokenType.TT_START_IDENTIFIER
+				.setExtractTemplate(new IExtractTemplate() {
+					@Override
+					public TemplateElement extract(Token t) throws IOException,
+							LexerException, ParserException {
+						return createStartIdTemplate(t);
 					}
-				}
+				});
+		TokenType.TT_TEXT.setExtractTemplate(new IExtractTemplate() {
+			public TemplateElement extract(Token t) {
+				return new LiteralTextTemplate(t.getValue());
 			}
+		});
+		TokenType.TT_STRING.setExtractTemplate(new IExtractTemplate() {
+			public TemplateElement extract(Token t) {
+				return new LiteralTextTemplate(t.getValue());
+			}
+		});
+		TokenType.TT_INTEGER.setExtractTemplate(new IExtractTemplate() {
+			public TemplateElement extract(Token t) {
+				return new LiteralIntegerTemplate(
+						Integer.parseInt(t.getValue()));
+			}
+		});
+		TokenType.TT_TRUE.setExtractTemplate(new IExtractTemplate() {
+			public TemplateElement extract(Token t) {
+				return new LiteralBooleanTemplate(t == Token.TOK_TRUE);
+			}
+		});
+		TokenType.TT_FALSE.setExtractTemplate(new IExtractTemplate() {
+			public TemplateElement extract(Token t) {
+				return new LiteralBooleanTemplate(t == Token.TOK_TRUE);
+			}
+		});
+		TokenType.TT_IF.setExtractTemplate(new IExtractTemplate() {
+			@Override
+			public TemplateElement extract(Token t) throws IOException,
+					LexerException, ParserException {
+				return createIfTemplate(t);
+			}
+		});
+		TokenType.TT_IFELSE.setExtractTemplate(new IExtractTemplate() {
+			@Override
+			public TemplateElement extract(Token t) throws IOException,
+					LexerException, ParserException {
+				return createIfTemplate(t);
+			}
+		});
+		TokenType.TT_WITH.setExtractTemplate(new IExtractTemplate() {
+			@Override
+			public TemplateElement extract(Token t) throws IOException,
+					LexerException, ParserException {
+				return createWithTemplate(t);
+			}
+		});
+		TokenType.TT_SET.setExtractTemplate(new IExtractTemplate() {
+			@Override
+			public TemplateElement extract(Token t) throws IOException,
+					LexerException, ParserException {
+				return createSetTemplate(t);
+			}
+		});
+		TokenType.TT_CBLOCK_START.setExtractTemplate(new IExtractTemplate() {
+			@Override
+			public TemplateElement extract(Token t) throws IOException,
+					LexerException, ParserException {
+				return createBlockTemplateWithTextLexer(CBLOCK_START_TYPES);
+			}
+		});
+	}
+
+	private ILexer getTextLexer() throws IOException {
+		if (currentLexer != textLexer)
+			currentLexer.pushback();
+		currentLexer = textLexer;
+		return textLexer;
+	}
+
+	private ILexer getTemplateLexer() throws IOException {
+		if (currentLexer != templateLexer)
+			currentLexer.pushback();
+		currentLexer = templateLexer;
+		return templateLexer;
+	}
+
+	@Override
+	public TemplateElement readTemplate() throws IOException, LexerException,
+			ParserException {
+		CompositeTemplate ct = new CompositeTemplate();
+		Token t;
+		while ((t = expect1(getTextLexer(), TEXT_LEXER_TYPES)) != Token.TOK_EOF) {
+			ct.add(t.extract());
 		}
 		return ct;
 	}
 
-	private ITemplateElement createLoopElement(Identifier identifier) throws IOException {
-		skipSpaces();
-		expect('{');
-		ITemplateElement template = readTemplate(true);
-		LoopTemplate lt = new LoopTemplate(createIdElement(identifier), template);
-		return lt;
-	}
-
-	private ITemplateElement createSetElement() throws IOException {
-		skipSpaces();
-		String alias = readSimpleIdentifier();
-		skipSpaces();
-		expect("to");
-		skipSpaces();
-		Identifier identifier = readIdentifier();
-		expect("$");
-		VariableScopeTemplate vst = new VariableScopeTemplate(
-				createIdElement(identifier), alias);
-		return vst;
-	}
-
-	private void expect(String string) throws IOException {
-		char[] cbuf = new char[string.length()];
-		int read = reader.read(cbuf);
-		String got = new String(cbuf);
-		if (read < cbuf.length || !string.equals(got)) {
-			throw new RuntimeException("Line No: " + lineno + " Position: "
-					+ position + " Error: Expecting a 'to' got " + got);
-		}
-	}
-
-	private String readSimpleIdentifier() throws IOException {
-		int c = reader.read();
-		if (c == -1 || !Character.isJavaIdentifierStart(c)) {
-			throw new RuntimeException("Line No: " + lineno + " Position: "
-					+ position + " Error: Expecting a simple identifier got "
-					+ (c == -1 ? "EOF" : "'" + (char) c + "'"));
-		}
-		StringBuffer sb = new StringBuffer();
-		sb.append((char) c);
-		while ((c = reader.read()) != -1 && Character.isJavaIdentifierPart(c)) {
-			sb.append((char) c);
-		}
-		if (c != -1)
-			reader.unread(c);
-		return sb.toString();
-	}
-
-	private ITemplateElement createWithElement() throws IOException {
-		skipSpaces();
-		Identifier identifier = readIdentifier();
-		skipSpaces();
-		expect('{');
-		ITemplateElement block = readTemplate(true);
-		WithTemplate wt = new WithTemplate(createIdElement(identifier), block);
-		return wt;
-	}
-
-	private ITemplateElement createIfElement() throws IOException {
-		skipSpaces();
-		Identifier identifier = readIdentifier();
-		skipSpaces();
-		expect('{');
-		ITemplateElement trueBranch = readTemplate(true);
-		ITemplateElement falseBranch = null;
-		skipSpaces();
-		char[] ourElse = new char[4];
-		int read = reader.read(ourElse);
-		if (read < 4 || !"else".equals(new String(ourElse))) {
-			for (int i = read - 1; i >= 0; i--)
-				reader.unread(ourElse[i]);
+	private TemplateElement createStartIdTemplate(Token t) throws IOException,
+			LexerException, ParserException {
+		TemplateElement ite;
+		TemplateElement vt = createExpression(t.getValue());
+		Token nextToken = expect1(getTemplateLexer(), START_ID_TYPES);
+		if (nextToken == Token.TOK_START) {
+			ite = vt;
 		} else {
-			skipSpaces();
-			expect('{');
-			falseBranch = readTemplate(true);
+			ite = new LoopTemplate(vt, nextToken.extract());
 		}
-		IfTemplate ift = new IfTemplate(createIdElement(identifier),
-				trueBranch, falseBranch);
-		return ift;
+		return ite;
 	}
 
-	private TemplateElement createIdElement(Identifier identifier) {
-		TemplateElement idElement;
-		if (identifier.indices.size() == 0) {
-			idElement = new VariableTemplate(identifier.text);
-		} else {
-			TemplateElement vt = new VariableTemplate(identifier.text);
-			IndexedAccessTemplate iat = null;
-			for (TemplateElement te : identifier.indices) {
-				iat = new IndexedAccessTemplate(vt, te);
-				vt = iat;
-			}
-			idElement = iat;
+	private TemplateElement createBlockTemplateWithTemplateLexer(
+			TokenType[] expectedTypes) throws IOException, LexerException,
+			ParserException {
+		CompositeTemplate ct = new CompositeTemplate();
+		Token t;
+		while ((t = expect1(getTemplateLexer(), expectedTypes)) != Token.TOK_BLOCK_END) {
+			ct.add(t.extract());
 		}
-		return idElement;
+		return ct;
 	}
 
-	private Identifier readIdentifier() throws IOException {
-		Identifier identifier = new Identifier();
-		int c = reader.read();
-		if (c == '\\') {
-			identifier.isEscaped = true;
-			c = reader.read();
+	private TemplateElement createBlockTemplateWithTextLexer(
+			TokenType[] expectedTypes) throws IOException, LexerException,
+			ParserException {
+		CompositeTemplate ct = new CompositeTemplate();
+		Token t;
+		while ((t = expect1(getTextLexer(), expectedTypes)) != Token.TOK_BLOCK_END) {
+			ct.add(t.extract());
 		}
-		StringBuffer sb = new StringBuffer();
-		if (c == -1 || !Character.isJavaIdentifierStart((char) c)) {
-			throw new RuntimeException("Line No: " + lineno + " Position: "
-					+ position + " Error: Expecting a javaIdentifier got "
-					+ (c == -1 ? "EOF" : "'" + (char) c + "'"));
-		}
-		sb.append((char) c);
-		while ((c = reader.read()) != -1) {
-			if ((c == '.' || Character.isJavaIdentifierPart((char) c)
-					&& c != '$')) {
-				sb.append((char) c);
-			} else {
-				reader.unread(c);
-				break;
-			}
-		}
-		identifier.text = sb.toString();
-		collectIndices(identifier);
-		return identifier;
+		return ct;
 	}
 
-	private void collectIndices(Identifier identifier) throws IOException {
-		skipSpaces();
-		int c = reader.read();
-		while (c == '[') {
-			skipSpaces();
-			c = reader.read();
-			if (Character.isDigit((char) c)) {
-				reader.unread(c);
-				int index = readInteger();
-				LiteralIntegerTemplate lit = new LiteralIntegerTemplate(index);
-				identifier.indices.add(lit);
-				skipSpaces();
-				expect(']');
-			} else if (Character.isJavaIdentifierStart(c)) {
-				reader.unread(c);
-				Identifier indexId = readIdentifier();
-				identifier.indices.add(createIdElement(indexId));
-				skipSpaces();
-				expect(']');
-			}
-			skipSpaces();
-			c = reader.read();
+	private TemplateElement createExpression(String variable)
+			throws IOException, LexerException, ParserException {
+		VariableTemplate vt = new VariableTemplate(variable);
+		Token la = getTemplateLexer().lookAhead();
+		if (la == Token.TOK_OPEN_BR) {
+			return createIndexedExpression(vt);
 		}
-		reader.unread(c);
+		return vt;
 	}
 
-	private int readInteger() throws IOException {
-		StringBuffer sb = new StringBuffer();
-		int c = reader.read();
-		while (c != -1 && Character.isDigit(c)) {
-			sb.append((char) c);
-			c = reader.read();
-		}
-		if (c != -1)
-			reader.unread(c);
-		return Integer.valueOf(sb.toString());
-	}
-
-	private void expect(char c) throws IOException {
-		int ch = reader.read();
-		if (c != ch)
-			throw new RuntimeException("Line No: " + lineno + " Position: "
-					+ position + " Error: Expecting a '" + c + "' Got "
-					+ (ch == -1 ? "EOF" : "'" + (char) ch + "'"));
-	}
-
-	private void skipSpaces() throws IOException {
-		int c = reader.read();
-		while (c != -1 && Character.isWhitespace(c))
-			c = reader.read();
-		if (c != -1)
-			reader.unread(c);
-	}
-
-	private LiteralTextTemplate readTextTemplate(boolean isBlock)
-			throws IOException {
-		int c;
-		boolean escape = false;
-		StringBuffer text = new StringBuffer();
-		while ((c = reader.read()) != -1) {
-			if (c == '\\') {
-				escape = true;
-			} else if (escape) {
-				escape = false;
-				if (c == '\n') {
-				} else if (c == 'n') {
-					text.append('\n');
-				} else
-					text.append((char) c);
-			} else if (c == '$') {
-				reader.unread(c);
-				break;
-			} else if (c == '}' && isBlock) {
-				int c1 = reader.read();
-				if (c1 == '$') {
-					reader.unread(c1);
-					reader.unread(c);
-					break;
+	private TemplateElement createIndexedExpression(TemplateElement vt)
+			throws LexerException, IOException, ParserException {
+		Token t = expect1r0(getTemplateLexer(), TokenType.TT_OPEN_BR,
+				TokenType.TT_NAME_SEPARATOR);
+		while (t == Token.TOK_OPEN_BR || t == Token.TOK_NAME_SEPARATOR) {
+			if (t == Token.TOK_OPEN_BR) {
+				Token nextToken = getTemplateLexer().nextToken();
+				TemplateElement index;
+				if (nextToken.getType() == TokenType.TT_IDENTIFIER) {
+					index = createExpression(nextToken.getValue());
 				} else {
-					text.append((char) c);
-					reader.unread(c1);
+					index = nextToken.extract();
 				}
+				vt = new IndexedAccessTemplate(vt, index);
+				expect1(getTemplateLexer(), TokenType.TT_CLOSE_BR);
 			} else {
-				text.append((char) c);
+				Token id = expect1(getTemplateLexer(), TokenType.TT_IDENTIFIER);
+				vt = new ObjectScopeTemplate(vt, id.getValue());
+			}
+			t = expect1r0(getTemplateLexer(), TokenType.TT_OPEN_BR,
+					TokenType.TT_NAME_SEPARATOR);
+		}
+		return vt;
+	}
+
+	private TemplateElement createIfTemplate(Token tokenGot)
+			throws IOException, LexerException, ParserException {
+		Token t = expect1(getTemplateLexer(), IF_TYPES);
+		TemplateElement condition;
+		if (t.getType() == TokenType.TT_IDENTIFIER) {
+			condition = createExpression(t.getValue());
+		} else {
+			condition = t.extract();
+		}
+		t = expect1(getTemplateLexer(), IF_TEMPLATE_TYPES);
+		TemplateElement trueBranch = t.extract();
+		TemplateElement falseBranch = null;
+		if (tokenGot == Token.TOK_IFELSE) {
+			t = expect1(getTemplateLexer(), IF_TEMPLATE_TYPES);
+			falseBranch = t.extract();
+		}
+		return new IfTemplate(condition, trueBranch, falseBranch);
+	}
+
+	private TemplateElement createWithTemplate(Token t) throws IOException,
+			LexerException, ParserException {
+		Token next = expect1(getTemplateLexer(), TokenType.TT_IDENTIFIER);
+		TemplateElement withVar = createExpression(next.getValue());
+		next = expect1r0(getTemplateLexer(), TokenType.TT_AS);
+		String alias = null;
+		if (next != null) {
+			next = expect1(getTemplateLexer(), TokenType.TT_ALIAS);
+			alias = next.getValue();
+		}
+		next = expect1(getTemplateLexer(), WITH_TEMPLATE_TYPES);
+		TemplateElement template = next.extract();
+		return new WithTemplate(withVar, alias, template);
+	}
+
+	private TemplateElement createSetTemplate(Token t) throws IOException,
+			LexerException, ParserException {
+		Token next = expect1(getTemplateLexer(), TokenType.TT_ALIAS);
+		String alias = next.getValue();
+		expect1(getTemplateLexer(), TokenType.TT_TO);
+		next = expect1(getTemplateLexer(), TokenType.TT_IDENTIFIER);
+		TemplateElement setVar = createExpression(next.getValue());
+		return new VariableScopeTemplate(setVar, alias);
+	}
+
+	private Token expect1(ILexer lexer, TokenType... types) throws IOException,
+			LexerException, ParserException {
+		Token t = expect1r0(lexer, types);
+		if (t == null) {
+			t = lexer.nextToken();
+			throw new ParserException(in.getFileName(), in.getLineNumber(),
+					"Expecting one of " + Arrays.asList(types) + " Got: " + t);
+		}
+		return t;
+	}
+
+	private Token expect1r0(ILexer lexer, TokenType... types)
+			throws IOException, LexerException {
+		Token la = lexer.lookAhead();
+		for (int i = 0; i < types.length; i++) {
+			if (la.getType() == types[i]) {
+				return lexer.nextToken();
+			}
+			if (types[i] == TokenType.TT_ALIAS
+					&& la.getType() == TokenType.TT_IDENTIFIER) {
+				String value = la.getValue();
+				if (!value.contains(".")) {
+					lexer.nextToken();
+					return new Token(TokenType.TT_ALIAS, la.getValue());
+				}
 			}
 		}
-		return new LiteralTextTemplate(text.toString());
+		return null;
 	}
-
-	public ITemplateElement readTemplate() throws IOException {
-		return readTemplate(false);
-	}
-
 }

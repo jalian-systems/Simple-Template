@@ -5,9 +5,57 @@ Syntax for templates:
 3. $java-identifier { ... }$ ==> Expects the value of java-identifier to be a map/collection
 4. $with java-identifier { ... }$ ==> Evaluates the block in the context of the value of java-identifier
 5. $with java-identifier as alias { }$ ==> Evaluates the block in the context of the value of java-identifier referred by alias
+5. $if java-identifier { }$ [else] { }$ ==> if java-identifier evaluates to true if-block is evaluated.
 6. $set java-identifier to alias$ ==> Evaluates the rest of the block in the context of the value of java-identifier referred by alias
 7. ${ opens up a plain block
 8. $\<with|set> uses the with and set as plain variables rather than keywords
 9. While iterating a Collection ==> $index0$, $index1$ refers to the index counting from 0 and 1 And $it$ refers to the object itself
 10. While iterating a Map ==> $index0$, $index1$ refers to the index counting from 0 and 1 And $key$, $value$ refers to the key and value respectively.
 11. All java-identifiers can be suffixed with indexing. The index values can be plain integers, strings(for maps) or other java-identifiers.
+
+EBNF:
+
+template-file = template*
+
+template = literal-text-template |
+            literal-string-template |
+            literal-integer-template |
+            literal-boolean-template |
+            variable-expansion-template |
+            block-template |
+            with-template |
+            if-template |
+            set-template |
+            loop-template
+
+literal-text-template: (^template-start | ^template-block-end)*
+
+template-start: non-escaped-template-start-char '{' |
+                 non-escaped-template-start-char 'if' |
+                 non-escaped-template-start-char 'with' |
+                 non-escaped-template-start-char 'set' |
+                 non-escaped-template-start-char identifier
+
+template-block-end: '}' non-escaped-template-end-char
+
+non-escaped-template-start-char: [^\] template-start-char
+
+non-escaped-template-end-char: [^\] template-end-char
+
+literal-string-template: '"' [^" | \"]* '"'
+
+literal-integer-template: [0-9][0-9]*
+
+literal-boolean-template: 'true' | 'false'
+
+variable-expansion-template: '$' q-identifier '$'
+
+block-template: non-escaped-template-start-char '{' template '}' non-escaped-template-end-char 
+
+with-template: non-escaped-template-start-char 'with' q-identifier [ as identifier ] template
+
+if-template: non-escaped-template-start-char 'if' q-identifier template [non-escaped-template-start-char 'else' template]
+
+set-template: non-escaped-template-start-char 'set' identifier 'to' q-identifier
+
+loop-template: non-escaped-template-start-char q-identifier template 

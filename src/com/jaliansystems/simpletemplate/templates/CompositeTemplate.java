@@ -3,26 +3,29 @@ package com.jaliansystems.simpletemplate.templates;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompositeTemplate implements ITemplateElement {
+public class CompositeTemplate extends TemplateElement {
 
-	private List<ITemplateElement> children = new ArrayList<ITemplateElement>();
+	private List<TemplateElement> children = new ArrayList<TemplateElement>();
 	
-	public void add(ITemplateElement t) {
+	public void add(TemplateElement t) {
 		children.add(t);
 	}
 
 	@Override
 	public String apply(Scope scope) {
 		StringBuffer buffer = new StringBuffer();
-		for (ITemplateElement t : children) {
+		for (TemplateElement t : children) {
 			buffer.append(t.apply(scope));
 		}
 		return buffer.toString();
 	}
 
 	@Override
-	public boolean asBinary(Scope scope) {
-		return false;
+	public Object getTarget(Scope scope) {
+		Object o = null ;
+		for (TemplateElement t : children)
+			o = t.getTarget(scope);
+		return o;
 	}
 
 }

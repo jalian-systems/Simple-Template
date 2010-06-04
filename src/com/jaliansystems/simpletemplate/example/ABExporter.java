@@ -4,8 +4,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import com.jaliansystems.simpletemplate.reader.LexerException;
+import com.jaliansystems.simpletemplate.reader.ParserException;
 import com.jaliansystems.simpletemplate.reader.TemplateReader;
-import com.jaliansystems.simpletemplate.templates.ITemplateElement;
+import com.jaliansystems.simpletemplate.templates.TemplateElement;
 import com.jaliansystems.simpletemplate.templates.Scope;
 
 public class ABExporter {
@@ -29,10 +31,19 @@ public class ABExporter {
 	}
 
 	private void export(String templateFile, String outputFile) throws IOException {
-		TemplateReader reader = new TemplateReader(new FileReader(templateFile));
+		TemplateReader reader = new TemplateReader(new FileReader(templateFile), templateFile);
 		Scope scope = new Scope();
 		scope.put("addressbook", addressBook);
-		ITemplateElement template = reader.readTemplate();
+		TemplateElement template = null;
+		try {
+			template = reader.readTemplate();
+		} catch (LexerException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
+		} catch (ParserException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
 		String result = template.apply(scope);
 		
 		FileWriter writer = new FileWriter(outputFile);

@@ -1,6 +1,6 @@
 package com.jaliansystems.simpletemplate.templates;
 
-public class VariableScopeTemplate implements ITemplateElement {
+public class VariableScopeTemplate extends TemplateElement {
 
 	private final TemplateElement withVar;
 	private final String alias;
@@ -17,8 +17,8 @@ public class VariableScopeTemplate implements ITemplateElement {
 	}
 
 	@Override
-	public boolean asBinary(Scope scope) {
-		return false;
+	public Object getTarget(Scope scope) {
+		return withVar.getTarget(scope);
 	}
 
 }
