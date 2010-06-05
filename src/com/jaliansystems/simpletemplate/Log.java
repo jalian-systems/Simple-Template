@@ -1,4 +1,4 @@
-package com.jaliansystems.simpletemplate.templates;
+package com.jaliansystems.simpletemplate;
 
 import java.io.PrintStream;
 

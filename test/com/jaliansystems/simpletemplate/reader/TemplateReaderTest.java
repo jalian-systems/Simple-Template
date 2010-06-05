@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 
 import org.junit.Test;
@@ -16,7 +15,7 @@ import com.jaliansystems.simpletemplate.templates.Person;
 import com.jaliansystems.simpletemplate.templates.Scope;
 
 
-public class TemplateReaderTest {
+public class TemplateReaderTest extends TemplateTest {
 
 	@Test
 	public void testReadsLiteralText() throws IOException, LexerException, ParserException {
@@ -466,16 +465,6 @@ public class TemplateReaderTest {
 			ParserException {
 		ITemplateReader reader = new TemplateReader(new FileReader("export.st"));
 		reader.readTemplate();
-	}
-
-	private void templateAssert(String templateText, String expected,
-			Scope scope, String message) throws IOException, LexerException,
-			ParserException {
-		Reader in = new StringReader(templateText);
-		ITemplateReader reader = new TemplateReader(in);
-		TemplateElement template = reader.readTemplate();
-		String result = template.apply(scope);
-		assertEquals(message, expected, result);
 	}
 
 }

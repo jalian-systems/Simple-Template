@@ -11,10 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.Log;
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.VariableTemplate;
-
+import com.jaliansystems.simpletemplate.Log;
 
 public class VariableTemplateTest {
 	

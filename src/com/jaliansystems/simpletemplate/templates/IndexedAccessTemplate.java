@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 
-import static com.jaliansystems.simpletemplate.templates.Log.*;
+import static com.jaliansystems.simpletemplate.Log.*;
 
 public class IndexedAccessTemplate extends TemplateElement {
 

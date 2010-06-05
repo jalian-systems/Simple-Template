@@ -1,5 +1,7 @@
 package com.jaliansystems.simpletemplate.templates;
 
+import static com.jaliansystems.simpletemplate.Log.warning;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,7 +58,7 @@ public class LoopTemplate extends TemplateElement {
 				sb.append(template.apply(loopScope));
 			}
 		} else {
-			Log.warning("You can loop only on Iterables, Arrays and Maps: got "
+			warning("You can loop only on Iterables, Arrays and Maps: got "
 					+ target.getClass() + " for " + loopVar);
 		}
 		return sb.toString();
@@ -102,7 +104,7 @@ public class LoopTemplate extends TemplateElement {
 				r = template.getTarget(loopScope);
 			}
 		} else {
-			Log.warning("You can loop only on Collections and Maps: got "
+			warning("You can loop only on Collections and Maps: got "
 					+ target.getClass() + " for " + loopVar);
 		}
 		return r ;
