@@ -1,0 +1,16 @@
+What is SimpleTemplate?
+SimpleTemplate is a simple (obvious) template engine written in Java.
+SimpleTemplate is inspired by StringTemplate (http://www.stringtemplate.org) but
+not based on any code from it.
+
+Using SimpleTemplate you can generate formatted text from a Java bean. You can
+use it for generating XML files, websites.
+
+Differences with StringTemplate
+1. No support for high level features like groups and subtemplates yet.
+2. Support for aliases using <with> and <set> template operations.
+3. Indexed access into lists, maps and arrays.
+
+Enjoy!!!
+KD
+
