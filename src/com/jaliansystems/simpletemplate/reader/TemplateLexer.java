@@ -20,12 +20,12 @@ public class TemplateLexer extends AbstractLexer {
 			} else if (c == '$') {
 				int c1 = reader.read();
 				if (c1 == '{')
-					return Token.TOK_BLOCK_START;
+					return new Token(TokenType.TT_BLOCK_START);
 				if (c1 != -1)
 					reader.unread(c1);
 				if (c1 == '\\' || Character.isJavaIdentifierStart(c1))
 					return readTemplateStartToken();
-				return Token.TOK_START;
+				return new Token(TokenType.TT_START);
 			} else if (Character.isDigit(c)) {
 				return readInteger(c);
 			} else if (Character.isJavaIdentifierStart(c)) {
@@ -37,25 +37,25 @@ public class TemplateLexer extends AbstractLexer {
 			} else if (c == '}') {
 				int la = reader.read();
 				if (la == '$')
-					return Token.TOK_BLOCK_END;
+					return new Token(TokenType.TT_BLOCK_END);
 				throw new LexerException(reader.getFileName(), reader.getLineNumber(),
 						"While reading template start token -- unexpected character '"
 								+ (char) c + "'");
 			} else if (c == '{') {
-				return Token.TOK_CBLOCK_START;
+				return new Token(TokenType.TT_CBLOCK_START);
 			} else if (c == '[') {
-				return Token.TOK_OPEN_BR;
+				return new Token(TokenType.TT_OPEN_BR);
 			} else if (c == ']') {
-				return Token.TOK_CLOSE_BR;
+				return new Token(TokenType.TT_CLOSE_BR);
 			} else if (c == '.') {
-				return Token.TOK_NAME_SEPARATOR ;
+				return new Token(TokenType.TT_NAME_SEPARATOR) ;
 			} else {
 				throw new LexerException(reader.getFileName(), reader.getLineNumber(),
 						"While reading template start token -- unexpected character '"
 								+ (char) c + "'");
 			}
 		}
-		return Token.TOK_EOF;
+		return new Token(TokenType.TT_EOF);
 	}
 
 	private Token readIdentifier(int initial, boolean escape)
@@ -74,13 +74,13 @@ public class TemplateLexer extends AbstractLexer {
 		String text = sb.toString();
 		if (!escape) {
 			if ("true".equals(text))
-				return Token.TOK_TRUE;
+				return new Token(TokenType.TT_TRUE);
 			else if ("false".equals(text))
-				return Token.TOK_FALSE;
+				return new Token(TokenType.TT_FALSE);
 			else if ("as".equals(text))
-				return Token.TOK_AS;
+				return new Token(TokenType.TT_AS);
 			else if ("to".equals(text))
-				return Token.TOK_TO;
+				return new Token(TokenType.TT_TO);
 		}
 		return checkValidIdentifier(text) ? new Token(TokenType.TT_IDENTIFIER,
 				text) : null;
@@ -163,13 +163,13 @@ public class TemplateLexer extends AbstractLexer {
 	private Token findToken(String text, boolean escape) throws LexerException {
 		if (!escape) {
 			if ("if".equals(text))
-				return Token.TOK_IF;
+				return new Token(TokenType.TT_IF);
 			else if ("ifelse".equals(text))
-				return Token.TOK_IFELSE;
+				return new Token(TokenType.TT_IFELSE);
 			else if ("set".equals(text))
-				return Token.TOK_SET;
+				return new Token(TokenType.TT_SET);
 			else if ("with".equals(text))
-				return Token.TOK_WITH;
+				return new Token(TokenType.TT_WITH);
 		}
 		return checkValidIdentifier(text) ? new Token(
 				TokenType.TT_START_IDENTIFIER, text) : null;

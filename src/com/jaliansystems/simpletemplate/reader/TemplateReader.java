@@ -2,8 +2,9 @@ package com.jaliansystems.simpletemplate.reader;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 
+import com.jaliansystems.simpletemplate.EvaluationMode;
+import com.jaliansystems.simpletemplate.Log;
 import com.jaliansystems.simpletemplate.templates.CompositeTemplate;
 import com.jaliansystems.simpletemplate.templates.IfTemplate;
 import com.jaliansystems.simpletemplate.templates.IndexedAccessTemplate;
@@ -63,6 +64,13 @@ public class TemplateReader implements ITemplateReader {
 			TokenType.TT_BLOCK_START, TokenType.TT_START,
 			TokenType.TT_CBLOCK_START };
 
+	private static final TokenType[] OPEN_BR_TYPES = new TokenType[] {
+			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
+			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
+			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
+			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_IDENTIFIER };
+
 	private final LexerReader in;
 	private final TextLexer textLexer;
 	private final TemplateLexer templateLexer;
@@ -109,12 +117,14 @@ public class TemplateReader implements ITemplateReader {
 		});
 		TokenType.TT_TRUE.setExtractTemplate(new IExtractTemplate() {
 			public TemplateElement extract(Token t) {
-				return new LiteralBooleanTemplate(t == Token.TOK_TRUE);
+				return new LiteralBooleanTemplate(
+						t.getType() == TokenType.TT_TRUE);
 			}
 		});
 		TokenType.TT_FALSE.setExtractTemplate(new IExtractTemplate() {
 			public TemplateElement extract(Token t) {
-				return new LiteralBooleanTemplate(t == Token.TOK_TRUE);
+				return new LiteralBooleanTemplate(
+						t.getType() == TokenType.TT_TRUE);
 			}
 		});
 		TokenType.TT_IF.setExtractTemplate(new IExtractTemplate() {
@@ -154,6 +164,10 @@ public class TemplateReader implements ITemplateReader {
 		});
 	}
 
+	public void setEvaluationMode(EvaluationMode mode) {
+		Log.setMode(mode);
+	}
+
 	private ILexer getTextLexer() throws IOException {
 		if (currentLexer != textLexer)
 			currentLexer.pushback();
@@ -173,7 +187,7 @@ public class TemplateReader implements ITemplateReader {
 			ParserException {
 		CompositeTemplate ct = new CompositeTemplate();
 		Token t;
-		while ((t = expect1(getTextLexer(), TEXT_LEXER_TYPES)) != Token.TOK_EOF) {
+		while ((t = getTextLexer().expect1(TEXT_LEXER_TYPES)).getType() != TokenType.TT_EOF) {
 			ct.add(t.extract());
 		}
 		return ct;
@@ -183,11 +197,12 @@ public class TemplateReader implements ITemplateReader {
 			LexerException, ParserException {
 		TemplateElement ite;
 		TemplateElement vt = createExpression(t.getValue());
-		Token nextToken = expect1(getTemplateLexer(), START_ID_TYPES);
-		if (nextToken == Token.TOK_START) {
+		Token nextToken = getTemplateLexer().expect1(START_ID_TYPES);
+		if (nextToken.getType() == TokenType.TT_START) {
 			ite = vt;
 		} else {
-			ite = new LoopTemplate(vt, nextToken.extract());
+			TemplateElement template = nextToken.extract();
+			ite = new LoopTemplate(vt, template);
 		}
 		return ite;
 	}
@@ -197,7 +212,7 @@ public class TemplateReader implements ITemplateReader {
 			ParserException {
 		CompositeTemplate ct = new CompositeTemplate();
 		Token t;
-		while ((t = expect1(getTemplateLexer(), expectedTypes)) != Token.TOK_BLOCK_END) {
+		while ((t = getTemplateLexer().expect1(expectedTypes)).getType() != TokenType.TT_BLOCK_END) {
 			ct.add(t.extract());
 		}
 		return ct;
@@ -208,7 +223,7 @@ public class TemplateReader implements ITemplateReader {
 			ParserException {
 		CompositeTemplate ct = new CompositeTemplate();
 		Token t;
-		while ((t = expect1(getTextLexer(), expectedTypes)) != Token.TOK_BLOCK_END) {
+		while ((t = getTextLexer().expect1(expectedTypes)).getType() != TokenType.TT_BLOCK_END) {
 			ct.add(t.extract());
 		}
 		return ct;
@@ -218,7 +233,7 @@ public class TemplateReader implements ITemplateReader {
 			throws IOException, LexerException, ParserException {
 		VariableTemplate vt = new VariableTemplate(variable);
 		Token la = getTemplateLexer().lookAhead();
-		if (la == Token.TOK_OPEN_BR) {
+		if (la.getType() == TokenType.TT_OPEN_BR) {
 			return createIndexedExpression(vt);
 		}
 		return vt;
@@ -226,11 +241,12 @@ public class TemplateReader implements ITemplateReader {
 
 	private TemplateElement createIndexedExpression(TemplateElement vt)
 			throws LexerException, IOException, ParserException {
-		Token t = expect1r0(getTemplateLexer(), TokenType.TT_OPEN_BR,
+		Token t = getTemplateLexer().expect1r0(TokenType.TT_OPEN_BR,
 				TokenType.TT_NAME_SEPARATOR);
-		while (t == Token.TOK_OPEN_BR || t == Token.TOK_NAME_SEPARATOR) {
-			if (t == Token.TOK_OPEN_BR) {
-				Token nextToken = getTemplateLexer().nextToken();
+		while (t != null
+				&& (t.getType() == TokenType.TT_OPEN_BR || t.getType() == TokenType.TT_NAME_SEPARATOR)) {
+			if (t.getType() == TokenType.TT_OPEN_BR) {
+				Token nextToken = templateLexer.expect1(OPEN_BR_TYPES);
 				TemplateElement index;
 				if (nextToken.getType() == TokenType.TT_IDENTIFIER) {
 					index = createExpression(nextToken.getValue());
@@ -238,12 +254,12 @@ public class TemplateReader implements ITemplateReader {
 					index = nextToken.extract();
 				}
 				vt = new IndexedAccessTemplate(vt, index);
-				expect1(getTemplateLexer(), TokenType.TT_CLOSE_BR);
+				getTemplateLexer().expect1(TokenType.TT_CLOSE_BR);
 			} else {
-				Token id = expect1(getTemplateLexer(), TokenType.TT_IDENTIFIER);
+				Token id = getTemplateLexer().expect1(TokenType.TT_IDENTIFIER);
 				vt = new ObjectScopeTemplate(vt, id.getValue());
 			}
-			t = expect1r0(getTemplateLexer(), TokenType.TT_OPEN_BR,
+			t = getTemplateLexer().expect1r0(TokenType.TT_OPEN_BR,
 					TokenType.TT_NAME_SEPARATOR);
 		}
 		return vt;
@@ -251,18 +267,18 @@ public class TemplateReader implements ITemplateReader {
 
 	private TemplateElement createIfTemplate(Token tokenGot)
 			throws IOException, LexerException, ParserException {
-		Token t = expect1(getTemplateLexer(), IF_TYPES);
+		Token t = getTemplateLexer().expect1(IF_TYPES);
 		TemplateElement condition;
 		if (t.getType() == TokenType.TT_IDENTIFIER) {
 			condition = createExpression(t.getValue());
 		} else {
 			condition = t.extract();
 		}
-		t = expect1(getTemplateLexer(), IF_TEMPLATE_TYPES);
+		t = getTemplateLexer().expect1(IF_TEMPLATE_TYPES);
 		TemplateElement trueBranch = t.extract();
 		TemplateElement falseBranch = null;
-		if (tokenGot == Token.TOK_IFELSE) {
-			t = expect1(getTemplateLexer(), IF_TEMPLATE_TYPES);
+		if (tokenGot.getType() == TokenType.TT_IFELSE) {
+			t = getTemplateLexer().expect1(IF_TEMPLATE_TYPES);
 			falseBranch = t.extract();
 		}
 		return new IfTemplate(condition, trueBranch, falseBranch);
@@ -270,56 +286,30 @@ public class TemplateReader implements ITemplateReader {
 
 	private TemplateElement createWithTemplate(Token t) throws IOException,
 			LexerException, ParserException {
-		Token next = expect1(getTemplateLexer(), TokenType.TT_IDENTIFIER);
+		Token next = getTemplateLexer().expect1(TokenType.TT_IDENTIFIER);
 		TemplateElement withVar = createExpression(next.getValue());
-		next = expect1r0(getTemplateLexer(), TokenType.TT_AS);
+		next = getTemplateLexer().expect1r0(TokenType.TT_AS);
 		String alias = null;
 		if (next != null) {
-			next = expect1(getTemplateLexer(), TokenType.TT_ALIAS);
+			next = getTemplateLexer().expect1(TokenType.TT_ALIAS);
 			alias = next.getValue();
 		}
-		next = expect1(getTemplateLexer(), WITH_TEMPLATE_TYPES);
+		next = getTemplateLexer().expect1(WITH_TEMPLATE_TYPES);
 		TemplateElement template = next.extract();
 		return new WithTemplate(withVar, alias, template);
 	}
 
 	private TemplateElement createSetTemplate(Token t) throws IOException,
 			LexerException, ParserException {
-		Token next = expect1(getTemplateLexer(), TokenType.TT_ALIAS);
+		Token next = getTemplateLexer().expect1(TokenType.TT_ALIAS);
 		String alias = next.getValue();
-		expect1(getTemplateLexer(), TokenType.TT_TO);
-		next = expect1(getTemplateLexer(), TokenType.TT_IDENTIFIER);
+		getTemplateLexer().expect1(TokenType.TT_TO);
+		next = getTemplateLexer().expect1(TokenType.TT_IDENTIFIER);
 		TemplateElement setVar = createExpression(next.getValue());
 		return new VariableScopeTemplate(setVar, alias);
 	}
 
-	private Token expect1(ILexer lexer, TokenType... types) throws IOException,
-			LexerException, ParserException {
-		Token t = expect1r0(lexer, types);
-		if (t == null) {
-			t = lexer.nextToken();
-			throw new ParserException(in.getFileName(), in.getLineNumber(),
-					"Expecting one of " + Arrays.asList(types) + " Got: " + t);
-		}
-		return t;
-	}
-
-	private Token expect1r0(ILexer lexer, TokenType... types)
-			throws IOException, LexerException {
-		Token la = lexer.lookAhead();
-		for (int i = 0; i < types.length; i++) {
-			if (la.getType() == types[i]) {
-				return lexer.nextToken();
-			}
-			if (types[i] == TokenType.TT_ALIAS
-					&& la.getType() == TokenType.TT_IDENTIFIER) {
-				String value = la.getValue();
-				if (!value.contains(".")) {
-					lexer.nextToken();
-					return new Token(TokenType.TT_ALIAS, la.getValue());
-				}
-			}
-		}
+	public TemplateElement evaluate() {
 		return null;
 	}
 }

@@ -17,4 +17,9 @@ public class ObjectScopeTemplate extends TemplateElement {
 		return variable.getTarget(objectScope);
 	}
 
+	@Override
+	public String getName() {
+		return object.toString() + "." + variable;
+	}
+
 }

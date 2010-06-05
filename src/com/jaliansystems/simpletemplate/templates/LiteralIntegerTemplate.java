@@ -14,4 +14,9 @@ public class LiteralIntegerTemplate extends TemplateElement {
 		return Integer.valueOf(value);
 	}
 
+	@Override
+	public String getName() {
+		return Integer.toString(value);
+	}
+
 }

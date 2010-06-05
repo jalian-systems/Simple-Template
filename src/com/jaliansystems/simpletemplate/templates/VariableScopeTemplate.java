@@ -2,23 +2,28 @@ package com.jaliansystems.simpletemplate.templates;
 
 public class VariableScopeTemplate extends TemplateElement {
 
-	private final TemplateElement withVar;
+	private final TemplateElement setVar;
 	private final String alias;
 
 	public VariableScopeTemplate(TemplateElement withVar, String alias) {
-		this.withVar = withVar;
+		this.setVar = withVar;
 		this.alias = alias;
 	}
 
 	@Override
 	public String apply(Scope scope) {
-		scope.put(alias, withVar.getTarget(scope));
+		scope.put(alias, setVar.getTarget(scope));
 		return "" ;
 	}
 
 	@Override
 	public Object getTarget(Scope scope) {
-		return withVar.getTarget(scope);
+		return setVar.getTarget(scope);
+	}
+
+	@Override
+	public String getName() {
+		return "$set " + alias + " to " + setVar.toString();
 	}
 
 }

@@ -2,30 +2,21 @@ package com.jaliansystems.simpletemplate.templates;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
+import com.jaliansystems.simpletemplate.EvaluationError;
+import com.jaliansystems.simpletemplate.EvaluationMode;
 import com.jaliansystems.simpletemplate.Log;
 
 public class VariableTemplateTest {
 	
-	private ByteArrayOutputStream baos;
-
-	@Before
-	public void setup() {
-		baos = new ByteArrayOutputStream();
-		Log.setWriter(new PrintStream(baos));
-	}
-	
 	@After
-	public void teardown() {
-		Log.reset();
+	public void resetLog() {
+		Log.setMode(EvaluationMode.RELAXED);
 	}
 	
 	@Test
@@ -67,6 +58,16 @@ public class VariableTemplateTest {
 
 	@Test
 	public void testUnavailableAttrReturnsNone() {
+		VariableTemplate svt = new VariableTemplate("person.minor");
+		Scope scope = new Scope();
+		scope.put("person", new Object());
+		String result = svt.apply(scope);
+		assertEquals("", result);
+	}
+
+	@Test(expected=EvaluationError.class)
+	public void testUnavailableAttrThrowsExceptionInStrictMode() {
+		Log.setMode(EvaluationMode.STRICT);
 		VariableTemplate svt = new VariableTemplate("person.minor");
 		Scope scope = new Scope();
 		scope.put("person", new Object());

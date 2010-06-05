@@ -10,7 +10,7 @@ import com.jaliansystems.simpletemplate.templates.Scope;
 public class ScopeTest {
 
 	@Test
-	public void testChecksInItsScopeBeforeParents() {
+	public void testChecksInItsScopeBeforeParents() throws Exception {
 		Scope parent = new Scope();
 		parent.put("Key", "Parents Value");
 		Scope child = new Scope(parent);
@@ -19,7 +19,7 @@ public class ScopeTest {
 	}
 	
 	@Test
-	public void testReturnsValueFromParentIfNotExistInChild() {
+	public void testReturnsValueFromParentIfNotExistInChild() throws Exception {
 		Scope parent = new Scope();
 		parent.put("Key", "Parents Value");
 		Scope child = new Scope(parent);
@@ -28,7 +28,7 @@ public class ScopeTest {
 	}
 	
 	@Test
-	public void testScopeWithAObjectChecksTheObjectBeforeTheParent() {
+	public void testScopeWithAObjectChecksTheObjectBeforeTheParent() throws Exception {
 		Scope parent = new Scope();
 		parent.put("Key", "Parents Value");
 		Scope child = new Scope(parent, new Object() {

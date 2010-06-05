@@ -27,4 +27,13 @@ public class IfTemplate extends TemplateElement {
 			return target.apply(scope);
 		return "" ;
 	}
+
+	@Override
+	public String getName() {
+		if (falseBranch != null) {
+			return "$ifelse " + condition.toString() + " " + trueBranch.toString() + falseBranch.toString() ;
+		} else {
+			return "$if " + condition.toString() + " " + trueBranch.toString() ;
+		}
+	}
 }

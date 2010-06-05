@@ -40,4 +40,9 @@ public class WithTemplate extends TemplateElement {
 		}
 		return template.getTarget(withScope);
 	}
+
+	@Override
+	public String getName() {
+		return "$with " + withVar.toString() + (alias == null ? "" : " as " + alias + " " + template.toString());
+	}
 }

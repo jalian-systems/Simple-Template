@@ -12,13 +12,16 @@ public class AttributeEvaluator {
 		this.attr = attr;
 	}
 	
-	public Object getValue() {
+	public Object getValue() throws Exception {
 		Object attribute = null;
 		String[] prefixes = new String[] { "get", "is", "" } ;
 		for (int i = 0; i < prefixes.length; i++) {
 			try {
 				attribute = getAttribute(o, attr, prefixes[i]);
+				break ;
 			} catch (Exception e) {
+				if (i == prefixes.length - 1)
+					throw e;
 			}
 		}
 		return attribute;

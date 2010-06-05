@@ -21,11 +21,15 @@ public class IndexedAccessTemplate extends TemplateElement {
 	public Object getTarget(Scope scope) {
 		Object targetVariable = variable.getTarget(scope);
 		Object targetIndex = index.getTarget(scope);
+		if (targetVariable == null)
+			return null ;
+		if (targetIndex == null)
+			warning("Can't index with a null value " + index.getName() + " in " + variable.toString());
 		if (targetVariable instanceof List<?>) {
 			if (targetIndex instanceof Integer) {
 				return ((List<?>) targetVariable).get(((Integer)targetIndex).intValue());
 			} else {
-				warning("TargetIndex expected to be an integer");
+				warning("TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
 				return null ;
 			}
 		}
@@ -34,7 +38,7 @@ public class IndexedAccessTemplate extends TemplateElement {
 			if (targetIndex instanceof Integer) {
 				return ((String) targetVariable).charAt(((Integer)targetIndex).intValue());
 			} else {
-				warning("TargetIndex expected to be an integer");
+				warning("TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
 				return null ;
 			}
 		}
@@ -47,11 +51,16 @@ public class IndexedAccessTemplate extends TemplateElement {
 			if (targetIndex instanceof Integer) {
 				return Array.get(targetVariable, ((Integer)targetIndex).intValue());
 			} else {
-				warning("TargetIndex expected to be an integer");
+				warning("TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
 				return null ;
 			}
 		}
-		return null;
+		warning("Can't index into " + variable.getName() + " Class: " + targetVariable.getClass().getName());
+		return null ;
 	}
 
+	@Override
+	public String getName() {
+		return variable.toString() + "[" + index.toString() + "]";
+	}
 }

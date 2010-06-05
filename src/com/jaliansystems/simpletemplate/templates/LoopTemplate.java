@@ -59,7 +59,7 @@ public class LoopTemplate extends TemplateElement {
 			}
 		} else {
 			warning("You can loop only on Iterables, Arrays and Maps: got "
-					+ target.getClass() + " for " + loopVar);
+					+ target.getClass() + " for " + loopVar.getName());
 		}
 		return sb.toString();
 	}
@@ -105,8 +105,13 @@ public class LoopTemplate extends TemplateElement {
 			}
 		} else {
 			warning("You can loop only on Collections and Maps: got "
-					+ target.getClass() + " for " + loopVar);
+					+ target.getClass() + " for " + loopVar.getName());
 		}
 		return r ;
+	}
+
+	@Override
+	public String getName() {
+		return loopVar.toString() + " " + template.toString();
 	}
 }

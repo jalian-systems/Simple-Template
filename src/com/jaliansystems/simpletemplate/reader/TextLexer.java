@@ -44,7 +44,7 @@ public class TextLexer extends AbstractLexer {
 					reader.unread(la);
 				} else {
 					if (la == '$') {
-						return Token.TOK_BLOCK_END;
+						return new Token(TokenType.TT_BLOCK_END);
 					}
 					reader.unread(la);
 				}
@@ -53,7 +53,7 @@ public class TextLexer extends AbstractLexer {
 		}
 		if (sb.length() > 0)
 			return new Token(TokenType.TT_TEXT, sb.toString());
-		return Token.TOK_EOF;
+		return new Token(TokenType.TT_EOF);
 	}
 
 	private Token readTemplateStartToken() throws IOException, LexerException {
@@ -64,7 +64,7 @@ public class TextLexer extends AbstractLexer {
 		while ((c = reader.read()) != -1) {
 			if (start) {
 				if (c == '{')
-					return Token.TOK_BLOCK_START;
+					return new Token(TokenType.TT_BLOCK_START);
 			}
 			if (start && c == '\\') {
 				escape = true;
@@ -96,13 +96,13 @@ public class TextLexer extends AbstractLexer {
 	private Token findToken(String text, boolean escape) throws LexerException {
 		if (!escape) {
 			if ("if".equals(text))
-				return Token.TOK_IF;
+				return new Token(TokenType.TT_IF);
 			else if ("ifelse".equals(text))
-				return Token.TOK_IFELSE;
+				return new Token(TokenType.TT_IFELSE);
 			else if ("set".equals(text))
-				return Token.TOK_SET;
+				return new Token(TokenType.TT_SET);
 			else if ("with".equals(text))
-				return Token.TOK_WITH;
+				return new Token(TokenType.TT_WITH);
 		}
 		return checkValidIdentifier(text);
 	}

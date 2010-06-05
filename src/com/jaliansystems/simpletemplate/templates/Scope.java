@@ -2,8 +2,6 @@ package com.jaliansystems.simpletemplate.templates;
 
 import java.util.HashMap;
 
-import static com.jaliansystems.simpletemplate.Log.*;
-
 public class Scope extends HashMap<String, Object> {
 
 	private static final long serialVersionUID = 1L;
@@ -31,14 +29,15 @@ public class Scope extends HashMap<String, Object> {
 		}
 		Object o = null ;
 		if (object != null)
-			o = new AttributeEvaluator(object, key).getValue();
+			try {
+				o = new AttributeEvaluator(object, key).getValue();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		else
 			o = get(key);
 		if (o == null && parent != null)
 			o = parent.get(key);
-		if (o == null) {
-			warning("Unable to resolve attribute " + key);
-		}
 		return o;
 	}
 }

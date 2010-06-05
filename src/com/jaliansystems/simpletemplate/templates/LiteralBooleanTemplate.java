@@ -14,4 +14,9 @@ public class LiteralBooleanTemplate extends TemplateElement {
 		return value;
 	}
 
+	@Override
+	public String getName() {
+		return Boolean.toString(value);
+	}
+
 }

@@ -17,13 +17,22 @@ public class VariableTemplate extends TemplateElement {
 		String[] tokens = getTokens(variable);
 		if (tokens.length == 0)
 			return null;
-		Object o = scope.resolve(tokens[0]);
+		Object o = null;
+		try {
+			o = scope.resolve(tokens[0]);
+		} catch (Exception e) {
+			warning("Unable to resolve attribute " + variable + " for attribute part " + tokens[0]);
+		}
 		if (o == null)
 			return null;
 		for (int i = 1; i < tokens.length; i++) {
-			o = new AttributeEvaluator(o, tokens[i]).getValue();
-			if (o == null) {
+			try {
+				o = new AttributeEvaluator(o, tokens[i]).getValue();
+			} catch (Exception e) {
 				warning("Unable to resolve attribute " + variable + " for attribute part " + tokens[i]);
+				o = null ;
+			}
+			if (o == null) {
 				break;
 			}
 		}
@@ -40,7 +49,7 @@ public class VariableTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String toString() {
-		return variable ;
+	public String getName() {
+		return "$" + variable + "$";
 	}
 }

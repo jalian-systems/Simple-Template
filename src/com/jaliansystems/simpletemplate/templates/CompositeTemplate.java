@@ -28,4 +28,9 @@ public class CompositeTemplate extends TemplateElement {
 		return o;
 	}
 
+	@Override
+	public String getName() {
+		return "${ " + children.toString() + " }$";
+	}
+
 }

@@ -13,4 +13,9 @@ public class LiteralTextTemplate extends TemplateElement {
 	public Object getTarget(Scope scope) {
 		return text;
 	}
+
+	@Override
+	public String getName() {
+		return "\"" + text.replaceAll("\"", "\\\\\"") + "\"";
+	}
 }

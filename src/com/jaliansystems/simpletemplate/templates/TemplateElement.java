@@ -1,11 +1,18 @@
 package com.jaliansystems.simpletemplate.templates;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
+
+import com.jaliansystems.simpletemplate.reader.SimpleTemplateException;
 
 public abstract class TemplateElement {
 	public abstract Object getTarget(Scope scope);
 
+	private String fileName ;
+	private int lineNumber ;
+	
 	/* (non-Javadoc)
 	 * @see com.jaliansystems.simpletemplate.TemplateElement#apply(java.util.Map)
 	 */
@@ -37,4 +44,37 @@ public abstract class TemplateElement {
 		}
 		return true;
 	}
+	
+	@Override
+	public final String toString() {
+		return getName();
+	}
+	
+	public abstract String getName();
+
+	public void evaluate(Scope scope, Writer writer) throws SimpleTemplateException, IOException {
+		
+		String result = apply(scope);
+		
+		writer.write(result);
+		writer.flush();
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
+	public void setLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+	
+	
 }
