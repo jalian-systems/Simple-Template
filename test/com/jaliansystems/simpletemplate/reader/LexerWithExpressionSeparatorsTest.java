@@ -83,4 +83,17 @@ public class LexerWithExpressionSeparatorsTest extends LexerTest {
 		assertToken("java.lang.object", TokenType.TT_IDENTIFIER, lexer.nextToken());
 		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
 	}
+	
+	@Test
+	public void testExpressionSeparators() throws IOException, LexerException {
+		StringReader reader = new StringReader("<template:ifelse true <template:trueMessage> <template:falseMessage>");
+		TemplateLexer lexer = new TemplateLexer(new LexerReader(reader, "<stream>", "<template:", ">"));
+		assertToken(null, TokenType.TT_IFELSE, lexer.nextToken());
+		assertToken(null, TokenType.TT_TRUE, lexer.nextToken());
+		assertToken("trueMessage", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
+		assertToken(null, TokenType.TT_END_TEMPLATE, lexer.nextToken());
+		assertToken("falseMessage", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
+		assertToken(null, TokenType.TT_END_TEMPLATE, lexer.nextToken());
+		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
+	}
 }

@@ -24,6 +24,9 @@ public class TemplateLexer extends AbstractLexer {
 				if (token == null)
 					token = new Token(TokenType.TT_END_TEMPLATE, fn, ln);
 				return token;
+			} else if (isEndOfTemplate(c)) {
+				skipRestOfEndOfTemplate();
+				return new Token(TokenType.TT_END_TEMPLATE, fn, ln);
 			} else if (Character.isDigit(c)) {
 				return readInteger(c, ln);
 			} else if (Character.isJavaIdentifierStart(c)) {
