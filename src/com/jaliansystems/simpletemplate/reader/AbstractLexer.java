@@ -10,9 +10,11 @@ public abstract class AbstractLexer implements ILexer {
 	protected String fn;
 	protected String ttStart;
 	protected String ttEnd;
+	private final LexerMaintainer maintainer;
 
-	public AbstractLexer(LexerReader in) {
+	public AbstractLexer(LexerReader in, LexerMaintainer maintainer) {
 		this.reader = in;
+		this.maintainer = maintainer;
 		ttStart = in.getTokenStart();
 		ttEnd = in.getTokenEnd();
 	}
@@ -59,6 +61,8 @@ public abstract class AbstractLexer implements ILexer {
 
 	public Token expect1r0(TokenType... types) throws IOException,
 			LexerException {
+		if (maintainer != null)
+			maintainer.pushback(this);
 		Token la = lookAhead();
 		for (int i = 0; i < types.length; i++) {
 			if (la.getType() == types[i]) {

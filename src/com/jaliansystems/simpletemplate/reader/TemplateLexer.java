@@ -4,9 +4,13 @@ import java.io.IOException;
 
 public class TemplateLexer extends AbstractLexer {
 
-	public TemplateLexer(LexerReader in) {
-		super(in);
+	public TemplateLexer(LexerReader in, LexerMaintainer maintainer) {
+		super(in, maintainer);
 		fn = in.getFileName();
+	}
+
+	public TemplateLexer(LexerReader in) {
+		this(in, null);
 	}
 
 	public Token getNextToken() throws IOException, LexerException {

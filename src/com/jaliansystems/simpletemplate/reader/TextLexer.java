@@ -4,9 +4,13 @@ import java.io.IOException;
 
 public class TextLexer extends AbstractLexer {
 
-	public TextLexer(LexerReader in) {
-		super(in);
+	public TextLexer(LexerReader in, LexerMaintainer maintainer) {
+		super(in, maintainer);
 		fn = in.getFileName();
+	}
+
+	public TextLexer(LexerReader in) {
+		this(in, null);
 	}
 
 	public Token getNextToken() throws IOException, LexerException {
