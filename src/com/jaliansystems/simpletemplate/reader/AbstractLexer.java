@@ -7,9 +7,14 @@ public abstract class AbstractLexer implements ILexer {
 
 	private Token laToken;
 	protected final LexerReader reader;
+	protected String fn;
+	protected String ttStart;
+	protected String ttEnd;
 
 	public AbstractLexer(LexerReader in) {
 		this.reader = in;
+		ttStart = in.getTokenStart();
+		ttEnd = in.getTokenEnd();
 	}
 
 	protected abstract Token getNextToken() throws IOException, LexerException;
@@ -36,7 +41,7 @@ public abstract class AbstractLexer implements ILexer {
 	public void pushback() throws IOException {
 		if (laToken != null) {
 			reader.pushback();
-			laToken = null ;
+			laToken = null;
 		}
 	}
 
@@ -45,14 +50,15 @@ public abstract class AbstractLexer implements ILexer {
 		Token t = expect1r0(types);
 		if (t == null) {
 			t = nextToken();
-			throw new ParserException(reader.getFileName(), reader.getLineNumber(),
-					"Expecting one of " + Arrays.asList(types) + " Got: " + t);
+			throw new ParserException(reader.getFileName(),
+					reader.getLineNumber(), "Expecting one of "
+							+ Arrays.asList(types) + " Got: " + t);
 		}
 		return t;
 	}
 
-	public Token expect1r0(TokenType... types)
-			throws IOException, LexerException {
+	public Token expect1r0(TokenType... types) throws IOException,
+			LexerException {
 		Token la = lookAhead();
 		for (int i = 0; i < types.length; i++) {
 			if (la.getType() == types[i]) {
@@ -63,10 +69,113 @@ public abstract class AbstractLexer implements ILexer {
 				String value = la.getValue();
 				if (!value.contains(".")) {
 					nextToken();
-					return new Token(TokenType.TT_ALIAS, la.getValue(), la.getFileName(), la.getLineNumber());
+					return new Token(TokenType.TT_ALIAS, la.getValue(),
+							la.getFileName(), la.getLineNumber());
 				}
 			}
 		}
 		return null;
+	}
+
+	protected void skipRestOfStartOfTemplate() throws IOException {
+		skipRest(ttStart);
+	}
+
+	protected boolean isStartOfTemplate(int c) throws IOException {
+		return isStart(ttStart, c);
+	}
+
+	protected void skipRestOfEndOfTemplate() throws IOException {
+		skipRest(ttEnd);
+	}
+
+	protected boolean isEndOfTemplate(int c) throws IOException {
+		return isStart(ttEnd, c);
+	}
+
+	private boolean isStart(String s, int c) throws IOException {
+		if (c != s.charAt(0))
+			return false;
+		else if (s.length() == 1)
+			return true;
+		char[] la = new char[s.length() - 1];
+		int len = reader.read(la);
+		reader.unread(Arrays.copyOfRange(la, 0, len));
+		return len < la.length || s.substring(1).equals(new String(la, 0, len));
+	}
+
+	private void skipRest(String s) throws IOException {
+		for (int i = 0; i < s.length() - 1; i++)
+			reader.read();
+	}
+
+	protected Token readTemplateStartToken(int ln, boolean throwException)
+			throws IOException, LexerException {
+		StringBuffer sb = new StringBuffer();
+		int c;
+		skipRestOfStartOfTemplate();
+		boolean start = true;
+		boolean escape = false;
+		while ((c = reader.read()) != -1) {
+			if (start) {
+				if (c == '{')
+					return new Token(TokenType.TT_BLOCK_START, fn, ln);
+			}
+			if (start && c == '\\') {
+				escape = true;
+				continue;
+			}
+			if (start) {
+				start = false;
+				if (Character.isJavaIdentifierStart(c) && !isStartOfTemplate(c))
+					sb.append((char) c);
+				else
+					break;
+			} else {
+				if ((c == '.' || Character.isJavaIdentifierPart(c))
+						&& !isStartOfTemplate(c))
+					sb.append((char) c);
+				else
+					break;
+			}
+		}
+		if (c != -1)
+			reader.unread(c);
+		if (sb.length() > 0) {
+			return findToken(sb.toString(), escape, ln);
+		}
+		if (throwException)
+			throw new LexerException(
+					reader.getFileName(),
+					reader.getLineNumber(),
+					"While reading template start token -- unexpected "
+							+ (c == -1 ? "EOF" : "character '" + (char) c + "'"));
+		return null ;
+	}
+
+	private Token findToken(String text, boolean escape, int ln)
+			throws LexerException {
+		if (!escape) {
+			if ("if".equals(text))
+				return new Token(TokenType.TT_IF, fn, ln);
+			else if ("ifelse".equals(text))
+				return new Token(TokenType.TT_IFELSE, fn, ln);
+			else if ("set".equals(text))
+				return new Token(TokenType.TT_SET, fn, ln);
+			else if ("with".equals(text))
+				return new Token(TokenType.TT_WITH, fn, ln);
+		}
+		return checkValidIdentifier(text, ln);
+	}
+
+	private Token checkValidIdentifier(String text, int ln)
+			throws LexerException {
+		if (text.endsWith(".") || text.contains("..")) {
+			throw new LexerException(reader.getFileName(),
+					reader.getLineNumber(),
+					"While reading template start token -- invalid identifier name '"
+							+ text + "'");
+		}
+		return new Token(TokenType.TT_START_IDENTIFIER, text, fn, ln);
 	}
 }

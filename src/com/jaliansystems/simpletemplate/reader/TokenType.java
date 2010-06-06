@@ -5,21 +5,21 @@ import java.io.IOException;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public enum TokenType {
-	TT_START ("$"),
-	TT_WITH ("$with"),
-	TT_SET ("$set"),
-	TT_IF ("$if"),
-	TT_IFELSE ("$ifelse"),
-	TT_CBLOCK_START ("{"),
-	TT_BLOCK_START ("${"),
-	TT_BLOCK_END ("}$"),
-	TT_OPEN_BR("["),
-	TT_CLOSE_BR("]"),
-	TT_NAME_SEPARATOR("."),
-	TT_TO("to"),
-	TT_AS("as"),
-	TT_TRUE("true"),
-	TT_FALSE("false"),
+	TT_END_TEMPLATE,
+	TT_WITH,
+	TT_SET,
+	TT_IF,
+	TT_IFELSE,
+	TT_CBLOCK_START,
+	TT_BLOCK_START,
+	TT_BLOCK_END,
+	TT_OPEN_BR,
+	TT_CLOSE_BR,
+	TT_NAME_SEPARATOR,
+	TT_TO,
+	TT_AS,
+	TT_TRUE,
+	TT_FALSE,
 	TT_START_IDENTIFIER,
 	TT_IDENTIFIER,
 	TT_INTEGER,
@@ -29,24 +29,10 @@ public enum TokenType {
 	TT_EOF,
 	TT_ALIAS;
 	
-	private String value;
 	private IExtractTemplate extractTemplate ;
 	private String readableString ;
 	
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
 	TokenType() {
-		this(null);
-	}
-	
-	TokenType(String value) {
-		this.value = value;
 		setUpReadableString();
 	}
 	

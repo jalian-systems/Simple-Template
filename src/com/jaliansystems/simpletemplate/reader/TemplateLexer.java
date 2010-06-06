@@ -4,8 +4,6 @@ import java.io.IOException;
 
 public class TemplateLexer extends AbstractLexer {
 
-	private String fn;
-
 	public TemplateLexer(LexerReader in) {
 		super(in);
 		fn = in.getFileName();
@@ -13,7 +11,7 @@ public class TemplateLexer extends AbstractLexer {
 
 	public Token getNextToken() throws IOException, LexerException {
 		int c;
-		int ln ;
+		int ln;
 		boolean escape = false;
 		while ((ln = reader.getLineNumber()) > 0 && (c = reader.read()) != -1) {
 			if (Character.isWhitespace(c)) {
@@ -21,15 +19,11 @@ public class TemplateLexer extends AbstractLexer {
 			} else if (c == '\\') {
 				escape = true;
 				continue;
-			} else if (c == '$') {
-				int c1 = reader.read();
-				if (c1 == '{')
-					return new Token(TokenType.TT_BLOCK_START, fn, ln);
-				if (c1 != -1)
-					reader.unread(c1);
-				if (c1 == '\\' || Character.isJavaIdentifierStart(c1))
-					return readTemplateStartToken(ln);
-				return new Token(TokenType.TT_START, fn, ln);
+			} else if (isStartOfTemplate(c)) {
+				Token token = readTemplateStartToken(ln, !ttStart.equals(ttEnd));
+				if (token == null)
+					token = new Token(TokenType.TT_END_TEMPLATE, fn, ln);
+				return token;
 			} else if (Character.isDigit(c)) {
 				return readInteger(c, ln);
 			} else if (Character.isJavaIdentifierStart(c)) {
@@ -40,11 +34,11 @@ public class TemplateLexer extends AbstractLexer {
 				return readString(ln);
 			} else if (c == '}') {
 				int la = reader.read();
-				if (la == '$')
+				if (isEndOfTemplate(la)) {
+					skipRestOfEndOfTemplate();
 					return new Token(TokenType.TT_BLOCK_END, fn, ln);
-				throw new LexerException(reader.getFileName(), reader.getLineNumber(),
-						"While reading template start token -- unexpected character '"
-								+ (char) c + "'");
+				}
+				reader.unread(la);
 			} else if (c == '{') {
 				return new Token(TokenType.TT_CBLOCK_START, fn, ln);
 			} else if (c == '[') {
@@ -52,9 +46,10 @@ public class TemplateLexer extends AbstractLexer {
 			} else if (c == ']') {
 				return new Token(TokenType.TT_CLOSE_BR, fn, ln);
 			} else if (c == '.') {
-				return new Token(TokenType.TT_NAME_SEPARATOR, fn, ln) ;
+				return new Token(TokenType.TT_NAME_SEPARATOR, fn, ln);
 			} else {
-				throw new LexerException(reader.getFileName(), reader.getLineNumber(),
+				throw new LexerException(reader.getFileName(),
+						reader.getLineNumber(),
 						"While reading template start token -- unexpected character '"
 								+ (char) c + "'");
 			}
@@ -127,61 +122,14 @@ public class TemplateLexer extends AbstractLexer {
 			}
 			sb.append((char) c);
 		}
-		throw new LexerException(reader.getFileName(), reader.getLineNumber(), "While reading string - unexpected EOF");
-	}
-
-	private Token readTemplateStartToken(int ln) throws IOException, LexerException {
-		StringBuffer sb = new StringBuffer();
-		int c;
-		boolean start = true;
-		boolean escape = false;
-		while ((c = reader.read()) != -1) {
-			if (start && c == '\\') {
-				escape = true;
-				continue;
-			}
-			if (start) {
-				start = false;
-				if (Character.isJavaIdentifierStart(c) && c != '$')
-					sb.append((char) c);
-				else
-					break;
-			} else {
-				if ((c == '.' || Character.isJavaIdentifierPart(c)) && c != '$')
-					sb.append((char) c);
-				else
-					break;
-			}
-		}
-		if (sb.length() > 0) {
-			if (c != -1) {
-				reader.unread(c);
-			}
-			return findToken(sb.toString(), escape, ln);
-		}
 		throw new LexerException(reader.getFileName(), reader.getLineNumber(),
-				"While reading template start token -- unexpected "
-						+ (c == -1 ? "EOF" : "character '" + (char) c + "'"));
-	}
-
-	private Token findToken(String text, boolean escape, int ln) throws LexerException {
-		if (!escape) {
-			if ("if".equals(text))
-				return new Token(TokenType.TT_IF, fn, ln);
-			else if ("ifelse".equals(text))
-				return new Token(TokenType.TT_IFELSE, fn, ln);
-			else if ("set".equals(text))
-				return new Token(TokenType.TT_SET, fn, ln);
-			else if ("with".equals(text))
-				return new Token(TokenType.TT_WITH, fn, ln);
-		}
-		return checkValidIdentifier(text) ? new Token(
-				TokenType.TT_START_IDENTIFIER, text, fn, ln) : null;
+				"While reading string - unexpected EOF");
 	}
 
 	private boolean checkValidIdentifier(String text) throws LexerException {
 		if (text.endsWith(".") || text.contains("..")) {
-			throw new LexerException(reader.getFileName(), reader.getLineNumber(),
+			throw new LexerException(reader.getFileName(),
+					reader.getLineNumber(),
 					"While reading template start token -- invalid identifier name '"
 							+ text + "'");
 		}

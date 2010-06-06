@@ -11,14 +11,38 @@ public class LexerReader {
 	private boolean isPushback;
 	private int[] pushbackBuffer = new int[1024];
 	private int nPushback = 0 ;
-	
-	public LexerReader(Reader in) {
-		this(in, null);
-	}
+	private final String tokenStart;
+	private String tokenEnd;
 	
 	public LexerReader(Reader in, String fileName) {
+		this(in, fileName, "$");
+	}
+	
+	public LexerReader(Reader in, String fileName, String tokenStart) {
+		this(in, fileName, tokenStart, tokenStart);
+	}
+
+	public LexerReader(Reader in, String fileName, String tokenStart, String tokenEnd) {
 		this.in = new PushbackReader(in, 1024);
 		this.fileName = fileName == null ? "<stream>" : fileName;
+		this.tokenStart = tokenStart;
+		this.tokenEnd = tokenEnd ;
+	}
+
+	public int getLineNumber() {
+		return lineNumber;
+	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public String getTokenStart() {
+		return tokenStart;
+	}
+	
+	public String getTokenEnd() {
+		return tokenEnd;
 	}
 	
 	public int read() throws IOException {
@@ -42,17 +66,10 @@ public class LexerReader {
 	}
 
 	public void unread(char[] ca) throws IOException {
-		in.unread(ca);
+		for (int i = ca.length - 1; i >= 0; i--)
+			unread((int)ca[i]);
 	}
 	
-	public int getLineNumber() {
-		return lineNumber;
-	}
-	
-	public String getFileName() {
-		return fileName;
-	}
-
 	public void pushback() throws IOException {
 		for (int i = nPushback - 1; i >= 0; i--)
 			unread(pushbackBuffer[i]);
@@ -61,5 +78,16 @@ public class LexerReader {
 	public void startPushback() {
 		isPushback = true ;
 		nPushback = 0 ;
+	}
+
+	public int read(char[] la) throws IOException {
+		int i = 0 ;
+		for (; i < la.length; i++) {
+			int c = in.read();
+			if (c == -1)
+				break ;
+			la[i] = (char) c ;
+		}
+		return i;
 	}
 }

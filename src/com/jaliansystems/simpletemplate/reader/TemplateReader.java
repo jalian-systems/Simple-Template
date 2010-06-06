@@ -40,39 +40,39 @@ public class TemplateReader implements ITemplateReader {
 			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
 			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
 			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
-			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_BLOCK_START, TokenType.TT_END_TEMPLATE,
 			TokenType.TT_CBLOCK_START };
 
 	private static final TokenType[] IF_TYPES = new TokenType[] {
 			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
 			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
 			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
-			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_BLOCK_START, TokenType.TT_END_TEMPLATE,
 			TokenType.TT_IDENTIFIER };
 
 	private static final TokenType[] IF_TEMPLATE_TYPES = new TokenType[] {
 			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
 			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
 			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
-			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_BLOCK_START, TokenType.TT_END_TEMPLATE,
 			TokenType.TT_CBLOCK_START };
 
 	private static final TokenType[] WITH_TEMPLATE_TYPES = new TokenType[] {
 			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
 			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
 			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
-			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_BLOCK_START, TokenType.TT_END_TEMPLATE,
 			TokenType.TT_CBLOCK_START };
 
 	private static final TokenType[] OPEN_BR_TYPES = new TokenType[] {
 			TokenType.TT_STRING, TokenType.TT_INTEGER, TokenType.TT_TRUE,
 			TokenType.TT_FALSE, TokenType.TT_START_IDENTIFIER, TokenType.TT_IF,
 			TokenType.TT_IFELSE, TokenType.TT_WITH, TokenType.TT_SET,
-			TokenType.TT_BLOCK_START, TokenType.TT_START,
+			TokenType.TT_BLOCK_START, TokenType.TT_END_TEMPLATE,
 			TokenType.TT_IDENTIFIER };
 
 	private final LexerReader in;
-	private final TextLexer textLexer;
+	private final AbstractLexer textLexer;
 	private final TemplateLexer templateLexer;
 	private ILexer currentLexer;
 
@@ -198,7 +198,7 @@ public class TemplateReader implements ITemplateReader {
 		TemplateElement ite;
 		TemplateElement vt = createExpression(t);
 		Token nextToken = getTemplateLexer().expect1(START_ID_TYPES);
-		if (nextToken.getType() == TokenType.TT_START) {
+		if (nextToken.getType() == TokenType.TT_END_TEMPLATE) {
 			ite = vt;
 		} else {
 			TemplateElement template = nextToken.extract();
