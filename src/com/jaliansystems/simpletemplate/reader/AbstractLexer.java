@@ -47,9 +47,9 @@ public abstract class AbstractLexer implements ILexer {
 		}
 	}
 
-	public Token expect1(TokenType... types) throws IOException,
-			LexerException, ParserException {
-		Token t = expect1r0(types);
+	public Token expect1(TokenType[] types, TokenType... others)
+			throws IOException, LexerException, ParserException {
+		Token t = expect1r0(types, others);
 		if (t == null) {
 			t = nextToken();
 			throw new ParserException(reader.getFileName(),
@@ -59,11 +59,19 @@ public abstract class AbstractLexer implements ILexer {
 		return t;
 	}
 
-	public Token expect1r0(TokenType... types) throws IOException,
-			LexerException {
+	public Token expect1r0(TokenType[] types, TokenType... others)
+			throws IOException, LexerException, ParserException {
 		if (maintainer != null)
 			maintainer.pushback(this);
 		Token la = lookAhead();
+		Token t = findMatchingToken(la, types);
+		if (t == null)
+			return findMatchingToken(la, others);
+		return t ;
+	}
+
+	private Token findMatchingToken(Token la, TokenType[] types)
+			throws IOException, LexerException {
 		for (int i = 0; i < types.length; i++) {
 			if (la.getType() == types[i]) {
 				return nextToken();
@@ -79,6 +87,16 @@ public abstract class AbstractLexer implements ILexer {
 			}
 		}
 		return null;
+	}
+
+	public Token expect1(TokenType... types) throws IOException,
+			LexerException, ParserException {
+		return expect1(new TokenType[0], types);
+	}
+
+	public Token expect1r0(TokenType... types) throws IOException,
+			LexerException, ParserException {
+		return expect1r0(new TokenType[0], types);
 	}
 
 	protected void skipRestOfStartOfTemplate() throws IOException {
@@ -154,7 +172,7 @@ public abstract class AbstractLexer implements ILexer {
 					reader.getLineNumber(),
 					"While reading template start token -- unexpected "
 							+ (c == -1 ? "EOF" : "character '" + (char) c + "'"));
-		return null ;
+		return null;
 	}
 
 	private Token findToken(String text, boolean escape, int ln)

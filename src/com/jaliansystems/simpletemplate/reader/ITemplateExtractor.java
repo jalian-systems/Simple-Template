@@ -4,6 +4,6 @@ import java.io.IOException;
 
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
-public interface IExtractTemplate {
-	public TemplateElement extract(Token t) throws IOException, LexerException, ParserException;
+public interface ITemplateExtractor {
+	public TemplateElement extract(Token t, ILexer lexer) throws IOException, LexerException, ParserException;
 }

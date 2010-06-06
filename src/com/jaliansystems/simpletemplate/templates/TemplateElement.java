@@ -1,11 +1,7 @@
 package com.jaliansystems.simpletemplate.templates;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
-
-import com.jaliansystems.simpletemplate.reader.SimpleTemplateException;
 
 public abstract class TemplateElement {
 	public abstract Object getTarget(Scope scope);
@@ -56,14 +52,6 @@ public abstract class TemplateElement {
 	}
 	
 	public abstract String getName();
-
-	public void evaluate(Scope scope, Writer writer) throws SimpleTemplateException, IOException {
-		
-		String result = apply(scope);
-		
-		writer.write(result);
-		writer.flush();
-	}
 
 	public String getFileName() {
 		return fileName;

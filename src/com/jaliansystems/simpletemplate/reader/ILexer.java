@@ -13,4 +13,10 @@ public interface ILexer {
 
 	public Token expect1r0(TokenType... types) throws IOException,
 			LexerException, ParserException;
+
+	public Token expect1(TokenType[] types, TokenType... others) throws IOException,
+			LexerException, ParserException;
+
+	public Token expect1r0(TokenType[] types, TokenType... others) throws IOException,
+			LexerException, ParserException;
 }

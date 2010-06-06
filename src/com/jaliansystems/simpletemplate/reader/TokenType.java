@@ -1,39 +1,52 @@
 package com.jaliansystems.simpletemplate.reader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public enum TokenType {
 	TT_END_TEMPLATE,
-	TT_WITH,
-	TT_SET,
-	TT_IF,
-	TT_IFELSE,
-	TT_CBLOCK_START,
-	TT_BLOCK_START,
+	TT_WITH(new WithTExtractor()),
+	TT_SET(new SetTExtractor()),
+	TT_IF(new IfElseTExtractor()),
+	TT_IFELSE(new IfElseTExtractor()),
 	TT_BLOCK_END,
 	TT_OPEN_BR,
 	TT_CLOSE_BR,
 	TT_NAME_SEPARATOR,
 	TT_TO,
 	TT_AS,
-	TT_TRUE,
-	TT_FALSE,
-	TT_START_IDENTIFIER,
+	TT_TRUE(new LBTExtractor()),
+	TT_FALSE(new LBTExtractor()),
+	TT_START_IDENTIFIER(new StartIDExtractor()),
 	TT_IDENTIFIER,
-	TT_INTEGER,
-	TT_STRING,
+	TT_INTEGER(new LITExtractor()),
+	TT_STRING(new LTTExtractor()),
 	TT_BOOLEAN,
-	TT_TEXT,
+	TT_TEXT(new LTTExtractor()),
 	TT_EOF,
+	TT_CBLOCK_START(new BTExtractor()),
+	TT_BLOCK_START(new BTExtractor()),
 	TT_ALIAS;
 	
-	private IExtractTemplate extractTemplate ;
+	private static TokenType[] extractableTokenTypes;
+	
+	private ITemplateExtractor extractor ;
 	private String readableString ;
+	private ILexer lexer;
 	
 	TokenType() {
+		this(null);
+	}
+	
+	TokenType(ITemplateExtractor extractor) {
+		this.extractor = extractor;
 		setUpReadableString();
+	}
+	
+	public boolean isExtractable() {
+		return extractor != null ;
 	}
 	
 	private void setUpReadableString() {
@@ -55,23 +68,40 @@ public enum TokenType {
 		readableString = sb.toString();
 	}
 
-	public IExtractTemplate getExtractTemplate() {
-		return extractTemplate;
+	public ITemplateExtractor getExtractTemplate() {
+		return extractor;
 	}
 
-	public void setExtractTemplate(IExtractTemplate extractTemplate) {
-		this.extractTemplate = extractTemplate;
+	public void setExtractTemplate(ITemplateExtractor extractTemplate) {
+		this.extractor = extractTemplate;
 	}
 
 	public TemplateElement extract(Token token) throws IOException, LexerException, ParserException {
-		if (extractTemplate == null) {
+		if (extractor == null) {
 			throw new RuntimeException("Do not know how to extract a template from " + toString());
 		}
-		return extractTemplate.extract(token);
+		return extractor.extract(token, lexer);
 	}
 
 	@Override
 	public String toString() {
 		return readableString ;
+	}
+
+	public void setLexer(ILexer lexer) {
+		this.lexer = lexer;
+	}
+
+	public static TokenType[] getExtractableTokens() {
+		if (extractableTokenTypes == null) {
+			ArrayList<TokenType> extractableList = new ArrayList<TokenType>();
+			for (TokenType tokenType : TokenType.values()) {
+				if (tokenType.isExtractable())
+					extractableList.add(tokenType);
+			}
+			extractableTokenTypes = extractableList
+					.toArray(new TokenType[extractableList.size()]);
+		}
+		return extractableTokenTypes;
 	}
 }
