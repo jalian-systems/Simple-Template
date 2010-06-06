@@ -5,7 +5,8 @@ public class VariableScopeTemplate extends TemplateElement {
 	private final TemplateElement setVar;
 	private final String alias;
 
-	public VariableScopeTemplate(TemplateElement withVar, String alias) {
+	public VariableScopeTemplate(TemplateElement withVar, String alias, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.setVar = withVar;
 		this.alias = alias;
 	}

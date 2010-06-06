@@ -13,7 +13,7 @@ public class LiteralTextTemplateTest {
 	@Test
 	public void textTemplateDoesNotDoSubstitutions() {
 		String text = "A tempting $way$ for failing $test$ case";
-		LiteralTextTemplate template = new LiteralTextTemplate(text);
+		LiteralTextTemplate template = new LiteralTextTemplate(text, text, 0);
 		Scope scope = new Scope();
 		scope.put("way", "This is my way");
 		scope.put("test", "Of testing");
@@ -23,8 +23,8 @@ public class LiteralTextTemplateTest {
 
 	@Test
 	public void testAsBinary() {
-		assertEquals("A true text is always true", true, new LiteralTextTemplate("true").asBinary(new Scope()));
-		assertEquals("Anyother text is false", true, new LiteralTextTemplate("").asBinary(new Scope()));
-		assertEquals("Anyother text is false", true, new LiteralTextTemplate("some text with true in it").asBinary(new Scope()));
+		assertEquals("A true text is always true", true, new LiteralTextTemplate("true", null, 0).asBinary(new Scope()));
+		assertEquals("Anyother text is false", true, new LiteralTextTemplate("", null, 0).asBinary(new Scope()));
+		assertEquals("Anyother text is false", true, new LiteralTextTemplate("some text with true in it", null, 0).asBinary(new Scope()));
 	}
 }

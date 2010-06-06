@@ -25,24 +25,24 @@ public class LoopTemplateTest {
 		items.add("Hyderabad");
 		items.add("Delhi");
 		
-		VariableTemplate vtIndex0 = new VariableTemplate("index0");
-		VariableTemplate vtIndex1 = new VariableTemplate("index1");
-		VariableTemplate vtItem = new VariableTemplate("it");
+		VariableTemplate vtIndex0 = new VariableTemplate("index0", null, 0);
+		VariableTemplate vtIndex1 = new VariableTemplate("index1", null, 0);
+		VariableTemplate vtItem = new VariableTemplate("it", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate();
+		CompositeTemplate ct = new CompositeTemplate(null, 0);
 		ct.add(vtIndex0);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtIndex1);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtItem);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		
-		VariableTemplate cities = new VariableTemplate("cities");
+		VariableTemplate cities = new VariableTemplate("cities", null, 0);
 		
 		Scope scope = new Scope();
 		scope.put("cities", items);
 		
-		LoopTemplate lt = new LoopTemplate(cities, ct);
+		LoopTemplate lt = new LoopTemplate(cities, ct, null, 0);
 		String result = lt.apply(scope);
 		
 		assertEquals("Loop should produce concatenated list of items", "0 1 Bangalore 1 2 Hyderabad 2 3 Delhi ", result);
@@ -50,24 +50,24 @@ public class LoopTemplateTest {
 
 	@Test
 	public void testArrayItemsAreUsed() {
-		VariableTemplate vtIndex0 = new VariableTemplate("index0");
-		VariableTemplate vtIndex1 = new VariableTemplate("index1");
-		VariableTemplate vtItem = new VariableTemplate("it");
+		VariableTemplate vtIndex0 = new VariableTemplate("index0", null, 0);
+		VariableTemplate vtIndex1 = new VariableTemplate("index1", null, 0);
+		VariableTemplate vtItem = new VariableTemplate("it", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate();
+		CompositeTemplate ct = new CompositeTemplate(null, 0);
 		ct.add(vtIndex0);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtIndex1);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtItem);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		
-		VariableTemplate cities = new VariableTemplate("cities");
+		VariableTemplate cities = new VariableTemplate("cities", null, 0);
 		
 		Scope scope = new Scope();
 		scope.put("cities", new String[] {"Bangalore", "Hyderabad", "Delhi"});
 		
-		LoopTemplate lt = new LoopTemplate(cities, ct);
+		LoopTemplate lt = new LoopTemplate(cities, ct, null, 0);
 		String result = lt.apply(scope);
 		
 		assertEquals("Loop should produce concatenated list of items", "0 1 Bangalore 1 2 Hyderabad 2 3 Delhi ", result);
@@ -80,27 +80,27 @@ public class LoopTemplateTest {
 		items.put("US", "Washington");
 		items.put("Srilanka", "Colombo");
 		
-		VariableTemplate vtIndex0 = new VariableTemplate("index0");
-		VariableTemplate vtIndex1 = new VariableTemplate("index1");
-		VariableTemplate vtKey = new VariableTemplate("key");
-		VariableTemplate vtValue = new VariableTemplate("value");
+		VariableTemplate vtIndex0 = new VariableTemplate("index0", null, 0);
+		VariableTemplate vtIndex1 = new VariableTemplate("index1", null, 0);
+		VariableTemplate vtKey = new VariableTemplate("key", null, 0);
+		VariableTemplate vtValue = new VariableTemplate("value", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate();
+		CompositeTemplate ct = new CompositeTemplate(null, 0);
 		ct.add(vtIndex0);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtIndex1);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtKey);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtValue);
-		ct.add(new LiteralTextTemplate(" "));
+		ct.add(new LiteralTextTemplate(" ", null, 0));
 		
-		VariableTemplate cities = new VariableTemplate("cities");
+		VariableTemplate cities = new VariableTemplate("cities", null, 0);
 		
 		Scope scope = new Scope();
 		scope.put("cities", items);
 		
-		LoopTemplate lt = new LoopTemplate(cities, ct);
+		LoopTemplate lt = new LoopTemplate(cities, ct, null, 0);
 		String result = lt.apply(scope);
 		
 		assertTrue("Loop should produce concatenated list of items", result.contains("India Delhi "));

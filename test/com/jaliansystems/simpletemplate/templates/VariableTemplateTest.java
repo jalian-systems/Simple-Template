@@ -21,7 +21,7 @@ public class VariableTemplateTest {
 	
 	@Test
 	public void testWithSingleProperty() {
-		VariableTemplate svt = new VariableTemplate("greeting");
+		VariableTemplate svt = new VariableTemplate("greeting", null, 0);
 		Scope scope = new Scope();
 		scope.put("greeting", "Hello World");
 		String result = svt.apply(scope);
@@ -30,7 +30,7 @@ public class VariableTemplateTest {
 	
 	@Test
 	public void testWithAccessThroughObject() {
-		VariableTemplate svt = new VariableTemplate("helloWorld.greeting");
+		VariableTemplate svt = new VariableTemplate("helloWorld.greeting", null, 0);
 		Scope scope = new Scope();
 		scope.put("helloWorld", new Object() {
 			@SuppressWarnings("unused")
@@ -44,7 +44,7 @@ public class VariableTemplateTest {
 
 	@Test
 	public void testWithAccessThroughObjectWithIs() {
-		VariableTemplate svt = new VariableTemplate("person.minor");
+		VariableTemplate svt = new VariableTemplate("person.minor", null, 0);
 		Scope scope = new Scope();
 		scope.put("person", new Object() {
 			@SuppressWarnings("unused")
@@ -58,7 +58,7 @@ public class VariableTemplateTest {
 
 	@Test
 	public void testUnavailableAttrReturnsNone() {
-		VariableTemplate svt = new VariableTemplate("person.minor");
+		VariableTemplate svt = new VariableTemplate("person.minor", null, 0);
 		Scope scope = new Scope();
 		scope.put("person", new Object());
 		String result = svt.apply(scope);
@@ -68,7 +68,7 @@ public class VariableTemplateTest {
 	@Test(expected=EvaluationError.class)
 	public void testUnavailableAttrThrowsExceptionInStrictMode() {
 		Log.setMode(EvaluationMode.STRICT);
-		VariableTemplate svt = new VariableTemplate("person.minor");
+		VariableTemplate svt = new VariableTemplate("person.minor", null, 0);
 		Scope scope = new Scope();
 		scope.put("person", new Object());
 		String result = svt.apply(scope);
@@ -94,7 +94,7 @@ public class VariableTemplateTest {
 	}
 
 	private void testAsBinary(Object o, String message, boolean expected) {
-		VariableTemplate svt = new VariableTemplate("foo");
+		VariableTemplate svt = new VariableTemplate("foo", null, 0);
 		Scope scope = new Scope();
 		scope.put("foo", o);
 		assertEquals(message, expected, svt.asBinary(scope));

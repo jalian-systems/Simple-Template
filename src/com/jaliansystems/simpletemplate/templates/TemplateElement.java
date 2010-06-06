@@ -13,6 +13,11 @@ public abstract class TemplateElement {
 	private String fileName ;
 	private int lineNumber ;
 	
+	public TemplateElement(String fileName, int lineNumber) {
+		this.fileName = fileName;
+		this.lineNumber = lineNumber;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.jaliansystems.simpletemplate.TemplateElement#apply(java.util.Map)
 	 */

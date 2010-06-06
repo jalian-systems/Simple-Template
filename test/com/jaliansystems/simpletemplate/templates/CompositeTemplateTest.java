@@ -14,10 +14,10 @@ public class CompositeTemplateTest {
 
 	@Test
 	public void testCompositeTemplate() {
-		CompositeTemplate ct = new CompositeTemplate();
-		ct.add(new LiteralTextTemplate("This is a composite template with "));
-		ct.add(new LiteralIntegerTemplate(3));
-		ct.add(new LiteralTextTemplate(" elements"));
+		CompositeTemplate ct = new CompositeTemplate(null, 0);
+		ct.add(new LiteralTextTemplate("This is a composite template with ", null, 0));
+		ct.add(new LiteralIntegerTemplate(3, null, 0));
+		ct.add(new LiteralTextTemplate(" elements", null, 0));
 		String result = ct.apply(new Scope());
 		assertEquals("Composite element just concatenates its elements", "This is a composite template with 3 elements", result);
 	}

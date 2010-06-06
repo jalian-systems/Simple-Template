@@ -7,6 +7,10 @@ public class CompositeTemplate extends TemplateElement {
 
 	private List<TemplateElement> children = new ArrayList<TemplateElement>();
 	
+	public CompositeTemplate(String fileName, int lineNumber) {
+		super(fileName, lineNumber);
+	}
+
 	public void add(TemplateElement t) {
 		children.add(t);
 	}

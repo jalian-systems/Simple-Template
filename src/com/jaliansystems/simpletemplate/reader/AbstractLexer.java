@@ -63,7 +63,7 @@ public abstract class AbstractLexer implements ILexer {
 				String value = la.getValue();
 				if (!value.contains(".")) {
 					nextToken();
-					return new Token(TokenType.TT_ALIAS, la.getValue());
+					return new Token(TokenType.TT_ALIAS, la.getValue(), la.getFileName(), la.getLineNumber());
 				}
 			}
 		}

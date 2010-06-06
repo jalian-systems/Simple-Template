@@ -45,7 +45,6 @@ public class ABExporter {
 			System.exit(1);
 		}
 		String result = template.apply(scope);
-		System.out.println(template.toString());
 		
 		FileWriter writer = new FileWriter(outputFile);
 		writer.write(result);

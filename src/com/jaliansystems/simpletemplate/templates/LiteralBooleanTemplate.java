@@ -5,7 +5,8 @@ public class LiteralBooleanTemplate extends TemplateElement {
 
 	private final boolean value;
 
-	public LiteralBooleanTemplate(boolean value) {
+	public LiteralBooleanTemplate(boolean value, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.value = value;
 	}
 	

@@ -6,11 +6,12 @@ public class WithTemplate extends TemplateElement {
 	private final TemplateElement withVar;
 	private final String alias;
 
-	public WithTemplate(TemplateElement withVar, TemplateElement template) {
-		this(withVar, null, template);
+	public WithTemplate(TemplateElement withVar, TemplateElement template, String fileName, int lineNumber) {
+		this(withVar, null, template, fileName, lineNumber);
 	}
 
-	public WithTemplate(TemplateElement withVar, String alias, TemplateElement template) {
+	public WithTemplate(TemplateElement withVar, String alias, TemplateElement template, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.withVar = withVar;
 		this.alias = alias;
 		this.template = template;

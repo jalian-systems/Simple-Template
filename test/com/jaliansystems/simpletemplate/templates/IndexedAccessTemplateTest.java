@@ -19,7 +19,9 @@ public class IndexedAccessTemplateTest {
 
 	@Test
 	public void testAccessToStringCharacters() {
-		IndexedAccessTemplate template = new IndexedAccessTemplate(new LiteralTextTemplate("Hello"), new LiteralIntegerTemplate(2));
+		IndexedAccessTemplate template = new IndexedAccessTemplate(
+				new LiteralTextTemplate("Hello", null, 0),
+				new LiteralIntegerTemplate(2, null, 0), null, 0);
 		String result = template.apply(new Scope());
 		assertEquals("We are expecting a single character", "l", result);
 	}
@@ -27,7 +29,7 @@ public class IndexedAccessTemplateTest {
 	@Test
 	public void testAccessToAnElementOfAList() {
 		IndexedAccessTemplate template = new IndexedAccessTemplate(
-				new VariableTemplate("list"), new LiteralIntegerTemplate(2));
+				new VariableTemplate("list", null, 0), new LiteralIntegerTemplate(2, null, 0), null, 0);
 		List<String> list = new ArrayList<String>();
 		list.add("Hello");
 		list.add("World");
@@ -42,7 +44,7 @@ public class IndexedAccessTemplateTest {
 	@Test
 	public void testAccessToAnElementOfAMap() {
 		IndexedAccessTemplate template = new IndexedAccessTemplate(
-				new VariableTemplate("map"), new VariableTemplate("key"));
+				new VariableTemplate("map", null, 0), new VariableTemplate("key", null, 0), null, 0);
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("First", "1st");
 		map.put("Second", "2nd");
@@ -57,7 +59,7 @@ public class IndexedAccessTemplateTest {
 	@Test
 	public void testAccessToAnElementOfAnArray() {
 		IndexedAccessTemplate template = new IndexedAccessTemplate(
-				new VariableTemplate("array"), new LiteralIntegerTemplate(1));
+				new VariableTemplate("array", null, 0), new LiteralIntegerTemplate(1, null, 0), null, 0);
 		Scope scope = new Scope();
 		scope.put("array", new String[] { "One", "Two", "Three"});
 		String result = template.apply(scope);

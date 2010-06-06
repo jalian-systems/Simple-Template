@@ -9,7 +9,8 @@ public class VariableTemplate extends TemplateElement {
 
 	private final String variable;
 
-	public VariableTemplate(String variable) {
+	public VariableTemplate(String variable, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.variable = variable;
 	}
 
@@ -21,7 +22,7 @@ public class VariableTemplate extends TemplateElement {
 		try {
 			o = scope.resolve(tokens[0]);
 		} catch (Exception e) {
-			warning("Unable to resolve attribute " + variable + " for attribute part " + tokens[0]);
+			warning(getFileName(), getLineNumber(), "Unable to resolve attribute " + variable + " for attribute part " + tokens[0]);
 		}
 		if (o == null)
 			return null;
@@ -29,7 +30,7 @@ public class VariableTemplate extends TemplateElement {
 			try {
 				o = new AttributeEvaluator(o, tokens[i]).getValue();
 			} catch (Exception e) {
-				warning("Unable to resolve attribute " + variable + " for attribute part " + tokens[i]);
+				warning(getFileName(), getLineNumber(), "Unable to resolve attribute " + variable + " for attribute part " + tokens[i]);
 				o = null ;
 			}
 			if (o == null) {

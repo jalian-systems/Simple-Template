@@ -5,7 +5,8 @@ public class LiteralIntegerTemplate extends TemplateElement {
 
 	private final int value;
 
-	public LiteralIntegerTemplate(int value) {
+	public LiteralIntegerTemplate(int value, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.value = value;
 	}
 	

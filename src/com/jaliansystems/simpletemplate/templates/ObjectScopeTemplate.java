@@ -5,9 +5,10 @@ public class ObjectScopeTemplate extends TemplateElement {
 	private final TemplateElement object;
 	private VariableTemplate variable;
 
-	public ObjectScopeTemplate(TemplateElement object, String variable) {
+	public ObjectScopeTemplate(TemplateElement object, String variable, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.object = object;
-		this.variable = new VariableTemplate(variable);
+		this.variable = new VariableTemplate(variable, fileName, lineNumber);
 	}
 	
 	@Override

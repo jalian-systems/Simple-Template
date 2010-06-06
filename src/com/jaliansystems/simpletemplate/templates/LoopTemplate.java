@@ -13,7 +13,8 @@ public class LoopTemplate extends TemplateElement {
 	private final TemplateElement template;
 	private final TemplateElement loopVar;
 
-	public LoopTemplate(TemplateElement loopVar, TemplateElement template) {
+	public LoopTemplate(TemplateElement loopVar, TemplateElement template, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.loopVar = loopVar;
 		this.template = template;
 	}
@@ -58,7 +59,7 @@ public class LoopTemplate extends TemplateElement {
 				sb.append(template.apply(loopScope));
 			}
 		} else {
-			warning("You can loop only on Iterables, Arrays and Maps: got "
+			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, Arrays and Maps: got "
 					+ target.getClass() + " for " + loopVar.getName());
 		}
 		return sb.toString();
@@ -104,7 +105,7 @@ public class LoopTemplate extends TemplateElement {
 				r = template.getTarget(loopScope);
 			}
 		} else {
-			warning("You can loop only on Collections and Maps: got "
+			warning(getFileName(), getLineNumber(), "You can loop only on Collections and Maps: got "
 					+ target.getClass() + " for " + loopVar.getName());
 		}
 		return r ;

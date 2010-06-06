@@ -8,11 +8,11 @@ public class Log {
 
 	private static PrintStream writer = System.err;
 
-	public static void warning(String message) {
+	public static void warning(String fileName, int lineNumber, String message) {
 		if (mode == EvaluationMode.STRICT)
-			throw new EvaluationError(message);
+			throw new EvaluationError(fileName + ":" + lineNumber + ": error " + message);
 		else
-			writer.println(message);
+			writer.println(fileName + ":" + lineNumber + ": warning " + message);
 	}
 
 	public static EvaluationMode getMode() {

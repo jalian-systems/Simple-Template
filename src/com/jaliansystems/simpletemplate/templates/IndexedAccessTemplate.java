@@ -12,7 +12,8 @@ public class IndexedAccessTemplate extends TemplateElement {
 	private final TemplateElement index;
 
 	public IndexedAccessTemplate(TemplateElement variable,
-			TemplateElement index) {
+			TemplateElement index, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.variable = variable;
 		this.index = index;
 	}
@@ -24,12 +25,12 @@ public class IndexedAccessTemplate extends TemplateElement {
 		if (targetVariable == null)
 			return null ;
 		if (targetIndex == null)
-			warning("Can't index with a null value " + index.getName() + " in " + variable.toString());
+			warning(getFileName(), getLineNumber(), "Can't index with a null value " + index.getName() + " in " + variable.toString());
 		if (targetVariable instanceof List<?>) {
 			if (targetIndex instanceof Integer) {
 				return ((List<?>) targetVariable).get(((Integer)targetIndex).intValue());
 			} else {
-				warning("TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
+				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
 				return null ;
 			}
 		}
@@ -38,7 +39,7 @@ public class IndexedAccessTemplate extends TemplateElement {
 			if (targetIndex instanceof Integer) {
 				return ((String) targetVariable).charAt(((Integer)targetIndex).intValue());
 			} else {
-				warning("TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
+				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
 				return null ;
 			}
 		}
@@ -51,11 +52,11 @@ public class IndexedAccessTemplate extends TemplateElement {
 			if (targetIndex instanceof Integer) {
 				return Array.get(targetVariable, ((Integer)targetIndex).intValue());
 			} else {
-				warning("TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
+				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
 				return null ;
 			}
 		}
-		warning("Can't index into " + variable.getName() + " Class: " + targetVariable.getClass().getName());
+		warning(getFileName(), getLineNumber(), "Can't index into " + variable.getName() + " Class: " + targetVariable.getClass().getName());
 		return null ;
 	}
 

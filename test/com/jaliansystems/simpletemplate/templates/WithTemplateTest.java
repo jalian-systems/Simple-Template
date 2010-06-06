@@ -13,9 +13,9 @@ public class WithTemplateTest {
 
 	@Test
 	public void testGetsResolvesInLocalScope() {
-		VariableTemplate withVar = new VariableTemplate("person.address");
-		VariableTemplate template = new VariableTemplate("line1");
-		WithTemplate withTemplate = new WithTemplate(withVar, template);
+		VariableTemplate withVar = new VariableTemplate("person.address", null, 0);
+		VariableTemplate template = new VariableTemplate("line1", null, 0);
+		WithTemplate withTemplate = new WithTemplate(withVar, template, null, 0);
 		Address address = new Address();
 		address.setLine1("This line1 of address");
 		Person person = new Person();
@@ -28,9 +28,9 @@ public class WithTemplateTest {
 
 	@Test
 	public void testParentScopeIsHidden() {
-		VariableTemplate withVar = new VariableTemplate("person.address");
-		VariableTemplate template = new VariableTemplate("line1");
-		WithTemplate withTemplate = new WithTemplate(withVar, template);
+		VariableTemplate withVar = new VariableTemplate("person.address", null, 0);
+		VariableTemplate template = new VariableTemplate("line1", null, 0);
+		WithTemplate withTemplate = new WithTemplate(withVar, template, null, 0);
 		Address address = new Address();
 		address.setLine1("This line1 of address");
 		Person person = new Person();
@@ -44,9 +44,9 @@ public class WithTemplateTest {
 
 	@Test
 	public void testParentScopeIsUsedWhenVarsStartWith_() {
-		VariableTemplate withVar = new VariableTemplate("person.address");
-		VariableTemplate template = new VariableTemplate("_line1");
-		WithTemplate withTemplate = new WithTemplate(withVar, template);
+		VariableTemplate withVar = new VariableTemplate("person.address", null, 0);
+		VariableTemplate template = new VariableTemplate("_line1", null, 0);
+		WithTemplate withTemplate = new WithTemplate(withVar, template, null, 0);
 		Address address = new Address();
 		address.setLine1("This line1 of address");
 		Person person = new Person();
@@ -60,9 +60,9 @@ public class WithTemplateTest {
 
 	@Test
 	public void testGetsResolvesInLocalScopeWithAVariableName() {
-		VariableTemplate withVar = new VariableTemplate("person.address");
-		VariableTemplate template = new VariableTemplate("alias.line1");
-		WithTemplate withTemplate = new WithTemplate(withVar, "alias", template);
+		VariableTemplate withVar = new VariableTemplate("person.address", null, 0);
+		VariableTemplate template = new VariableTemplate("alias.line1", null, 0);
+		WithTemplate withTemplate = new WithTemplate(withVar, "alias", template, null, 0);
 		Address address = new Address();
 		address.setLine1("This line1 of address");
 		Person person = new Person();

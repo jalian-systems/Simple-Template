@@ -8,7 +8,8 @@ public class IfTemplate extends TemplateElement {
 	private final TemplateElement falseBranch;
 
 	public IfTemplate(TemplateElement condition, TemplateElement trueBranch,
-			TemplateElement falseBranch) {
+			TemplateElement falseBranch, String fileName, int lineNumber) {
+		super(fileName, lineNumber);
 		this.condition = condition;
 		this.trueBranch = trueBranch;
 		this.falseBranch = falseBranch;

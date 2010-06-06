@@ -14,11 +14,11 @@ public class VariableScopeTemplateTest {
 
 	@Test
 	public void testIntroducingAVariableGivesAShortHand() {
-		VariableTemplate withVar = new VariableTemplate("person.address");
-		VariableTemplate template = new VariableTemplate("alias.line1");
-		VariableScopeTemplate vst = new VariableScopeTemplate(withVar, "alias");
+		VariableTemplate withVar = new VariableTemplate("person.address", null, 0);
+		VariableTemplate template = new VariableTemplate("alias.line1", null, 0);
+		VariableScopeTemplate vst = new VariableScopeTemplate(withVar, "alias", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate();
+		CompositeTemplate ct = new CompositeTemplate(null, 0);
 		ct.add(vst);
 		ct.add(template);
 		
