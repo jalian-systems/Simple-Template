@@ -10,7 +10,7 @@ public class TemplateLexerTest extends LexerTest {
 
 	@Test
 	public void testReturnsProperTokens() throws IOException, LexerException {
-		StringReader reader = new StringReader("$set $\\with $hello $java.lang.object $java $lang }$$lang { []");
+		StringReader reader = new StringReader("$set $\\with $hello $java.lang.object $java $lang }$$lang { [](),");
 		TemplateLexer lexer = new TemplateLexer(new LexerReader(reader, "<stream>"));
 		assertToken(null, TokenType.TT_SET, lexer.nextToken());
 		assertToken("with", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -23,6 +23,9 @@ public class TemplateLexerTest extends LexerTest {
 		assertToken(null, TokenType.TT_CBLOCK_START, lexer.nextToken());
 		assertToken(null, TokenType.TT_OPEN_BR, lexer.nextToken());
 		assertToken(null, TokenType.TT_CLOSE_BR, lexer.nextToken());
+		assertToken(null, TokenType.TT_OPEN_PAREN, lexer.nextToken());
+		assertToken(null, TokenType.TT_CLOSE_PAREN, lexer.nextToken());
+		assertToken(null, TokenType.TT_COMMA, lexer.nextToken());
 		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
 	}
 

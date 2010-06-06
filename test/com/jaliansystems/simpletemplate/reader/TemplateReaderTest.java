@@ -467,4 +467,47 @@ public class TemplateReaderTest extends TemplateTest {
 		reader.readTemplate();
 	}
 
+	@Test
+	public void testSubtemplateDefinition() throws Exception {
+		templateAssert("$helloWorld() \"Hello World\\n\"", "",
+				new Scope(), "The Input and Output should be same");
+	}
+
+	@Test
+	public void testSubtemplateDefinitionWithParameters() throws Exception {
+		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $workd$ }$", "",
+				new Scope(), "The Input and Output should be same");
+	}
+
+	@Test
+	public void testSubtemplateCallWithParameters() throws Exception {
+		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$:helloWorld(\"Hello\", \"World\")$", "Hello World",
+				new Scope(), "The Input and Output should be same");
+	}
+
+	@Test
+	public void testSubtemplateCallWithParametersOnAIdentifier() throws Exception {
+		Scope scope = new Scope();
+		scope.put("hello", "Hello");
+		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$hello:helloWorld(\"World\")$", "Hello World",
+				scope, "The Input and Output should be same");
+	}
+	
+	@Test
+	public void testSubtemplateCallChaining() throws Exception {
+		Scope scope = new Scope();
+		scope.put("hello", "Hello");
+		templateAssert("$bold(item) ${\"<b>\" $item$ \"</b>\"}$" +
+				"$italics(item) ${\"<i>\" $item$ \"</i>\"}$" +
+				"$hello:bold():italics()$", "<i><b>Hello</b></i>",
+				scope, "The Input and Output should be same");
+	}
+
+	@Test
+	public void testSubtemplateCallWithAList() throws Exception {
+		Scope scope = new Scope();
+		scope.put("greeting", new String[] { "Hello", "World" });
+		templateAssert("$helloWorld(list) ${ $list {$it$ }$}$$greeting:helloWorld()$", "Hello World ",
+				scope, "The Input and Output should be same");
+	}
 }

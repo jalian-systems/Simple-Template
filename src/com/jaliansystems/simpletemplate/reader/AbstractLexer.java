@@ -1,7 +1,9 @@
 package com.jaliansystems.simpletemplate.reader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractLexer implements ILexer {
 
@@ -52,9 +54,12 @@ public abstract class AbstractLexer implements ILexer {
 		Token t = expect1r0(types, others);
 		if (t == null) {
 			t = nextToken();
+			List<TokenType> asList = new ArrayList<TokenType>(
+					Arrays.asList(types));
+			asList.addAll(Arrays.asList(others));
 			throw new ParserException(reader.getFileName(),
-					reader.getLineNumber(), "Expecting one of "
-							+ Arrays.asList(types) + " Got: " + t);
+					reader.getLineNumber(), "Expecting one of " + asList
+							+ " Got: " + t);
 		}
 		return t;
 	}
@@ -67,7 +72,7 @@ public abstract class AbstractLexer implements ILexer {
 		Token t = findMatchingToken(la, types);
 		if (t == null)
 			return findMatchingToken(la, others);
-		return t ;
+		return t;
 	}
 
 	private Token findMatchingToken(Token la, TokenType[] types)
@@ -138,10 +143,15 @@ public abstract class AbstractLexer implements ILexer {
 		skipRestOfStartOfTemplate();
 		boolean start = true;
 		boolean escape = false;
+		boolean methodCall = false;
 		while ((c = reader.read()) != -1) {
 			if (start) {
 				if (c == '{')
 					return new Token(TokenType.TT_BLOCK_START, fn, ln);
+			}
+			if (start && c == ':') {
+				methodCall = true;
+				continue;
 			}
 			if (start && c == '\\') {
 				escape = true;
@@ -164,7 +174,7 @@ public abstract class AbstractLexer implements ILexer {
 		if (c != -1)
 			reader.unread(c);
 		if (sb.length() > 0) {
-			return findToken(sb.toString(), escape, ln);
+			return findToken(sb.toString(), methodCall, escape, ln);
 		}
 		if (throwException)
 			throw new LexerException(
@@ -175,8 +185,10 @@ public abstract class AbstractLexer implements ILexer {
 		return null;
 	}
 
-	private Token findToken(String text, boolean escape, int ln)
-			throws LexerException {
+	private Token findToken(String text, boolean methodCall, boolean escape,
+			int ln) throws LexerException {
+		if (methodCall)
+			return checkValidMethodCall(text, ln);
 		if (!escape) {
 			if ("if".equals(text))
 				return new Token(TokenType.TT_IF, fn, ln);
@@ -190,7 +202,18 @@ public abstract class AbstractLexer implements ILexer {
 		return checkValidIdentifier(text, ln);
 	}
 
-	private Token checkValidIdentifier(String text, int ln)
+	protected Token checkValidMethodCall(String text, int ln)
+			throws LexerException {
+		if (text.contains(".")) {
+			throw new LexerException(reader.getFileName(),
+					reader.getLineNumber(),
+					"While reading template start token -- invalid method name '"
+							+ text + "'");
+		}
+		return new Token(TokenType.TT_METHOD_CALL, text, fn, ln);
+	}
+
+	protected Token checkValidIdentifier(String text, int ln)
 			throws LexerException {
 		if (text.endsWith(".") || text.contains("..")) {
 			throw new LexerException(reader.getFileName(),
@@ -199,5 +222,16 @@ public abstract class AbstractLexer implements ILexer {
 							+ text + "'");
 		}
 		return new Token(TokenType.TT_START_IDENTIFIER, text, fn, ln);
+	}
+
+	protected Token checkValidIdentifier(String text, int ln, TokenType t)
+			throws LexerException {
+		if (text.endsWith(".") || text.contains("..")) {
+			throw new LexerException(reader.getFileName(),
+					reader.getLineNumber(),
+					"While reading template start token -- invalid identifier name '"
+							+ text + "'");
+		}
+		return new Token(t, text, fn, ln);
 	}
 }

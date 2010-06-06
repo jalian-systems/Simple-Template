@@ -28,7 +28,11 @@ public enum TokenType {
 	TT_EOF,
 	TT_CBLOCK_START(new BTExtractor()),
 	TT_BLOCK_START(new BTExtractor()),
-	TT_ALIAS;
+	TT_ALIAS,
+	TT_CLOSE_PAREN,
+	TT_OPEN_PAREN,
+	TT_COMMA,
+	TT_METHOD_CALL(new MethodCallExtractor());
 	
 	private static TokenType[] extractableTokenTypes;
 	

@@ -33,8 +33,9 @@ public class TemplateLexer extends AbstractLexer {
 				return new Token(TokenType.TT_END_TEMPLATE, fn, ln);
 			} else if (Character.isDigit(c)) {
 				return readInteger(c, ln);
-			} else if (Character.isJavaIdentifierStart(c)) {
-				Token token = readIdentifier(c, escape, ln);
+			} else if (c == ':' || Character.isJavaIdentifierStart(c)) {
+				reader.unread(c);
+				Token token = readIdentifier(escape, ln);
 				escape = false;
 				return token;
 			} else if (c == '"') {
@@ -54,6 +55,12 @@ public class TemplateLexer extends AbstractLexer {
 				return new Token(TokenType.TT_CLOSE_BR, fn, ln);
 			} else if (c == '.') {
 				return new Token(TokenType.TT_NAME_SEPARATOR, fn, ln);
+			} else if (c == '(') {
+				return new Token(TokenType.TT_OPEN_PAREN, fn, ln);
+			} else if (c == ')') {
+				return new Token(TokenType.TT_CLOSE_PAREN, fn, ln);
+			} else if (c == ',') {
+				return new Token(TokenType.TT_COMMA, fn, ln);
 			} else {
 				throw new LexerException(reader.getFileName(),
 						reader.getLineNumber(),
@@ -64,12 +71,20 @@ public class TemplateLexer extends AbstractLexer {
 		return new Token(TokenType.TT_EOF, fn, ln);
 	}
 
-	private Token readIdentifier(int initial, boolean escape, int ln)
+	private Token readIdentifier(boolean escape, int ln)
 			throws IOException, LexerException {
 		StringBuffer sb = new StringBuffer();
-		sb.append((char) initial);
 		int c;
+		boolean methodCall = false ;
+		boolean start = true ;
 		while ((c = reader.read()) != -1) {
+			if (start) {
+				if (c == ':') {
+					methodCall = true ;
+					continue ;
+				}
+				start = false ;
+			}
 			if ((c == '.' || Character.isJavaIdentifierPart(c)) && c != '$')
 				sb.append((char) c);
 			else
@@ -78,6 +93,8 @@ public class TemplateLexer extends AbstractLexer {
 		if (c != -1)
 			reader.unread(c);
 		String text = sb.toString();
+		if (methodCall)
+			return checkValidMethodCall(text, ln);
 		if (!escape) {
 			if ("true".equals(text))
 				return new Token(TokenType.TT_TRUE, fn, ln);
@@ -88,8 +105,7 @@ public class TemplateLexer extends AbstractLexer {
 			else if ("to".equals(text))
 				return new Token(TokenType.TT_TO, fn, ln);
 		}
-		return checkValidIdentifier(text) ? new Token(TokenType.TT_IDENTIFIER,
-				text, fn, ln) : null;
+		return checkValidIdentifier(text, ln, TokenType.TT_IDENTIFIER);
 	}
 
 	private Token readInteger(int initial, int ln) throws IOException {
@@ -131,15 +147,5 @@ public class TemplateLexer extends AbstractLexer {
 		}
 		throw new LexerException(reader.getFileName(), reader.getLineNumber(),
 				"While reading string - unexpected EOF");
-	}
-
-	private boolean checkValidIdentifier(String text) throws LexerException {
-		if (text.endsWith(".") || text.contains("..")) {
-			throw new LexerException(reader.getFileName(),
-					reader.getLineNumber(),
-					"While reading template start token -- invalid identifier name '"
-							+ text + "'");
-		}
-		return true;
 	}
 }
