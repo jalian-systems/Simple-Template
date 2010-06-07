@@ -6,7 +6,7 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
-public class TemplateLexerTest extends LexerTest {
+public class TemplateLexerTest extends LexerTestSuper {
 
 	@Test
 	public void testReturnsProperTokens() throws IOException, LexerException {

@@ -15,7 +15,7 @@ import com.jaliansystems.simpletemplate.templates.Person;
 import com.jaliansystems.simpletemplate.templates.Scope;
 
 
-public class TemplateReaderTest extends TemplateTest {
+public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testReadsLiteralText() throws IOException, LexerException, ParserException {
@@ -458,14 +458,6 @@ public class TemplateReaderTest extends TemplateTest {
 				new MyString("Universe") });
 		templateAssert("${$set p to greeting[1]}$Hello $p.length$", "Hello 8",
 				scope, "The Input and Output should be same");
-	}
-
-	@Test
-	public void testErrorFromExample() throws IOException, LexerException,
-			ParserException {
-		ITemplateReader reader = new TemplateReader(new FileReader("export.st"));
-		@SuppressWarnings("unused")
-		TemplateElement readTemplate = reader.readTemplate();
 	}
 
 	@Test

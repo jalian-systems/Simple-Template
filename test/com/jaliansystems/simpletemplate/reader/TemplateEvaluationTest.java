@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.jaliansystems.simpletemplate.templates.Scope;
 
 
-public class TemplateEvaluationTest extends TemplateTest {
+public class TemplateEvaluationTest extends TemplateTestSuper {
 	
 	@Test
 	public void testEvaluatesMethodsWithoutPrevixes() throws Exception {

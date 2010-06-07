@@ -5,7 +5,7 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
-public class TokenTest extends LexerTest {
+public class TokenTest extends LexerTestSuper {
 
 	@Test
 	public void testCarriesLineNumberInformation() throws IOException,

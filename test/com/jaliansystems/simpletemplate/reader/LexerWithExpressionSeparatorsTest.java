@@ -6,7 +6,7 @@ import java.io.StringReader;
 import org.junit.Test;
 
 
-public class LexerWithExpressionSeparatorsTest extends LexerTest {
+public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 
 	@Test
 	public void testSpecifyingDifferentStartToken() throws IOException, LexerException {

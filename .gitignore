@@ -1,4 +1,8 @@
 bin
 export.out
 .DS_Store
-/myexport.st
+simpletemplate-*.zip
+simpletemplate*.jar
+*.class
+ant-target
+myexport.st

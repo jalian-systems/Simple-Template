@@ -9,9 +9,9 @@ import java.io.StringReader;
 import com.jaliansystems.simpletemplate.templates.Scope;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
-public class TemplateTest {
+public class TemplateTestSuper {
 
-	public TemplateTest() {
+	public TemplateTestSuper() {
 		super();
 	}
 

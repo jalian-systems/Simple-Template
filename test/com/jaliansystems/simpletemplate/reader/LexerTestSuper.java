@@ -2,7 +2,7 @@ package com.jaliansystems.simpletemplate.reader;
 
 import static org.junit.Assert.assertEquals;
 
-public class LexerTest {
+public class LexerTestSuper {
 
 	public void assertToken(String expectedText, TokenType expectedType, Token actual) {
 		assertEquals("Token types should match", expectedType, actual.getType());

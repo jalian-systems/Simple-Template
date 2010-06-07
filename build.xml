@@ -1,0 +1,68 @@
+<project name='simple-template' default='deploy' basedir='.'>
+	<property name="simpletemplate-version" value="1.0" />
+	<property name="junit.jar" location="/usr/share/java/junit-4.6/junit.jar"/>
+
+	<target name='clean'>
+        <delete dir='ant-target'/>
+        <delete file="simpletemplate.jar"/>
+	</target>
+
+	<target name='clean-all' depends='clean'>
+        <delete file="simpletemplate-${simpletemplate-version}.zip"/>
+	</target>
+
+	<property name="class.dir" location="ant-target/classes"/>
+	<property name="tests.dir" location="ant-target/test-classes"/>
+
+	<path id="tests-classpath">
+		<pathelement location="${class.dir}"/>
+		<pathelement location="${tests.dir}"/>
+		<pathelement location="${junit.jar}"/>
+	</path>
+
+    <target name='compile-tests' description="Compiles all the test sources">
+        <mkdir dir='${tests.dir}'/>
+        <copy todir='${tests.dir}'>
+            <fileset dir='test' excludes='**/*.java'/>
+        </copy>
+        <javac destdir='${tests.dir}' debug='on' optimize='off' deprecation='on'>
+            <src path='test'/>
+			<classpath refid="tests-classpath"/>
+        </javac>
+	</target>
+
+    <target name='compile' description="Compiles all the sources">
+        <mkdir dir='${class.dir}'/>
+        <copy todir='${class.dir}'>
+            <fileset dir='src' excludes='**/*.java'/>
+        </copy>
+        <javac destdir='${class.dir}' debug='on' optimize='off' deprecation='on'>
+            <src path='src'/>
+        </javac>
+	</target>
+
+	<target name='tests' depends="compile-tests" description="Runs all unit tests">
+		<ant dir="ant-tool" inheritAll="true">
+			<reference refid="tests-classpath" torefid="classpath"/>
+			<property name="source.dir" location="test"/>
+			<property name="file.pattern" value=".*Test.java"/>
+		</ant>
+	</target>
+
+    <target name='build' depends='compile, tests' description="Builds all the dependent jars">
+		<jar jarfile='simpletemplate.jar' basedir='ant-target/classes'/>
+	</target>
+
+    <target name='zip' depends='build' description="Creates the compressed distribution files">
+        <delete file="simpletemplate-${simpletemplate-version}.zip"/>
+        <zip destfile="simpletemplate-${simpletemplate-version}.zip">
+            <zipfileset dir='.' prefix='simpletemplate-${simpletemplate-version}'>
+                <include name="simpletemplate.jar"/>
+				<include name="README"/>
+            </zipfileset>
+		</zip>
+	</target>
+
+    <target name='deploy' depends='zip, clean' description="Generate files for deployment">
+	</target>
+</project>
