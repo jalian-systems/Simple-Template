@@ -9,3 +9,8 @@ ant-tool/report.xml
 ant-tool/report.txt
 ant-tool/report
 myexport.st
+report.txt
+report.xml
+src/export.st
+test-reports
+src/URLTesting.java
