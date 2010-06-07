@@ -3,6 +3,7 @@ package com.jaliansystems.simpletemplate.reader;
 import java.io.IOException;
 
 import com.jaliansystems.simpletemplate.templates.LoopTemplate;
+import com.jaliansystems.simpletemplate.templates.MethodCallTemplate;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public final class StartIDExtractor implements ITemplateExtractor {

@@ -1,11 +1,8 @@
-package com.jaliansystems.simpletemplate.reader;
+package com.jaliansystems.simpletemplate.templates;
 
 import java.util.List;
 
 import com.jaliansystems.simpletemplate.Log;
-import com.jaliansystems.simpletemplate.templates.LiteralTextTemplate;
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class MethodCallTemplate extends TemplateElement {
 
@@ -28,12 +25,12 @@ public class MethodCallTemplate extends TemplateElement {
 					"Unspecified subtemplate - " + name);
 			return "";
 		}
-		if (!(o instanceof Subtemplate)) {
+		if (!(o instanceof MethodDefinitionTemplate)) {
 			Log.warning(getFileName(), getLineNumber(),
 					"Unspecified subtemplate - " + name + " Found a " + o.getClass().getName() + " for " + name);
 			return "";
 		}
-		Subtemplate st = (Subtemplate) o;
+		MethodDefinitionTemplate st = (MethodDefinitionTemplate) o;
 		List<String> paramNames = st.getParams();
 		if (paramNames.size() != paramValues.size()) {
 			Log.warning(getFileName(), getLineNumber(), "For subtemplate "
@@ -63,8 +60,20 @@ public class MethodCallTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return name;
+	public String getLispizedText(String indent) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(indent + "(call " + name + "\n") ;
+		sb.append(indent + "  " + "(paramlist\n");
+		for (TemplateElement t : paramValues) {
+			sb.append(t.getLispizedText("    " + indent)).append("\n");
+		}
+		sb.append(indent + "  " + ")\n");
+		if (next != null) {
+			sb.append(indent + "  " + "(next-in-chain\n");
+			sb.append(next.getLispizedText("    " + indent));
+		}
+		sb.append(indent + ")");
+		return sb.toString();
 	}
 
 	public void setVariable(TemplateElement vt) {

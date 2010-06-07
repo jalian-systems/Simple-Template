@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaliansystems.simpletemplate.templates.MethodDefinitionTemplate;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class SubtemplateExtractor implements ITemplateExtractor {
@@ -15,7 +16,7 @@ public class SubtemplateExtractor implements ITemplateExtractor {
 		List<String> params = extractParams(lexer); 
 		Token token = lexer.expect1(TokenType.getExtractableTokens());
 		TemplateElement template = token.extract();
-		return new Subtemplate(name, params, template, t.getFileName(), t.getLineNumber());
+		return new MethodDefinitionTemplate(name, params, template, t.getFileName(), t.getLineNumber());
 	}
 
 	private List<String> extractParams(ILexer lexer) throws IOException, LexerException, ParserException {

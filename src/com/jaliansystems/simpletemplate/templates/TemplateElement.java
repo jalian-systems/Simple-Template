@@ -46,12 +46,7 @@ public abstract class TemplateElement {
 		return true;
 	}
 	
-	@Override
-	public final String toString() {
-		return getName();
-	}
-	
-	public abstract String getName();
+	public abstract String getLispizedText(String indent);
 
 	public String getFileName() {
 		return fileName;

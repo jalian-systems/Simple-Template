@@ -16,8 +16,8 @@ public class LiteralBooleanTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return Boolean.toString(value);
+	public String getLispizedText(String indent) {
+		return indent + Boolean.toString(value);
 	}
 
 }

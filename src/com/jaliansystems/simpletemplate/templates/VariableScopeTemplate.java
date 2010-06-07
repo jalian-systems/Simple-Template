@@ -23,8 +23,11 @@ public class VariableScopeTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return "$set " + alias + " to " + setVar.toString();
+	public String getLispizedText(String indent) {
+		return indent + "(set\n" +
+				setVar.getLispizedText(indent + "  ") + "\n" +
+				(indent + "  " + alias) + "\n" +
+				(indent + ")") ;
 	}
 
 }

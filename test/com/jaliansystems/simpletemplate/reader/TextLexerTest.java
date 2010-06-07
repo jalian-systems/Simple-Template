@@ -82,4 +82,15 @@ public class TextLexerTest extends LexerTest {
 		assertToken("greeting", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
 		assertToken("[1]", TokenType.TT_TEXT, lexer.nextToken());
 	}
+	
+	@Test
+	public void testEachLineIsATextToken() throws Exception {
+		StringReader reader = new StringReader("line1\nline2\nline3\n");
+		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>"));
+		assertToken("line1\n", TokenType.TT_TEXT, lexer.nextToken());
+		assertToken("line2\n", TokenType.TT_TEXT, lexer.nextToken());
+		assertToken("line3\n", TokenType.TT_TEXT, lexer.nextToken());
+		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
+
+	}
 }

@@ -16,8 +16,8 @@ public class LiteralIntegerTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return Integer.toString(value);
+	public String getLispizedText(String indent) {
+		return indent + Integer.toString(value);
 	}
 
 }

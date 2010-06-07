@@ -43,7 +43,12 @@ public class WithTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return "$with " + withVar.toString() + (alias == null ? "" : " as " + alias + " " + template.toString());
+	public String getLispizedText(String indent) {
+		return indent + "(with" + 
+				(alias == null ? "" : " (alias " + alias + ")") + "\n" + 
+				withVar.getLispizedText("  " + indent) + 
+				template.getLispizedText("  " + indent) +
+				(indent + ")");
+				
 	}
 }

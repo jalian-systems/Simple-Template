@@ -1,6 +1,5 @@
 package com.jaliansystems.simpletemplate.templates;
 
-
 public class IfTemplate extends TemplateElement {
 
 	private final TemplateElement condition;
@@ -26,15 +25,19 @@ public class IfTemplate extends TemplateElement {
 		TemplateElement target = getTarget(scope);
 		if (target != null)
 			return target.apply(scope);
-		return "" ;
+		return "";
 	}
 
 	@Override
-	public String getName() {
+	public String getLispizedText(String indent) {
 		if (falseBranch != null) {
-			return "$ifelse " + condition.toString() + " " + trueBranch.toString() + falseBranch.toString() ;
+			return indent + "(ifelse\n" + condition.getLispizedText("  " + indent)
+					+ "\n" + trueBranch.getLispizedText("  " + indent) + "\n"
+					+ falseBranch.getLispizedText("  " + indent) + "\n" + indent + ")";
 		} else {
-			return "$if " + condition.toString() + " " + trueBranch.toString() ;
+			return indent + "(if\n" + condition.getLispizedText("  " + indent)
+					+ "\n" + trueBranch.getLispizedText("  " + indent) + "\n"
+					+ indent + ")";
 		}
 	}
 }

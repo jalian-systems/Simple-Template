@@ -16,7 +16,12 @@ public class LiteralTextTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return "\"" + text.replaceAll("\"", "\\\\\"") + "\"";
+	public String getLispizedText(String indent) {
+		return indent + "\"" + text.replaceAll("\"", "\\\\\"").replaceAll("\n", "\\\\n") + "\"";
+	}
+	
+	@Override
+	public String apply(Scope scope) {
+		return text ;
 	}
 }

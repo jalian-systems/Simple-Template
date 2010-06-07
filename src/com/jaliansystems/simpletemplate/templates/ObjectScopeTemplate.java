@@ -19,8 +19,10 @@ public class ObjectScopeTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return object.toString() + "." + variable;
+	public String getLispizedText(String indent) {
+		return indent + "(attribute-of\n" +
+							object.getLispizedText("  " + indent) + "\n" +
+							variable.getLispizedText("  " + indent) + "\n" + ")" ;
 	}
 
 }

@@ -464,7 +464,8 @@ public class TemplateReaderTest extends TemplateTest {
 	public void testErrorFromExample() throws IOException, LexerException,
 			ParserException {
 		ITemplateReader reader = new TemplateReader(new FileReader("export.st"));
-		reader.readTemplate();
+		@SuppressWarnings("unused")
+		TemplateElement readTemplate = reader.readTemplate();
 	}
 
 	@Test
@@ -486,10 +487,19 @@ public class TemplateReaderTest extends TemplateTest {
 	}
 
 	@Test
-	public void testSubtemplateCallWithParametersOnAIdentifier() throws Exception {
+	public void testSubtemplateCallWithDefaultParameterAsAnIdentifier() throws Exception {
 		Scope scope = new Scope();
 		scope.put("hello", "Hello");
 		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$hello:helloWorld(\"World\")$", "Hello World",
+				scope, "The Input and Output should be same");
+	}
+	
+	@Test
+	public void testSubtemplateCallWithParametersAsIdentifiers() throws Exception {
+		Scope scope = new Scope();
+		scope.put("hello", "Hello");
+		scope.put("world", "World");
+		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$:helloWorld(hello, world)$", "Hello World",
 				scope, "The Input and Output should be same");
 	}
 	
@@ -510,4 +520,5 @@ public class TemplateReaderTest extends TemplateTest {
 		templateAssert("$helloWorld(list) ${ $list {$it$ }$}$$greeting:helloWorld()$", "Hello World ",
 				scope, "The Input and Output should be same");
 	}
+
 }

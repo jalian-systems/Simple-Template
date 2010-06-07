@@ -55,6 +55,11 @@ public class TextLexer extends AbstractLexer {
 			}
 			if (isStartOfTemplate(c))
 				break ;
+			if (c == '\n') {
+				sb.append((char)c);
+				c = reader.read();
+				break ;
+			}
 			if (c == '}') {
 				int la = reader.read();
 				if (la != -1)

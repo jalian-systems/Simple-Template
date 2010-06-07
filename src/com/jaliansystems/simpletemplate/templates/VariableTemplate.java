@@ -50,7 +50,7 @@ public class VariableTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getName() {
-		return "$" + variable + "$";
+	public String getLispizedText(String indent) {
+		return indent + variable;
 	}
 }

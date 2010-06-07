@@ -3,7 +3,6 @@ package com.jaliansystems.simpletemplate.templates;
 import static com.jaliansystems.simpletemplate.Log.warning;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,7 +59,7 @@ public class LoopTemplate extends TemplateElement {
 			}
 		} else {
 			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, Arrays and Maps: got "
-					+ target.getClass() + " for " + loopVar.getName());
+					+ target.getClass() + " for " + loopVar.getLispizedText(""));
 		}
 		return sb.toString();
 	}
@@ -69,8 +68,8 @@ public class LoopTemplate extends TemplateElement {
 	public Object getTarget(Scope scope) {
 		Object r = null ;
 		Object target = loopVar.getTarget(scope);
-		if (target instanceof Collection<?>) {
-			Iterator<?> iterator = ((Collection<?>) target).iterator();
+		if (target instanceof Iterable<?>) {
+			Iterator<?> iterator = ((Iterable<?>) target).iterator();
 			int index = 0;
 			while (iterator.hasNext()) {
 				Object o = iterator.next();
@@ -105,14 +104,14 @@ public class LoopTemplate extends TemplateElement {
 				r = template.getTarget(loopScope);
 			}
 		} else {
-			warning(getFileName(), getLineNumber(), "You can loop only on Collections and Maps: got "
-					+ target.getClass() + " for " + loopVar.getName());
+			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got "
+					+ target.getClass() + " for " + loopVar.getLispizedText(""));
 		}
 		return r ;
 	}
 
 	@Override
-	public String getName() {
-		return loopVar.toString() + " " + template.toString();
+	public String getLispizedText(String indent) {
+		return indent + "(loop\n" + loopVar.getLispizedText("  " + indent) + "\n" + template.getLispizedText("  " + indent) + "\n" + indent + ")";
 	}
 }

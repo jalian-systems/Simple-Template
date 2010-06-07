@@ -25,12 +25,12 @@ public class IndexedAccessTemplate extends TemplateElement {
 		if (targetVariable == null)
 			return null ;
 		if (targetIndex == null)
-			warning(getFileName(), getLineNumber(), "Can't index with a null value " + index.getName() + " in " + variable.toString());
+			warning(getFileName(), getLineNumber(), "Can't index with a null value " + index.getLispizedText("") + " in " + variable.getLispizedText(""));
 		if (targetVariable instanceof List<?>) {
 			if (targetIndex instanceof Integer) {
 				return ((List<?>) targetVariable).get(((Integer)targetIndex).intValue());
 			} else {
-				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
+				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getLispizedText("") + " in " + variable.getLispizedText(""));
 				return null ;
 			}
 		}
@@ -39,7 +39,7 @@ public class IndexedAccessTemplate extends TemplateElement {
 			if (targetIndex instanceof Integer) {
 				return ((String) targetVariable).charAt(((Integer)targetIndex).intValue());
 			} else {
-				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
+				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getLispizedText("") + " in " + variable.getLispizedText(""));
 				return null ;
 			}
 		}
@@ -52,16 +52,17 @@ public class IndexedAccessTemplate extends TemplateElement {
 			if (targetIndex instanceof Integer) {
 				return Array.get(targetVariable, ((Integer)targetIndex).intValue());
 			} else {
-				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getName() + " in " + variable.toString());
+				warning(getFileName(), getLineNumber(), "TargetIndex expected to be an integer " + index.getLispizedText("") + " in " + variable.getLispizedText(""));
 				return null ;
 			}
 		}
-		warning(getFileName(), getLineNumber(), "Can't index into " + variable.getName() + " Class: " + targetVariable.getClass().getName());
+		warning(getFileName(), getLineNumber(), "Can't index into " + variable.getLispizedText("") + " Class: " + targetVariable.getClass().getName());
 		return null ;
 	}
 
 	@Override
-	public String getName() {
-		return variable.toString() + "[" + index.toString() + "]";
+	public String getLispizedText(String indent) {
+		return indent + "(indexed-access\n"
+						+ variable.getLispizedText("  " + indent) + "\n" + index.getLispizedText("  " + indent) + "\n" + indent + ")";
 	}
 }
