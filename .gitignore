@@ -5,4 +5,7 @@ simpletemplate-*.zip
 simpletemplate*.jar
 *.class
 ant-target
+ant-tool/report.xml
+ant-tool/report.txt
+ant-tool/report
 myexport.st
