@@ -62,7 +62,7 @@ public class IndexedAccessTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + "(indexed-access\n"
+		return getLineNumber() + ":" + indent + "(indexed-access\n"
 						+ variable.getLispizedText("  " + indent) + "\n" + index.getLispizedText("  " + indent) + "\n" + indent + ")";
 	}
 }

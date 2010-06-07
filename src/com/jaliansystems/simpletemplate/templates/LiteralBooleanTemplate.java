@@ -17,7 +17,7 @@ public class LiteralBooleanTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + Boolean.toString(value);
+		return getLineNumber() + ":" + indent + Boolean.toString(value);
 	}
 
 }

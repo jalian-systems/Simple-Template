@@ -20,7 +20,7 @@ public class ObjectScopeTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + "(attribute-of\n" +
+		return getLineNumber() + ":" + indent + "(attribute-of\n" +
 							object.getLispizedText("  " + indent) + "\n" +
 							variable.getLispizedText("  " + indent) + "\n" + ")" ;
 	}

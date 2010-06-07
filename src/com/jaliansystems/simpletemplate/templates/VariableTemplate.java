@@ -51,6 +51,6 @@ public class VariableTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + variable;
+		return getLineNumber() + ":" + indent + variable;
 	}
 }

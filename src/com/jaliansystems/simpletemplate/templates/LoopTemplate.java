@@ -112,6 +112,6 @@ public class LoopTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + "(loop\n" + loopVar.getLispizedText("  " + indent) + "\n" + template.getLispizedText("  " + indent) + "\n" + indent + ")";
+		return getLineNumber() + ":" + indent + "(loop\n" + loopVar.getLispizedText("  " + indent) + "\n" + template.getLispizedText("  " + indent) + "\n" + indent + ")";
 	}
 }

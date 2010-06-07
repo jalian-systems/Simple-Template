@@ -24,7 +24,7 @@ public class VariableScopeTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + "(set\n" +
+		return getLineNumber() + ":" + indent + "(set\n" +
 				setVar.getLispizedText(indent + "  ") + "\n" +
 				(indent + "  " + alias) + "\n" +
 				(indent + ")") ;

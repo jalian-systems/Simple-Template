@@ -31,11 +31,11 @@ public class IfTemplate extends TemplateElement {
 	@Override
 	public String getLispizedText(String indent) {
 		if (falseBranch != null) {
-			return indent + "(ifelse\n" + condition.getLispizedText("  " + indent)
+			return getLineNumber() + ":" + indent + "(ifelse\n" + condition.getLispizedText("  " + indent)
 					+ "\n" + trueBranch.getLispizedText("  " + indent) + "\n"
 					+ falseBranch.getLispizedText("  " + indent) + "\n" + indent + ")";
 		} else {
-			return indent + "(if\n" + condition.getLispizedText("  " + indent)
+			return getLineNumber() + ":" + indent + "(if\n" + condition.getLispizedText("  " + indent)
 					+ "\n" + trueBranch.getLispizedText("  " + indent) + "\n"
 					+ indent + ")";
 		}

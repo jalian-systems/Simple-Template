@@ -24,7 +24,7 @@ public class MethodDefinitionTemplate extends TemplateElement {
 	@Override
 	public String getLispizedText(String indent) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(indent + "(method-def " + methodName + "\n") ;
+		sb.append(getLineNumber() + ":" + indent + "(method-def " + methodName + "\n") ;
 		sb.append(indent + "  " + "(paramlist\n");
 		for (String t : params) {
 			sb.append("    " + indent + t).append("\n");

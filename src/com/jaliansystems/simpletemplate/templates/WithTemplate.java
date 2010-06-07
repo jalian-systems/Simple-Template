@@ -44,7 +44,7 @@ public class WithTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + "(with" + 
+		return getLineNumber() + ":" + indent + "(with" + 
 				(alias == null ? "" : " (alias " + alias + ")") + "\n" + 
 				withVar.getLispizedText("  " + indent) + 
 				template.getLispizedText("  " + indent) +

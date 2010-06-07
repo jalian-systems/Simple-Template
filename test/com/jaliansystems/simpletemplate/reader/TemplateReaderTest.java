@@ -513,4 +513,12 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				scope, "The Input and Output should be same");
 	}
 
+	@Test
+	public void testMyExport() throws Exception {
+		TemplateReader reader = new TemplateReader(new FileReader("myexport.st"));
+		TemplateElement template = reader.readTemplate();
+		System.out.println(template.getLispizedText(""));
+		System.out.println(template.apply(new Scope()));
+	}
+
 }

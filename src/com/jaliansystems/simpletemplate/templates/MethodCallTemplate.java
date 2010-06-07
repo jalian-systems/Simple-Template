@@ -62,7 +62,7 @@ public class MethodCallTemplate extends TemplateElement {
 	@Override
 	public String getLispizedText(String indent) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(indent + "(call " + name + "\n") ;
+		sb.append(getLineNumber() + ":" + indent + "(call " + name + "\n") ;
 		sb.append(indent + "  " + "(paramlist\n");
 		for (TemplateElement t : paramValues) {
 			sb.append(t.getLispizedText("    " + indent)).append("\n");

@@ -17,7 +17,7 @@ public class LiteralTextTemplate extends TemplateElement {
 
 	@Override
 	public String getLispizedText(String indent) {
-		return indent + "\"" + text.replaceAll("\"", "\\\\\"").replaceAll("\n", "\\\\n") + "\"";
+		return getLineNumber() + ":" + indent + "\"" + text.replaceAll("\"", "\\\\\"").replaceAll("\n", "\\\\n") + "\"";
 	}
 	
 	@Override
