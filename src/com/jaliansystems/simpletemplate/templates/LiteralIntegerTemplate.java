@@ -33,7 +33,7 @@ public class LiteralIntegerTemplate extends TemplateElement {
 
 	@Override
 	public String getDisplayName(String indent) {
-		return getLineNumber() + ":" + indent + Integer.toString(value);
+		return indent + Integer.toString(value);
 	}
 
 	@Override

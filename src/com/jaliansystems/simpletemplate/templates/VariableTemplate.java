@@ -67,7 +67,7 @@ public class VariableTemplate extends TemplateElement {
 
 	@Override
 	public String getDisplayName(String indent) {
-		return getLineNumber() + ":" + indent + variable;
+		return indent + variable;
 	}
 
 	@Override

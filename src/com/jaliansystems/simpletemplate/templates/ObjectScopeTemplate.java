@@ -36,7 +36,7 @@ public class ObjectScopeTemplate extends TemplateElement {
 
 	@Override
 	public String getDisplayName(String indent) {
-		return getLineNumber() + ":" + indent + "(attribute-of\n" +
+		return indent + "(attribute-of\n" +
 							object.getDisplayName("  " + indent) + "\n" +
 							variable.getDisplayName("  " + indent) + "\n" + ")" ;
 	}

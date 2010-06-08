@@ -60,9 +60,9 @@ public class WithTemplate extends TemplateElement {
 
 	@Override
 	public String getDisplayName(String indent) {
-		return getLineNumber() + ":" + indent + "(with" + 
+		return indent + "(with" + 
 				(alias == null ? "" : " (alias " + alias + ")") + "\n" + 
-				withVar.getDisplayName("  " + indent) + 
+				withVar.getDisplayName("  " + indent) + "\n" +
 				template.getDisplayName("  " + indent) +
 				(indent + ")");
 				

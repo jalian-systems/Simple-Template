@@ -33,7 +33,7 @@ public class LiteralBooleanTemplate extends TemplateElement {
 
 	@Override
 	public String getDisplayName(String indent) {
-		return getLineNumber() + ":" + indent + Boolean.toString(value);
+		return indent + Boolean.toString(value);
 	}
 
 	@Override

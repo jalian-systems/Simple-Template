@@ -40,7 +40,7 @@ public class MethodDefinitionTemplate extends TemplateElement {
 	@Override
 	public String getDisplayName(String indent) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(getLineNumber() + ":" + indent + "(method-def " + methodName + "\n") ;
+		sb.append(indent + "(method-def " + methodName + "\n") ;
 		sb.append(indent + "  " + "(paramlist\n");
 		for (String t : params) {
 			sb.append("    " + indent + t).append("\n");

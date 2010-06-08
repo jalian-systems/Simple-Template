@@ -51,7 +51,7 @@ public class CompositeTemplate extends TemplateElement {
 	@Override
 	public String getDisplayName(String indent) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(getLineNumber() + ":" + indent + "(composite\n");
+		sb.append(indent + "(composite\n");
 		for (TemplateElement t : children) {
 			sb.append(t.getDisplayName(indent + "  ")).append('\n');
 		}

@@ -40,7 +40,7 @@ public class VariableScopeTemplate extends TemplateElement {
 
 	@Override
 	public String getDisplayName(String indent) {
-		return getLineNumber() + ":" + indent + "(set\n" +
+		return indent + "(set\n" +
 				setVar.getDisplayName(indent + "  ") + "\n" +
 				(indent + "  " + alias) + "\n" +
 				(indent + ")") ;

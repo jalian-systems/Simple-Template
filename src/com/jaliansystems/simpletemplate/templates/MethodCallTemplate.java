@@ -78,7 +78,7 @@ public class MethodCallTemplate extends TemplateElement {
 	@Override
 	public String getDisplayName(String indent) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(getLineNumber() + ":" + indent + "(call " + name + "\n") ;
+		sb.append(indent + "(call " + name + "\n") ;
 		sb.append(indent + "  " + "(paramlist\n");
 		for (TemplateElement t : paramValues) {
 			sb.append(t.getDisplayName("    " + indent)).append("\n");
