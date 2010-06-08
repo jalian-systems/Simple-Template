@@ -38,7 +38,7 @@ public class MethodDefinitionTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getLispizedText(String indent) {
+	public String getDisplayName(String indent) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getLineNumber() + ":" + indent + "(method-def " + methodName + "\n") ;
 		sb.append(indent + "  " + "(paramlist\n");
@@ -46,7 +46,7 @@ public class MethodDefinitionTemplate extends TemplateElement {
 			sb.append("    " + indent + t).append("\n");
 		}
 		sb.append(indent + "  " + ")\n");
-		sb.append(template.getLispizedText("  " + indent));
+		sb.append(template.getDisplayName("  " + indent));
 		sb.append(indent + ")");
 		return sb.toString();
 	}

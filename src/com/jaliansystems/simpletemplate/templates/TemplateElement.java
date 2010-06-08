@@ -16,6 +16,7 @@
 
 package com.jaliansystems.simpletemplate.templates;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
@@ -59,10 +60,16 @@ public abstract class TemplateElement {
 		if (o instanceof Map<?, ?>) {
 			return ((Map<?, ?>) o).size() != 0;
 		}
+		if (o.getClass().isArray()) {
+			return Array.getLength(o) > 0 ;
+		}
+		if (o instanceof String) {
+			return ((String)o).length() > 0 ;
+		}
 		return true;
 	}
 	
-	public abstract String getLispizedText(String indent);
+	public abstract String getDisplayName(String indent);
 
 	public String getFileName() {
 		return fileName;

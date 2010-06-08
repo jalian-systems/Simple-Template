@@ -94,7 +94,7 @@ public class VariableTemplateTest {
 	@Test
 	public void testAsBinary() {
 		testAsBinary("true", "A true string is true", true);
-		testAsBinary("", "An empty string is still true", true);
+		testAsBinary("", "An empty string is false", false);
 		testAsBinary("anyother", "Any string other than true is false", true);
 		testAsBinary("TrUe", "You can't hide truth by case changing", true);
 		testAsBinary(null, "A null object is false", false);

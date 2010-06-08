@@ -39,8 +39,8 @@ public class LiteralTextTemplateTest {
 
 	@Test
 	public void testAsBinary() {
-		assertEquals("A true text is always true", true, new LiteralTextTemplate("true", null, 0).asBinary(new Scope()));
-		assertEquals("Anyother text is false", true, new LiteralTextTemplate("", null, 0).asBinary(new Scope()));
-		assertEquals("Anyother text is false", true, new LiteralTextTemplate("some text with true in it", null, 0).asBinary(new Scope()));
+		assertEquals(true, new LiteralTextTemplate("true", null, 0).asBinary(new Scope()));
+		assertEquals(false, new LiteralTextTemplate("", null, 0).asBinary(new Scope()));
+		assertEquals(true, new LiteralTextTemplate("some text with true in it", null, 0).asBinary(new Scope()));
 	}
 }

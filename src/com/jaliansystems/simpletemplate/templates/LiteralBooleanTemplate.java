@@ -32,7 +32,7 @@ public class LiteralBooleanTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getLispizedText(String indent) {
+	public String getDisplayName(String indent) {
 		return getLineNumber() + ":" + indent + Boolean.toString(value);
 	}
 

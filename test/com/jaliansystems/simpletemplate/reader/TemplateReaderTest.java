@@ -579,7 +579,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new FileReader("export.st"),
 				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		System.out.println(template.getLispizedText(""));
+		System.out.println(template.getDisplayName(""));
 		// System.out.println(template.apply(new Scope()));
 	}
 

@@ -59,11 +59,11 @@ public class WithTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getLispizedText(String indent) {
+	public String getDisplayName(String indent) {
 		return getLineNumber() + ":" + indent + "(with" + 
 				(alias == null ? "" : " (alias " + alias + ")") + "\n" + 
-				withVar.getLispizedText("  " + indent) + 
-				template.getLispizedText("  " + indent) +
+				withVar.getDisplayName("  " + indent) + 
+				template.getDisplayName("  " + indent) +
 				(indent + ")");
 				
 	}

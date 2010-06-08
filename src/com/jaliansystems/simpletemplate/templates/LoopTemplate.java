@@ -39,7 +39,7 @@ public class LoopTemplate extends TemplateElement {
 		StringBuffer sb = new StringBuffer();
 		Object target = loopVar.getTarget(scope);
 		if (target == null) {
-			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got null target for " + loopVar.getLispizedText(""));
+			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got null target for " + loopVar.getDisplayName(""));
 			return sb.toString();
 		}
 		if (target instanceof Iterable<?>) {
@@ -79,7 +79,7 @@ public class LoopTemplate extends TemplateElement {
 			}
 		} else {
 			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, Arrays and Maps: got "
-					+ target.getClass() + " for " + loopVar.getLispizedText(""));
+					+ target.getClass() + " for " + loopVar.getDisplayName(""));
 		}
 		return sb.toString();
 	}
@@ -125,13 +125,13 @@ public class LoopTemplate extends TemplateElement {
 			}
 		} else {
 			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got "
-					+ target.getClass() + " for " + loopVar.getLispizedText(""));
+					+ target.getClass() + " for " + loopVar.getDisplayName(""));
 		}
 		return r ;
 	}
 
 	@Override
-	public String getLispizedText(String indent) {
-		return getLineNumber() + ":" + indent + "(loop\n" + loopVar.getLispizedText("  " + indent) + "\n" + template.getLispizedText("  " + indent) + "\n" + indent + ")";
+	public String getDisplayName(String indent) {
+		return getLineNumber() + ":" + indent + "(loop\n" + loopVar.getDisplayName("  " + indent) + "\n" + template.getDisplayName("  " + indent) + "\n" + indent + ")";
 	}
 }

@@ -49,11 +49,11 @@ public class CompositeTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getLispizedText(String indent) {
+	public String getDisplayName(String indent) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getLineNumber() + ":" + indent + "(composite\n");
 		for (TemplateElement t : children) {
-			sb.append(t.getLispizedText(indent + "  ")).append('\n');
+			sb.append(t.getDisplayName(indent + "  ")).append('\n');
 		}
 		sb.append(indent + ")");
 		return sb.toString() ;

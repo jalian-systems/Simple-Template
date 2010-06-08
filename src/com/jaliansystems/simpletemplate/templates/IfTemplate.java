@@ -45,14 +45,14 @@ public class IfTemplate extends TemplateElement {
 	}
 
 	@Override
-	public String getLispizedText(String indent) {
+	public String getDisplayName(String indent) {
 		if (falseBranch != null) {
-			return getLineNumber() + ":" + indent + "(ifelse\n" + condition.getLispizedText("  " + indent)
-					+ "\n" + trueBranch.getLispizedText("  " + indent) + "\n"
-					+ falseBranch.getLispizedText("  " + indent) + "\n" + indent + ")";
+			return getLineNumber() + ":" + indent + "(ifelse\n" + condition.getDisplayName("  " + indent)
+					+ "\n" + trueBranch.getDisplayName("  " + indent) + "\n"
+					+ falseBranch.getDisplayName("  " + indent) + "\n" + indent + ")";
 		} else {
-			return getLineNumber() + ":" + indent + "(if\n" + condition.getLispizedText("  " + indent)
-					+ "\n" + trueBranch.getLispizedText("  " + indent) + "\n"
+			return getLineNumber() + ":" + indent + "(if\n" + condition.getDisplayName("  " + indent)
+					+ "\n" + trueBranch.getDisplayName("  " + indent) + "\n"
 					+ indent + ")";
 		}
 	}
