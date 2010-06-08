@@ -1,15 +1,22 @@
 package com.jaliansystems.simpletemplate.reader;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LexerMaintainer {
-	private ILexer currentLexer ;
+	private Map<LexerReader, ILexer> readerLexerMap = new HashMap<LexerReader, ILexer>();
 
-	public void pushback(ILexer lexer) throws IOException {
+	public void reset(AbstractLexer lexer) throws IOException {
+		ILexer currentLexer = readerLexerMap.get(lexer.getReader());
 		if (currentLexer != lexer) {
 			if (currentLexer != null)
 				currentLexer.pushbackLACharacters();
 		}
-		currentLexer = lexer ;
+		readerLexerMap.put(lexer.getReader(), lexer) ;
+	}
+
+	public void remove(AbstractLexer lexer) {
+		readerLexerMap.remove(lexer.getReader()) ;
 	}
 }

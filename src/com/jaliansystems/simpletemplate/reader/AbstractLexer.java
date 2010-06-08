@@ -21,6 +21,10 @@ public abstract class AbstractLexer implements ILexer {
 		ttEnd = in.getTokenEnd();
 	}
 
+	public LexerReader getReader() {
+		return reader;
+	}
+
 	protected abstract Token getNextToken() throws IOException, LexerException;
 
 	public final Token nextToken() throws IOException, LexerException {
@@ -67,7 +71,7 @@ public abstract class AbstractLexer implements ILexer {
 	public Token expect1r0(TokenType[] types, TokenType... others)
 			throws IOException, LexerException, ParserException {
 		if (maintainer != null)
-			maintainer.pushback(this);
+			maintainer.reset(this);
 		Token la = lookAhead();
 		Token t = findMatchingToken(la, types);
 		if (t == null)

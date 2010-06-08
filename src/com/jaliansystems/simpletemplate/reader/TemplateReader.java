@@ -14,8 +14,9 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 public class TemplateReader implements ITemplateReader {
 
 	private final LexerReader lexerReader;
-	private final ILexer textLexer;
-	private final ILexer templateLexer;
+	private LexerMaintainer lexerMaintainer;
+	private TextLexer textLexer;
+	private TemplateLexer templateLexer;
 
 	public TemplateReader(Reader in, String fileName, String startToken, String endToken) throws Exception {
 		this(new LexerReader(new File(".").toURI().toURL(), in, fileName, startToken, endToken));
@@ -25,11 +26,11 @@ public class TemplateReader implements ITemplateReader {
 		this(new LexerReader(url, new InputStreamReader(url.openStream()), url.getFile(), startToken, endToken));
 	}
 
-	private TemplateReader(LexerReader in) {
-		this.lexerReader = in;
-		LexerMaintainer maintainer = new LexerMaintainer();
-		textLexer = new TextLexer(this.lexerReader, maintainer);
-		templateLexer = new TemplateLexer(this.lexerReader, maintainer);
+	private TemplateReader(LexerReader lexerReader) {
+		this.lexerReader = lexerReader;
+		lexerMaintainer = new LexerMaintainer();
+		textLexer = new TextLexer(this.lexerReader, lexerMaintainer);
+		templateLexer = new TemplateLexer(this.lexerReader, lexerMaintainer);
 		TokenType[] values = TokenType.values();
 		for (TokenType tokenType : values) {
 			if (tokenType.isExtractable()) {
@@ -53,6 +54,8 @@ public class TemplateReader implements ITemplateReader {
 		while ((t = textLexer.expect1(TokenType.getExtractableTokens(), TokenType.TT_EOF)).getType() != TokenType.TT_EOF) {
 			ct.add(t.extract());
 		}
+		lexerMaintainer.remove(textLexer);
+		lexerMaintainer.remove(templateLexer);
 		return ct;
 	}
 }
