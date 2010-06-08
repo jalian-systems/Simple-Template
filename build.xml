@@ -37,7 +37,6 @@
 		<pathelement location="${class.dir}"/>
 		<pathelement location="${tests.dir}"/>
 		<pathelement location="${junit.jar}"/>
-		<pathelement location="lib/cpsuite-1.2.5.jar"/>
 	</path>
 
     <target name='compile-tests' description="Compiles all the test sources">
@@ -62,22 +61,12 @@
 	</target>
 
 	<target name='tests' depends="compile-tests" description="Runs all unit tests">
-		<junit printsummary="yes" haltonfailure="yes">
-			<classpath refid="tests-classpath"/>
-			<classpath location="."/>
-			<formatter type="plain"/>
-			<test name="com.jaliansystems.simpletemplate.AllTests" fork="yes" haltOnFailure="yes" outfile="report">
-				<formatter type="xml"/>
-			</test>
-		</junit>
-		<mkdir dir="reports"/>
-		<junitreport todir="./reports">
-	  		<fileset dir=".">
-	      		<include name="report.xml"/>
-		    </fileset>
-			<report format="frames" todir="${report.dir}"/>
-		</junitreport>
-		<delete dir="reports"/>
+		<ant dir="ant-tool" inheritAll="true">
+			<reference refid="tests-classpath" torefid="classpath"/>
+			<property name="source.dir" location="test"/>
+			<property name="file.pattern" value=".*Test.java"/>
+			<property name="report.dir" location="report"/>
+		</ant>
 	</target>
 
 	<target name='tests-old' depends="compile-tests" description="Runs all unit tests">

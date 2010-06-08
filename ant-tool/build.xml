@@ -1,0 +1,51 @@
+<project name='create-test-suite' default='all' basedir='.'>
+    <target name='compile' description="Compiles all the sources">
+        <javac destdir='.' debug='on' optimize='off' deprecation='on'>
+            <src path='.'/>
+			<include name="CreateTestSuite.java"/>
+        </javac>
+	</target>
+
+	<target name="create-all-tests" depends="compile">
+		<java classname="CreateTestSuite" fork="true" failonerror="true" maxmemory="128m" >
+			<arg value="${file.pattern}"/>
+			<arg value="${source.dir}"/>
+		</java>
+        <javac destdir='.' debug='on' optimize='off' deprecation='on'>
+            <src path='.'/>
+			<include name="AllTests.java"/>
+			<classpath refid="classpath"/>
+        </javac>
+	</target>
+
+	<target name="run-tests" depends="create-all-tests">
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath refid="classpath"/>
+			<classpath location="."/>
+			<formatter type="plain"/>
+			<test name="AllTests" fork="yes" haltOnFailure="yes" outfile="report">
+				<formatter type="xml"/>
+			</test>
+		</junit>
+		<mkdir dir="reports"/>
+		<junitreport todir="./reports">
+	  		<fileset dir=".">
+	      		<include name="report.xml"/>
+		    </fileset>
+			<report format="frames" todir="${report.dir}"/>
+		</junitreport>
+	</target>
+
+	<target name="clean">
+		<delete dir=".">
+			<include name="*.class"/>
+			<include name="AllTests.java"/>
+			<include name="report.txt"/>
+			<include name="report.xml"/>
+		</delete>
+		<delete dir="reports"/>
+	</target>
+
+    <target name='all' depends='run-tests, clean' description="Generate files for deployment">
+	</target>
+</project>
