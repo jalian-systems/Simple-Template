@@ -24,8 +24,10 @@ public class IndexedAccessTemplate extends TemplateElement {
 		Object targetIndex = index.getTarget(scope);
 		if (targetVariable == null)
 			return null ;
-		if (targetIndex == null)
+		if (targetIndex == null) {
 			warning(getFileName(), getLineNumber(), "Can't index with a null value " + index.getLispizedText("") + " in " + variable.getLispizedText(""));
+			return null ;
+		}
 		if (targetVariable instanceof List<?>) {
 			if (targetIndex instanceof Integer) {
 				return ((List<?>) targetVariable).get(((Integer)targetIndex).intValue());

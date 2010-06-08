@@ -601,4 +601,15 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		templateAssert("${if true \"Hello World\"}$", "Hello World",
 				new Scope(), "The Input and Output should be same");
 	}
+
+	@Test
+	public void testTemplateReaderSupportsInclude() throws Exception {
+		Scope scope = new Scope();
+		scope.put("greeting", new String[] { "Hello", "World" });
+		templateAssert(
+				"<<include \"test-data/testTemplateReaderAcceptsURLAsConstructorParameter.st\"",
+				"Hello World ", scope, "The Input and Output should be same",
+				"<<", ">>");
+	}
+
 }

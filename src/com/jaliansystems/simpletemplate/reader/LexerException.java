@@ -1,6 +1,8 @@
 package com.jaliansystems.simpletemplate.reader;
 
-public class LexerException extends Exception {
+import com.jaliansystems.simpletemplate.EvaluationError;
+
+public class LexerException extends EvaluationError {
 	public LexerException(String fileName, int lineNumber, String message) {
 		super(fileName + ":" + lineNumber + ": error: " + message);
 	}

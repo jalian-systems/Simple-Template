@@ -13,6 +13,10 @@ $addressbook.addresses {
     $if it.email {
         E-Mail: $it.email$
     }$
+
+    
+    ASCII: $it.affiliations["ASCII"]$
+     
     $if it.affiliations {
         $it.affiliations {
             $key$ ===> $value$

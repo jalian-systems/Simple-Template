@@ -200,6 +200,8 @@ public abstract class AbstractLexer implements ILexer {
 				return new Token(TokenType.TT_IFELSE, fn, ln);
 			else if ("set".equals(text))
 				return new Token(TokenType.TT_SET, fn, ln);
+			else if ("include".equals(text))
+				return new Token(TokenType.TT_INCLUDE, fn, ln);
 			else if ("with".equals(text))
 				return new Token(TokenType.TT_WITH, fn, ln);
 		}
@@ -238,4 +240,13 @@ public abstract class AbstractLexer implements ILexer {
 		}
 		return new Token(t, text, fn, ln);
 	}
+
+	public String getEndToken() {
+		return ttEnd;
+	}
+
+	public String getStartToken() {
+		return ttStart;
+	}
+
 }

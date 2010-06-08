@@ -14,7 +14,6 @@ public class LexerReader {
 	private int nMarked = 0;
 	private final String tokenStart;
 	private String tokenEnd;
-	@SuppressWarnings("unused")
 	private final URL contextURL;
 
 	public LexerReader(URL url, Reader in, String fileName, String tokenStart,
@@ -91,5 +90,9 @@ public class LexerReader {
 			la[i] = (char) c;
 		}
 		return i;
+	}
+
+	public URL getContextURL() {
+		return contextURL;
 	}
 }

@@ -110,6 +110,8 @@ public class TemplateLexer extends AbstractLexer {
 				return new Token(TokenType.TT_IF, fn, ln);
 			else if ("ifelse".equals(text))
 				return new Token(TokenType.TT_IFELSE, fn, ln);
+			else if ("include".equals(text))
+				return new Token(TokenType.TT_INCLUDE, fn, ln);
 			else if ("to".equals(text))
 				return new Token(TokenType.TT_TO, fn, ln);
 		}

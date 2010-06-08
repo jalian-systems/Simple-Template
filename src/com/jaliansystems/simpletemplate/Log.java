@@ -15,10 +15,6 @@ public class Log {
 			writer.println(fileName + ":" + lineNumber + ": warning " + message);
 	}
 
-	public static EvaluationMode getMode() {
-		return mode;
-	}
-
 	public static void setMode(EvaluationMode mode) {
 		Log.mode = mode;
 	}

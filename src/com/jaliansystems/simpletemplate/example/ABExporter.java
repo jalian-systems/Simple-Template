@@ -2,7 +2,9 @@ package com.jaliansystems.simpletemplate.example;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.Writer;
 
+import com.jaliansystems.simpletemplate.EvaluationMode;
 import com.jaliansystems.simpletemplate.reader.LexerException;
 import com.jaliansystems.simpletemplate.reader.ParserException;
 import com.jaliansystems.simpletemplate.reader.TemplateReader;
@@ -33,6 +35,7 @@ public class ABExporter {
 	private void export(String templateFile, String outputFile)
 			throws Exception {
 		TemplateReader reader = new TemplateReader(new FileReader(templateFile), templateFile, "$", "$");
+		reader.setEvaluationMode(EvaluationMode.STRICT);
 		Scope scope = new Scope();
 		scope.put("addressbook", addressBook);
 		TemplateElement template = null;
@@ -47,7 +50,7 @@ public class ABExporter {
 		}
 		String result = template.apply(scope);
 
-		FileWriter writer = new FileWriter(outputFile);
+		Writer writer = new SpaceRemovingWriter(new FileWriter(outputFile));
 		writer.write(result);
 		writer.close();
 	}

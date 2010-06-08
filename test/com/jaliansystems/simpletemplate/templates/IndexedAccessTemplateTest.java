@@ -66,4 +66,13 @@ public class IndexedAccessTemplateTest {
 		assertEquals("Array item 2 should be second item", "Two", result);
 	}
 
+	@Test
+	public void testAccessUsingInvalidIndex() {
+		IndexedAccessTemplate template = new IndexedAccessTemplate(
+				new VariableTemplate("array", null, 0), new VariableTemplate("index", null, 0), null, 0);
+		Scope scope = new Scope();
+		scope.put("array", new String[] { "One", "Two", "Three"});
+		String result = template.apply(scope);
+		assertEquals("Array item 2 should be second item", "", result);
+	}
 }

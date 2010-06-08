@@ -22,6 +22,10 @@ public class LoopTemplate extends TemplateElement {
 	public String apply(Scope scope) {
 		StringBuffer sb = new StringBuffer();
 		Object target = loopVar.getTarget(scope);
+		if (target == null) {
+			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got null target for " + loopVar.getLispizedText(""));
+			return sb.toString();
+		}
 		if (target instanceof Iterable<?>) {
 			Iterator<?> iterator = ((Iterable<?>) target).iterator();
 			int index = 0;
