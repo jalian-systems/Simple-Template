@@ -11,7 +11,8 @@ public class TemplateLexerTest extends LexerTestSuper {
 
 	@Test
 	public void testReturnsProperTokens() throws IOException, LexerException {
-		StringReader reader = new StringReader("$set $\\with $hello $java.lang.object $java $lang }$$lang { [](),");
+		StringReader reader = new StringReader("$set $\\with $hello $java.lang.object $java $lang }$$lang { []()," +
+				"if ifelse with set $if $ifelse $with $set");
 		TemplateLexer lexer = new TemplateLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken(null, TokenType.TT_SET, lexer.nextToken());
 		assertToken("with", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -27,6 +28,14 @@ public class TemplateLexerTest extends LexerTestSuper {
 		assertToken(null, TokenType.TT_OPEN_PAREN, lexer.nextToken());
 		assertToken(null, TokenType.TT_CLOSE_PAREN, lexer.nextToken());
 		assertToken(null, TokenType.TT_COMMA, lexer.nextToken());
+		assertToken(null, TokenType.TT_IF, lexer.nextToken());
+		assertToken(null, TokenType.TT_IFELSE, lexer.nextToken());
+		assertToken(null, TokenType.TT_WITH, lexer.nextToken());
+		assertToken(null, TokenType.TT_SET, lexer.nextToken());
+		assertToken(null, TokenType.TT_IF, lexer.nextToken());
+		assertToken(null, TokenType.TT_IFELSE, lexer.nextToken());
+		assertToken(null, TokenType.TT_WITH, lexer.nextToken());
+		assertToken(null, TokenType.TT_SET, lexer.nextToken());
 		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
 	}
 

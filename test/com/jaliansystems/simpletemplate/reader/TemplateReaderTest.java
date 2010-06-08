@@ -14,69 +14,81 @@ import com.jaliansystems.simpletemplate.templates.Person;
 import com.jaliansystems.simpletemplate.templates.Scope;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
-
 public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testReadsLiteralText() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello World"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello World"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
-		assertEquals("Expect plain raw text", "Hello World", template.apply(new Scope()));
+		assertEquals("Expect plain raw text", "Hello World",
+				template.apply(new Scope()));
 	}
 
 	@Test
 	public void testReadsLiteralWithEscapedDollors() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello \\$World"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello \\$World"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
-		assertEquals("Expect escaped dollors", "Hello $World", template.apply(new Scope()));
+		assertEquals("Expect escaped dollors", "Hello $World",
+				template.apply(new Scope()));
 	}
 
 	@Test
 	public void testReadsLiteralWithEscapedNewlines() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello \\nWorld\\\nNextLine"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello \\nWorld\\\nNextLine"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
-		assertEquals("Expect escaped dollors", "Hello \nWorldNextLine", template.apply(new Scope()));
+		assertEquals("Expect escaped dollors", "Hello \nWorldNextLine",
+				template.apply(new Scope()));
 	}
 
 	@Test
 	public void testReadsVariableTemplates() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $name$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $name$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		scope.put("name", "GitHub");
-		assertEquals("Expect escaped dollors", "Hello GitHub", template.apply(scope));
+		assertEquals("Expect escaped dollors", "Hello GitHub",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testKeywordsDoNotNeedEscapesNotTrue() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $\\with$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $\\with$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		scope.put("with", "GitHub");
-		assertEquals("Expect escaped dollors", "Hello GitHub", template.apply(scope));
+		assertEquals("Expect escaped dollors", "Hello GitHub",
+				template.apply(scope));
 	}
-	
+
 	@Test
 	public void testPlainTemplateBlock() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("${ \"Hello \" $\\with$ }$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"${ \"Hello \" $\\with$ }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		scope.put("with", "GitHub");
-		assertEquals("Expect escaped dollors", "Hello GitHub", template.apply(scope));
+		assertEquals("Expect escaped dollors", "Hello GitHub",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testReadsVariableTemplatesWithQualifiedNames() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.name$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -84,24 +96,31 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		Person person = new Person();
 		person.setName("GitHub");
 		scope.put("person", person);
-		assertEquals("Expect escaped dollors", "Hello GitHub", template.apply(scope));
+		assertEquals("Expect escaped dollors", "Hello GitHub",
+				template.apply(scope));
 	}
 
 	@Test
-	public void testReadsVariableTemplatesWithQualifiedNamesMultipleTimes() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name$. This is a $person.name$ greeting"), "<stream>", "$", "$");
+	public void testReadsVariableTemplatesWithQualifiedNamesMultipleTimes()
+			throws Exception {
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.name$. This is a $person.name$ greeting"),
+				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
 		Person person = new Person();
 		person.setName("GitHub");
 		scope.put("person", person);
-		assertEquals("Expect escaped dollors", "Hello GitHub. This is a GitHub greeting", template.apply(scope));
+		assertEquals("Expect escaped dollors",
+				"Hello GitHub. This is a GitHub greeting",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testReadsIndexedTemplate() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name[2]$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.name[2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -114,7 +133,8 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testReadsIndexedTemplateWithTwoIndirections() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.names[1][2]$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.names[1][2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -127,8 +147,10 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplateWithTwoIndirectionsWithSpaces() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.names [ 1 ] [2]$"), "<stream>", "$", "$");
+	public void testReadsIndexedTemplateWithTwoIndirectionsWithSpaces()
+			throws Exception {
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.names [ 1 ] [2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -142,7 +164,8 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testReadsIndexedTemplateWithIdentifier() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name[index]$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.name[index]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -155,8 +178,10 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplateWithIdentifierDoubleIndexing() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name[indices[2]]$"), "<stream>", "$", "$");
+	public void testReadsIndexedTemplateWithIdentifierDoubleIndexing()
+			throws Exception {
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $person.name[indices[2]]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -164,13 +189,15 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		Person person = new Person();
 		person.setName("GitHub");
 		scope.put("person", person);
-		scope.put("indices", new Integer[] { 0, 1, 2, 3 } );
+		scope.put("indices", new Integer[] { 0, 1, 2, 3 });
 		assertEquals("Expect escaped dollors", "Hello t", template.apply(scope));
 	}
 
 	@Test
 	public void testIfTemplateWithSimpleExpressions() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $if person.minor { $person.name$ is a Kid }$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $if person.minor { $person.name$ is a Kid }$"),
+				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -179,13 +206,16 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		person.setName("GitHub");
 		person.setMinor(true);
 		scope.put("person", person);
-		scope.put("indices", new Integer[] { 0, 1, 2, 3 } );
-		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid ", template.apply(scope));
+		scope.put("indices", new Integer[] { 0, 1, 2, 3 });
+		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid ",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testIfEscapeWorksForBlock() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $if person.minor\n { $person.name$ is a Kid \\}\\$ }$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $if person.minor\n { $person.name$ is a Kid \\}\\$ }$"),
+				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -194,13 +224,16 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		person.setName("GitHub");
 		person.setMinor(true);
 		scope.put("person", person);
-		scope.put("indices", new Integer[] { 0, 1, 2, 3 } );
-		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid }$ ", template.apply(scope));
+		scope.put("indices", new Integer[] { 0, 1, 2, 3 });
+		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid }$ ",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testWithTemplateWithSimpleExpressions() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $with person { $name$ is a Kid }$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $with person { $name$ is a Kid }$"), "<stream>", "$",
+				"$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -208,13 +241,16 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		person.setName("GitHub");
 		person.setMinor(true);
 		scope.put("person", person);
-		scope.put("indices", new Integer[] { 0, 1, 2, 3 } );
-		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid ", template.apply(scope));
+		scope.put("indices", new Integer[] { 0, 1, 2, 3 });
+		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid ",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testInsertingVariableIntoScope() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $set name to person.name $name$ is a Kid"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $set name to person.name $name$ is a Kid"), "<stream>",
+				"$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
@@ -222,24 +258,28 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		person.setName("GitHub");
 		person.setMinor(true);
 		scope.put("person", person);
-		scope.put("indices", new Integer[] { 0, 1, 2, 3 } );
-		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid", template.apply(scope));
+		scope.put("indices", new Integer[] { 0, 1, 2, 3 });
+		assertEquals("Expect escaped dollors", "Hello  GitHub is a Kid",
+				template.apply(scope));
 	}
 
 	@Test
 	public void testLoopingThroughAList() throws Exception {
-		TemplateReader reader = new TemplateReader(new StringReader("Hello $names { $it$, }$"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new StringReader(
+				"Hello $names { $it$, }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
 		Scope scope = new Scope();
-		scope.put("names", new String[] { "Linus Torvalds", "Ken Thomson", "Dennis Richie" });
-		assertEquals("Expect escaped dollors", "Hello  Linus Torvalds,  Ken Thomson,  Dennis Richie, ", template.apply(scope));
+		scope.put("names", new String[] { "Linus Torvalds", "Ken Thomson",
+				"Dennis Richie" });
+		assertEquals("Expect escaped dollors",
+				"Hello  Linus Torvalds,  Ken Thomson,  Dennis Richie, ",
+				template.apply(scope));
 	}
 
-
 	@Test
-	public void testLiteralTextIsProcessed() throws Exception,
-			LexerException, ParserException {
+	public void testLiteralTextIsProcessed() throws Exception, LexerException,
+			ParserException {
 		templateAssert("Hello World", "Hello World", new Scope(),
 				"The Input and Output should be same");
 	}
@@ -268,8 +308,8 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testABlockWithLiteralString() throws Exception,
-			LexerException, ParserException {
+	public void testABlockWithLiteralString() throws Exception, LexerException,
+			ParserException {
 		Scope scope = new Scope();
 		scope.put("world", "World");
 		templateAssert("${\"Hello \" $world$}$", "Hello World", scope,
@@ -304,8 +344,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testIndexedVariableGetsSubstitutedByItsValue()
-			throws Exception {
+	public void testIndexedVariableGetsSubstitutedByItsValue() throws Exception {
 		Scope scope = new Scope();
 		scope.put("greeting", new String[] { "World", "Universe" });
 		templateAssert("Hello $greeting[1]$", "Hello Universe", scope,
@@ -394,8 +433,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testIfTemplateDoesnotExecuteTheFalseBranch()
-			throws Exception {
+	public void testIfTemplateDoesnotExecuteTheFalseBranch() throws Exception {
 		templateAssert("$if false \"Hello World\"", "", new Scope(),
 				"The Input and Output should be same");
 
@@ -462,81 +500,105 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testSubtemplateDefinition() throws Exception {
-		templateAssert("$helloWorld() \"Hello World\\n\"", "",
-				new Scope(), "The Input and Output should be same");
+		templateAssert("$helloWorld() \"Hello World\\n\"", "", new Scope(),
+				"The Input and Output should be same");
 	}
 
 	@Test
 	public void testSubtemplateDefinitionWithParameters() throws Exception {
-		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $workd$ }$", "",
-				new Scope(), "The Input and Output should be same");
+		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $workd$ }$",
+				"", new Scope(), "The Input and Output should be same");
 	}
 
 	@Test
 	public void testSubtemplateCallWithParameters() throws Exception {
-		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$:helloWorld(\"Hello\", \"World\")$", "Hello World",
-				new Scope(), "The Input and Output should be same");
+		templateAssert(
+				"$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$:helloWorld(\"Hello\", \"World\")$",
+				"Hello World", new Scope(),
+				"The Input and Output should be same");
 	}
 
 	@Test
-	public void testSubtemplateCallWithDefaultParameterAsAnIdentifier() throws Exception {
+	public void testSubtemplateCallWithDefaultParameterAsAnIdentifier()
+			throws Exception {
 		Scope scope = new Scope();
 		scope.put("hello", "Hello");
-		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$hello:helloWorld(\"World\")$", "Hello World",
-				scope, "The Input and Output should be same");
+		templateAssert(
+				"$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$hello:helloWorld(\"World\")$",
+				"Hello World", scope, "The Input and Output should be same");
 	}
-	
+
 	@Test
-	public void testSubtemplateCallWithParametersAsIdentifiers() throws Exception {
+	public void testSubtemplateCallWithParametersAsIdentifiers()
+			throws Exception {
 		Scope scope = new Scope();
 		scope.put("hello", "Hello");
 		scope.put("world", "World");
-		templateAssert("$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$:helloWorld(hello, world)$", "Hello World",
-				scope, "The Input and Output should be same");
+		templateAssert(
+				"$helloWorld(hello, world) ${ $hello$ \" \" $world$ }$$:helloWorld(hello, world)$",
+				"Hello World", scope, "The Input and Output should be same");
 	}
-	
+
 	@Test
 	public void testSubtemplateCallChaining() throws Exception {
 		Scope scope = new Scope();
 		scope.put("hello", "Hello");
-		templateAssert("$bold(item) ${\"<b>\" $item$ \"</b>\"}$" +
-				"$italics(item) ${\"<i>\" $item$ \"</i>\"}$" +
-				"$hello:bold():italics()$", "<i><b>Hello</b></i>",
-				scope, "The Input and Output should be same");
+		templateAssert("$bold(item) ${\"<b>\" $item$ \"</b>\"}$"
+				+ "$italics(item) ${\"<i>\" $item$ \"</i>\"}$"
+				+ "$hello:bold():italics()$", "<i><b>Hello</b></i>", scope,
+				"The Input and Output should be same");
 	}
 
 	@Test
 	public void testSubtemplateCallWithAList() throws Exception {
 		Scope scope = new Scope();
 		scope.put("greeting", new String[] { "Hello", "World" });
-		templateAssert("$helloWorld(list) ${ $list {$it$ }$}$$greeting:helloWorld()$", "Hello World ",
-				scope, "The Input and Output should be same");
+		templateAssert(
+				"$helloWorld(list) ${ $list {$it$ }$}$$greeting:helloWorld()$",
+				"Hello World ", scope, "The Input and Output should be same");
 	}
 
 	@Test
 	public void testMyExport() throws Exception {
-		TemplateReader reader = new TemplateReader(new FileReader("export.st"), "<stream>", "$", "$");
+		TemplateReader reader = new TemplateReader(new FileReader("export.st"),
+				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		System.out.println(template.getLispizedText(""));
-//		System.out.println(template.apply(new Scope()));
+		// System.out.println(template.apply(new Scope()));
 	}
 
 	@Test
-	public void testTemplateReaderAllowsSettingOfExpressionSeparators() throws Exception {
+	public void testTemplateReaderAllowsSettingOfExpressionSeparators()
+			throws Exception {
 		Scope scope = new Scope();
 		scope.put("greeting", new String[] { "Hello", "World" });
-		templateAssert("<<helloWorld(list) <<{ <<list {<<it>> }>>}>><<greeting:helloWorld()>>", "Hello World ",
-				scope, "The Input and Output should be same", "<<", ">>");
+		templateAssert(
+				"<<helloWorld(list) <<{ <<list {<<it>> }>>}>><<greeting:helloWorld()>>",
+				"Hello World ", scope, "The Input and Output should be same",
+				"<<", ">>");
 	}
-	
+
 	@Test
-	public void testTemplateReaderAcceptsURLAsConstructorParameter() throws Exception {
-		File templateFile = new File("test-data/testTemplateReaderAcceptsURLAsConstructorParameter.st");
-		TemplateReader reader = new TemplateReader(templateFile.toURI().toURL(), "<<", ">>");
+	public void testTemplateReaderAcceptsURLAsConstructorParameter()
+			throws Exception {
+		File templateFile = new File(
+				"test-data/testTemplateReaderAcceptsURLAsConstructorParameter.st");
+		TemplateReader reader = new TemplateReader(
+				templateFile.toURI().toURL(), "<<", ">>");
 		TemplateElement template = reader.readTemplate();
 		Scope scope = new Scope();
 		scope.put("greeting", new String[] { "Hello", "World" });
 		String result = template.apply(scope);
-		assertEquals("The Input and Output should be same", "Hello World ", result);
+		assertEquals("The Input and Output should be same", "Hello World ",
+				result);
+	}
+
+	@Test
+	public void testKeywordsNeedNotBeQuotedInTemplateLexerContext()
+			throws Exception, LexerException, ParserException {
+		templateAssert("$if true \"Hello World\"", "Hello World", new Scope(),
+				"The Input and Output should be same");
+		templateAssert("${if true \"Hello World\"}$", "Hello World",
+				new Scope(), "The Input and Output should be same");
 	}
 }

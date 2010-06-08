@@ -102,6 +102,14 @@ public class TemplateLexer extends AbstractLexer {
 				return new Token(TokenType.TT_FALSE, fn, ln);
 			else if ("as".equals(text))
 				return new Token(TokenType.TT_AS, fn, ln);
+			else if ("with".equals(text))
+				return new Token(TokenType.TT_WITH, fn, ln);
+			else if ("set".equals(text))
+				return new Token(TokenType.TT_SET, fn, ln);
+			else if ("if".equals(text))
+				return new Token(TokenType.TT_IF, fn, ln);
+			else if ("ifelse".equals(text))
+				return new Token(TokenType.TT_IFELSE, fn, ln);
 			else if ("to".equals(text))
 				return new Token(TokenType.TT_TO, fn, ln);
 		}
