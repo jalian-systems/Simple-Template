@@ -10,7 +10,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 
 	@Test
 	public void testSpecifyingDifferentStartToken() throws IOException, LexerException {
-		LexerReader in = new LexerReader(new StringReader("@some.name@"), "<stream>", "@");
+		LexerReader in = new LexerReader(new StringReader("@some.name@"), "<stream>", "@", "@");
 		AbstractLexer lexer = new TextLexer(in);
 		
 		assertToken("some.name", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -18,7 +18,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 
 	@Test
 	public void testSpecifyingDifferentMultiCharStartToken() throws IOException, LexerException {
-		LexerReader in = new LexerReader(new StringReader("@$some.name@$x"), "<stream>", "@$");
+		LexerReader in = new LexerReader(new StringReader("@$some.name@$x"), "<stream>", "@$", "@$");
 		AbstractLexer lexer = new TextLexer(in);
 		
 		assertToken("some.name", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -60,7 +60,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 	@Test
 	public void testEscapedKeywordsAreHandled() throws IOException, LexerException {
 		StringReader reader = new StringReader("$\\set");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
 		assertToken("set", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
 		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
 	}

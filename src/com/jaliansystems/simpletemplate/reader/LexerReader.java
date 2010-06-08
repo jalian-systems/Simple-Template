@@ -14,17 +14,14 @@ public class LexerReader {
 	private final String tokenStart;
 	private String tokenEnd;
 	
-	public LexerReader(Reader in, String fileName) {
-		this(in, fileName, "$");
-	}
-	
-	public LexerReader(Reader in, String fileName, String tokenStart) {
-		this(in, fileName, tokenStart, tokenStart);
-	}
-
 	public LexerReader(Reader in, String fileName, String tokenStart, String tokenEnd) {
 		this.in = new PushbackReader(in, 1024);
 		this.fileName = fileName == null ? "<stream>" : fileName;
+		if (tokenStart == null) {
+			tokenStart = "$" ;
+		}
+		if (tokenEnd == null)
+			tokenEnd = tokenStart ;
 		this.tokenStart = tokenStart;
 		this.tokenEnd = tokenEnd ;
 	}

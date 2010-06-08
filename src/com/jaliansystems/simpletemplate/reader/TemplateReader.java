@@ -14,8 +14,8 @@ public class TemplateReader implements ITemplateReader {
 	private final ILexer textLexer;
 	private final ILexer templateLexer;
 
-	public TemplateReader(Reader in, String fileName) {
-		this.in = new LexerReader(in, fileName);
+	public TemplateReader(Reader in, String fileName, String startToken, String endToken) {
+		this.in = new LexerReader(in, fileName, startToken, endToken);
 		LexerMaintainer maintainer = new LexerMaintainer();
 		textLexer = new TextLexer(this.in, maintainer);
 		templateLexer = new TemplateLexer(this.in, maintainer);

@@ -58,7 +58,7 @@ public class VariableTemplateTest {
 
 	@Test
 	public void testUnavailableAttrReturnsNone() {
-		VariableTemplate svt = new VariableTemplate("person.minor", null, 0);
+		VariableTemplate svt = new VariableTemplate("person.minor", "<stream>", 0);
 		Scope scope = new Scope();
 		scope.put("person", new Object());
 		String result = svt.apply(scope);
@@ -68,7 +68,7 @@ public class VariableTemplateTest {
 	@Test(expected=EvaluationError.class)
 	public void testUnavailableAttrThrowsExceptionInStrictMode() {
 		Log.setMode(EvaluationMode.STRICT);
-		VariableTemplate svt = new VariableTemplate("person.minor", null, 0);
+		VariableTemplate svt = new VariableTemplate("person.minor", "<stream>", 0);
 		Scope scope = new Scope();
 		scope.put("person", new Object());
 		String result = svt.apply(scope);

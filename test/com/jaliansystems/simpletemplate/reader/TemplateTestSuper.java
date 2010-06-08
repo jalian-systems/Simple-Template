@@ -17,8 +17,13 @@ public class TemplateTestSuper {
 
 	protected void templateAssert(String templateText, String expected, Scope scope,
 			String message) throws IOException, LexerException, ParserException {
+		templateAssert(templateText, expected, scope, message, null, null);
+			}
+
+	protected void templateAssert(String templateText, String expected, Scope scope,
+			String message, String start, String end) throws IOException, LexerException, ParserException {
 				Reader in = new StringReader(templateText);
-				ITemplateReader reader = new TemplateReader(in, "<stream>");
+				ITemplateReader reader = new TemplateReader(in, "<stream>", start, end);
 				TemplateElement template = reader.readTemplate();
 				String result = template.apply(scope);
 				assertEquals(message, expected, result);

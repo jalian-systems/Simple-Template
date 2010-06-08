@@ -31,7 +31,7 @@ public class ABExporter {
 	}
 
 	private void export(String templateFile, String outputFile) throws IOException {
-		TemplateReader reader = new TemplateReader(new FileReader(templateFile), templateFile);
+		TemplateReader reader = new TemplateReader(new FileReader(templateFile), templateFile, "$", "$");
 		Scope scope = new Scope();
 		scope.put("addressbook", addressBook);
 		TemplateElement template = null;
