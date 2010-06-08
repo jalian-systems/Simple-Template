@@ -9,9 +9,9 @@ public class LexerReader {
 	private final PushbackReader in;
 	private int lineNumber = 1;
 	private final String fileName;
-	private boolean isPushback;
-	private int[] pushbackBuffer = new int[1024];
-	private int nPushback = 0;
+	private boolean isMarked;
+	private int[] markBuffer = new int[1024];
+	private int nMarked = 0;
 	private final String tokenStart;
 	private String tokenEnd;
 	@SuppressWarnings("unused")
@@ -51,8 +51,8 @@ public class LexerReader {
 		int b = in.read();
 		if (b == '\n')
 			lineNumber++;
-		if (isPushback) {
-			pushbackBuffer[nPushback++] = b;
+		if (isMarked) {
+			markBuffer[nMarked++] = b;
 		}
 		return b;
 	}
@@ -62,8 +62,8 @@ public class LexerReader {
 		if (c == '\n') {
 			lineNumber--;
 		}
-		if (isPushback) {
-			nPushback--;
+		if (isMarked) {
+			nMarked--;
 		}
 	}
 
@@ -72,14 +72,14 @@ public class LexerReader {
 			unread((int) ca[i]);
 	}
 
-	public void pushback() throws IOException {
-		for (int i = nPushback - 1; i >= 0; i--)
-			unread(pushbackBuffer[i]);
+	public void reset() throws IOException {
+		for (int i = nMarked - 1; i >= 0; i--)
+			unread(markBuffer[i]);
 	}
 
-	public void startPushback() {
-		isPushback = true;
-		nPushback = 0;
+	public void mark() {
+		isMarked = true;
+		nMarked = 0;
 	}
 
 	public int read(char[] la) throws IOException {

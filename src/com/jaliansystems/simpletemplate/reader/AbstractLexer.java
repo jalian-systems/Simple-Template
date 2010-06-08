@@ -36,15 +36,15 @@ public abstract class AbstractLexer implements ILexer {
 	public final Token lookAhead() throws IOException, LexerException {
 		if (laToken != null)
 			return laToken;
-		reader.startPushback();
+		reader.mark();
 		laToken = getNextToken();
 		return laToken;
 	}
 
 	@Override
-	public void pushback() throws IOException {
+	public void pushbackLACharacters() throws IOException {
 		if (laToken != null) {
-			reader.pushback();
+			reader.reset();
 			laToken = null;
 		}
 	}

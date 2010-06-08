@@ -6,7 +6,7 @@ public interface ILexer {
 
 	public Token lookAhead() throws IOException, LexerException;
 
-	public void pushback() throws IOException;
+	public void pushbackLACharacters() throws IOException;
 
 	public Token expect1(TokenType... types) throws IOException,
 			LexerException, ParserException;

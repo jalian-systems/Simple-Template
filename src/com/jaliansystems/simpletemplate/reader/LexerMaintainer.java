@@ -8,7 +8,7 @@ public class LexerMaintainer {
 	public void pushback(ILexer lexer) throws IOException {
 		if (currentLexer != lexer) {
 			if (currentLexer != null)
-				currentLexer.pushback();
+				currentLexer.pushbackLACharacters();
 		}
 		currentLexer = lexer ;
 	}
