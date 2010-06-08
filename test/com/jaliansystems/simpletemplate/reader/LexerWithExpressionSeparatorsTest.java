@@ -1,5 +1,6 @@
 package com.jaliansystems.simpletemplate.reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -10,7 +11,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 
 	@Test
 	public void testSpecifyingDifferentStartToken() throws IOException, LexerException {
-		LexerReader in = new LexerReader(new StringReader("@some.name@"), "<stream>", "@", "@");
+		LexerReader in = new LexerReader(new File(".").toURI().toURL(), new StringReader("@some.name@"), "<stream>", "@", "@");
 		AbstractLexer lexer = new TextLexer(in);
 		
 		assertToken("some.name", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -18,7 +19,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 
 	@Test
 	public void testSpecifyingDifferentMultiCharStartToken() throws IOException, LexerException {
-		LexerReader in = new LexerReader(new StringReader("@$some.name@$x"), "<stream>", "@$", "@$");
+		LexerReader in = new LexerReader(new File(".").toURI().toURL(), new StringReader("@$some.name@$x"), "<stream>", "@$", "@$");
 		AbstractLexer lexer = new TextLexer(in);
 		
 		assertToken("some.name", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -28,7 +29,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 
 	@Test
 	public void testSpecifyingDifferentMultiCharAndEndStartToken() throws IOException, LexerException {
-		LexerReader in = new LexerReader(new StringReader("<<{<<some.name}>>"), "<stream>", "<<", ">>");
+		LexerReader in = new LexerReader(new File(".").toURI().toURL(), new StringReader("<<{<<some.name}>>"), "<stream>", "<<", ">>");
 		AbstractLexer lexer = new TextLexer(in);
 		
 		assertToken(null, TokenType.TT_BLOCK_START, lexer.nextToken());
@@ -40,7 +41,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 	@Test
 	public void testReturnsProperTokens() throws IOException, LexerException {
 		StringReader reader = new StringReader("<<set <<hello <<java.lang.object <<java<<lang }>> } }\\>> }xy<<lang}x");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "<<", ">>"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "<<", ">>"));
 		assertToken(null, TokenType.TT_SET, lexer.nextToken());
 		assertToken(" ", TokenType.TT_TEXT, lexer.nextToken());
 		assertToken("hello", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -60,7 +61,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 	@Test
 	public void testEscapedKeywordsAreHandled() throws IOException, LexerException {
 		StringReader reader = new StringReader("$\\set");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken("set", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
 		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
 	}
@@ -68,7 +69,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 	@Test
 	public void testReturnsProperTokensForTemplateLexer() throws IOException, LexerException {
 		StringReader reader = new StringReader("<<set <<\\with <<hello <<java.lang.object <<java <<lang }>><<lang { [] java.lang.object");
-		TemplateLexer lexer = new TemplateLexer(new LexerReader(reader, "<stream>", "<<", ">>"));
+		TemplateLexer lexer = new TemplateLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "<<", ">>"));
 		assertToken(null, TokenType.TT_SET, lexer.nextToken());
 		assertToken("with", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
 		assertToken("hello", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -87,7 +88,7 @@ public class LexerWithExpressionSeparatorsTest extends LexerTestSuper {
 	@Test
 	public void testExpressionSeparators() throws IOException, LexerException {
 		StringReader reader = new StringReader("<template:ifelse true <template:trueMessage> <template:falseMessage>");
-		TemplateLexer lexer = new TemplateLexer(new LexerReader(reader, "<stream>", "<template:", ">"));
+		TemplateLexer lexer = new TemplateLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "<template:", ">"));
 		assertToken(null, TokenType.TT_IFELSE, lexer.nextToken());
 		assertToken(null, TokenType.TT_TRUE, lexer.nextToken());
 		assertToken("trueMessage", TokenType.TT_START_IDENTIFIER, lexer.nextToken());

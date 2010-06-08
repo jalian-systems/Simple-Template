@@ -3,6 +3,7 @@ package com.jaliansystems.simpletemplate.reader;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.net.URL;
 
 public class LexerReader {
 	private final PushbackReader in;
@@ -10,26 +11,30 @@ public class LexerReader {
 	private final String fileName;
 	private boolean isPushback;
 	private int[] pushbackBuffer = new int[1024];
-	private int nPushback = 0 ;
+	private int nPushback = 0;
 	private final String tokenStart;
 	private String tokenEnd;
-	
-	public LexerReader(Reader in, String fileName, String tokenStart, String tokenEnd) {
+	@SuppressWarnings("unused")
+	private final URL contextURL;
+
+	public LexerReader(URL url, Reader in, String fileName, String tokenStart,
+			String tokenEnd) {
+		this.contextURL = url;
 		this.in = new PushbackReader(in, 1024);
 		this.fileName = fileName == null ? "<stream>" : fileName;
 		if (tokenStart == null) {
-			tokenStart = "$" ;
+			tokenStart = "$";
 		}
 		if (tokenEnd == null)
-			tokenEnd = tokenStart ;
+			tokenEnd = tokenStart;
 		this.tokenStart = tokenStart;
-		this.tokenEnd = tokenEnd ;
+		this.tokenEnd = tokenEnd;
 	}
 
 	public int getLineNumber() {
 		return lineNumber;
 	}
-	
+
 	public String getFileName() {
 		return fileName;
 	}
@@ -37,53 +42,53 @@ public class LexerReader {
 	public String getTokenStart() {
 		return tokenStart;
 	}
-	
+
 	public String getTokenEnd() {
 		return tokenEnd;
 	}
-	
+
 	public int read() throws IOException {
 		int b = in.read();
 		if (b == '\n')
-			lineNumber++ ;
+			lineNumber++;
 		if (isPushback) {
-			pushbackBuffer[nPushback++] = b ;
+			pushbackBuffer[nPushback++] = b;
 		}
 		return b;
 	}
-	
+
 	public void unread(int c) throws IOException {
 		in.unread(c);
 		if (c == '\n') {
-			lineNumber-- ;
+			lineNumber--;
 		}
 		if (isPushback) {
-			nPushback-- ;
+			nPushback--;
 		}
 	}
 
 	public void unread(char[] ca) throws IOException {
 		for (int i = ca.length - 1; i >= 0; i--)
-			unread((int)ca[i]);
+			unread((int) ca[i]);
 	}
-	
+
 	public void pushback() throws IOException {
 		for (int i = nPushback - 1; i >= 0; i--)
 			unread(pushbackBuffer[i]);
 	}
 
 	public void startPushback() {
-		isPushback = true ;
-		nPushback = 0 ;
+		isPushback = true;
+		nPushback = 0;
 	}
 
 	public int read(char[] la) throws IOException {
-		int i = 0 ;
+		int i = 0;
 		for (; i < la.length; i++) {
 			int c = in.read();
 			if (c == -1)
-				break ;
-			la[i] = (char) c ;
+				break;
+			la[i] = (char) c;
 		}
 		return i;
 	}

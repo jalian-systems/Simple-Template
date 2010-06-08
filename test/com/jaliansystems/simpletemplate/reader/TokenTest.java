@@ -1,5 +1,6 @@
 package com.jaliansystems.simpletemplate.reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -12,7 +13,7 @@ public class TokenTest extends LexerTestSuper {
 			LexerException, ParserException {
 		StringReader reader = new StringReader(
 				"${   {   }$\nsecond.line \"at other position\"\nthird.line");
-		TemplateLexer lexer = new TemplateLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		TemplateLexer lexer = new TemplateLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 
 		assertToken(lexer.expect1(TokenType.TT_BLOCK_START),
 				TokenType.TT_BLOCK_START, null, "<stream>", 1);

@@ -2,25 +2,25 @@ package com.jaliansystems.simpletemplate.example;
 
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 
 import com.jaliansystems.simpletemplate.reader.LexerException;
 import com.jaliansystems.simpletemplate.reader.ParserException;
 import com.jaliansystems.simpletemplate.reader.TemplateReader;
-import com.jaliansystems.simpletemplate.templates.TemplateElement;
 import com.jaliansystems.simpletemplate.templates.Scope;
+import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class ABExporter {
-	private AddressBook addressBook ;
-	
+	private AddressBook addressBook;
+
 	public ABExporter() {
 		populate();
 	}
-	
+
 	private void populate() {
 		addressBook = new AddressBook("Dakshinamurthy Karra");
 		AddressBookEntry abe = new AddressBookEntry("Dakshinamurthy", "Karra");
-		Address address = new Address("M.M.Layout", "Kavalbyrasandra", "560 032", "India");
+		Address address = new Address("M.M.Layout", "Kavalbyrasandra",
+				"560 032", "India");
 		abe.setAddress(address);
 		abe.setEmail("dakshinamurthy.karra@jaliansystems.com");
 		abe.setAffiliation("Linux India", "Founding Member");
@@ -30,7 +30,8 @@ public class ABExporter {
 		addressBook.add(abe);
 	}
 
-	private void export(String templateFile, String outputFile) throws IOException {
+	private void export(String templateFile, String outputFile)
+			throws Exception {
 		TemplateReader reader = new TemplateReader(new FileReader(templateFile), templateFile, "$", "$");
 		Scope scope = new Scope();
 		scope.put("addressbook", addressBook);
@@ -45,7 +46,7 @@ public class ABExporter {
 			System.exit(1);
 		}
 		String result = template.apply(scope);
-		
+
 		FileWriter writer = new FileWriter(outputFile);
 		writer.write(result);
 		writer.close();
@@ -58,7 +59,7 @@ public class ABExporter {
 		ABExporter exporter = new ABExporter();
 		try {
 			exporter.export("export.st", "export.out");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

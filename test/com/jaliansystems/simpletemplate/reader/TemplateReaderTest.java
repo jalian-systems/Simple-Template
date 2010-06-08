@@ -3,8 +3,8 @@ package com.jaliansystems.simpletemplate.reader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.StringReader;
 
 import org.junit.Test;
@@ -18,7 +18,7 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
-	public void testReadsLiteralText() throws IOException, LexerException, ParserException {
+	public void testReadsLiteralText() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello World"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -26,7 +26,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsLiteralWithEscapedDollors() throws IOException, LexerException, ParserException {
+	public void testReadsLiteralWithEscapedDollors() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello \\$World"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -34,7 +34,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsLiteralWithEscapedNewlines() throws IOException, LexerException, ParserException {
+	public void testReadsLiteralWithEscapedNewlines() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello \\nWorld\\\nNextLine"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -42,7 +42,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsVariableTemplates() throws IOException, LexerException, ParserException {
+	public void testReadsVariableTemplates() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $name$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -53,7 +53,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testKeywordsDoNotNeedEscapesNotTrue() throws IOException, LexerException, ParserException {
+	public void testKeywordsDoNotNeedEscapesNotTrue() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $\\with$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -64,7 +64,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 	
 	@Test
-	public void testPlainTemplateBlock() throws IOException, LexerException, ParserException {
+	public void testPlainTemplateBlock() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("${ \"Hello \" $\\with$ }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -75,7 +75,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsVariableTemplatesWithQualifiedNames() throws IOException, LexerException, ParserException {
+	public void testReadsVariableTemplatesWithQualifiedNames() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -88,7 +88,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsVariableTemplatesWithQualifiedNamesMultipleTimes() throws IOException, LexerException, ParserException {
+	public void testReadsVariableTemplatesWithQualifiedNamesMultipleTimes() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name$. This is a $person.name$ greeting"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -100,7 +100,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplate() throws IOException, LexerException, ParserException {
+	public void testReadsIndexedTemplate() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name[2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -113,7 +113,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplateWithTwoIndirections() throws IOException, LexerException, ParserException {
+	public void testReadsIndexedTemplateWithTwoIndirections() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.names[1][2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -127,7 +127,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplateWithTwoIndirectionsWithSpaces() throws IOException, LexerException, ParserException {
+	public void testReadsIndexedTemplateWithTwoIndirectionsWithSpaces() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.names [ 1 ] [2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -141,7 +141,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplateWithIdentifier() throws IOException, LexerException, ParserException {
+	public void testReadsIndexedTemplateWithIdentifier() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name[index]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -155,7 +155,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testReadsIndexedTemplateWithIdentifierDoubleIndexing() throws IOException, LexerException, ParserException {
+	public void testReadsIndexedTemplateWithIdentifierDoubleIndexing() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $person.name[indices[2]]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -169,7 +169,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testIfTemplateWithSimpleExpressions() throws IOException, LexerException, ParserException {
+	public void testIfTemplateWithSimpleExpressions() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $if person.minor { $person.name$ is a Kid }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -184,7 +184,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testIfEscapeWorksForBlock() throws IOException, LexerException, ParserException {
+	public void testIfEscapeWorksForBlock() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $if person.minor\n { $person.name$ is a Kid \\}\\$ }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -199,7 +199,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testWithTemplateWithSimpleExpressions() throws IOException, LexerException, ParserException {
+	public void testWithTemplateWithSimpleExpressions() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $with person { $name$ is a Kid }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -213,7 +213,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testInsertingVariableIntoScope() throws IOException, LexerException, ParserException {
+	public void testInsertingVariableIntoScope() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $set name to person.name $name$ is a Kid"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -227,7 +227,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testLoopingThroughAList() throws IOException, LexerException, ParserException {
+	public void testLoopingThroughAList() throws Exception {
 		TemplateReader reader = new TemplateReader(new StringReader("Hello $names { $it$, }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
 		assertTrue(template instanceof CompositeTemplate);
@@ -238,28 +238,28 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 
 	@Test
-	public void testLiteralTextIsProcessed() throws IOException,
+	public void testLiteralTextIsProcessed() throws Exception,
 			LexerException, ParserException {
 		templateAssert("Hello World", "Hello World", new Scope(),
 				"The Input and Output should be same");
 	}
 
 	@Test
-	public void testBackslashEscapesTemplateStart() throws IOException,
+	public void testBackslashEscapesTemplateStart() throws Exception,
 			LexerException, ParserException {
 		templateAssert("Hello \\$World", "Hello $World", new Scope(),
 				"The Input and Output should be same");
 	}
 
 	@Test
-	public void testBackslashSubstitutesNewlines() throws IOException,
+	public void testBackslashSubstitutesNewlines() throws Exception,
 			LexerException, ParserException {
 		templateAssert("Hello \\nWorld", "Hello \nWorld", new Scope(),
 				"The Input and Output should be same");
 	}
 
 	@Test
-	public void testVariableGetsSubstitutedByItsValue() throws IOException,
+	public void testVariableGetsSubstitutedByItsValue() throws Exception,
 			LexerException, ParserException {
 		Scope scope = new Scope();
 		scope.put("world", "World");
@@ -268,7 +268,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testABlockWithLiteralString() throws IOException,
+	public void testABlockWithLiteralString() throws Exception,
 			LexerException, ParserException {
 		Scope scope = new Scope();
 		scope.put("world", "World");
@@ -277,7 +277,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testABlockWithInteger() throws IOException, LexerException,
+	public void testABlockWithInteger() throws Exception, LexerException,
 			ParserException {
 		Scope scope = new Scope();
 		scope.put("world", "World");
@@ -287,7 +287,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testABlockWithBoolean() throws IOException, LexerException,
+	public void testABlockWithBoolean() throws Exception, LexerException,
 			ParserException {
 		templateAssert("${\"Whether it is \" true \" or \" false }$",
 				"Whether it is true or false", new Scope(),
@@ -295,7 +295,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test(expected = ParserException.class)
-	public void testAUnendedBlockThrowsAnException() throws IOException,
+	public void testAUnendedBlockThrowsAnException() throws Exception,
 			LexerException, ParserException {
 		Scope scope = new Scope();
 		scope.put("world", "World");
@@ -305,7 +305,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testIndexedVariableGetsSubstitutedByItsValue()
-			throws IOException, LexerException, ParserException {
+			throws Exception {
 		Scope scope = new Scope();
 		scope.put("greeting", new String[] { "World", "Universe" });
 		templateAssert("Hello $greeting[1]$", "Hello Universe", scope,
@@ -313,7 +313,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testLoopingOverAVariable() throws IOException, LexerException,
+	public void testLoopingOverAVariable() throws Exception, LexerException,
 			ParserException {
 		Scope scope = new Scope();
 		scope.put("list", new String[] { "Bangalore", "Delhi", "Hyderabad" });
@@ -322,7 +322,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testLoopingOverAVariableWithABlock() throws IOException,
+	public void testLoopingOverAVariableWithABlock() throws Exception,
 			LexerException, ParserException {
 		Scope scope = new Scope();
 		scope.put("list", new String[] { "Bangalore", "Delhi", "Hyderabad" });
@@ -333,7 +333,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testIndexedVariableGetsSubstitutedByItsValueInMultiDimensionalArray()
-			throws IOException, LexerException, ParserException {
+			throws Exception {
 		String[][][] u = new String[3][][];
 		for (int i = 0; i < 3; i++) {
 			String[][] v = new String[3][];
@@ -374,7 +374,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testIndexedVariablesMemberGetsSubstitutedByItsValue()
-			throws IOException, LexerException, ParserException {
+			throws Exception {
 		Scope scope = new Scope();
 		scope.put("greeting", new MyString[] { new MyString("World"),
 				new MyString("Universe") });
@@ -386,7 +386,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testIfTemplateExecutesTheTrueBranch() throws IOException,
+	public void testIfTemplateExecutesTheTrueBranch() throws Exception,
 			LexerException, ParserException {
 		templateAssert("$if true \"Hello World\"", "Hello World", new Scope(),
 				"The Input and Output should be same");
@@ -395,14 +395,14 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testIfTemplateDoesnotExecuteTheFalseBranch()
-			throws IOException, LexerException, ParserException {
+			throws Exception {
 		templateAssert("$if false \"Hello World\"", "", new Scope(),
 				"The Input and Output should be same");
 
 	}
 
 	@Test
-	public void testIfElseTemplateExecutesTheTrueBranch() throws IOException,
+	public void testIfElseTemplateExecutesTheTrueBranch() throws Exception,
 			LexerException, ParserException {
 		templateAssert("$ifelse true \"Hello World\" \"Hello Universe\"",
 				"Hello World", new Scope(),
@@ -412,14 +412,14 @@ public class TemplateReaderTest extends TemplateTestSuper {
 
 	@Test
 	public void testIfElseTemplateDoesnotExecuteTheFalseBranch()
-			throws IOException, LexerException, ParserException {
+			throws Exception {
 		templateAssert("$ifelse false \"Hello World\" \"Hello Universe\"",
 				"Hello Universe", new Scope(),
 				"The Input and Output should be same");
 	}
 
 	@Test
-	public void testWithAllowsShorthand() throws IOException, LexerException,
+	public void testWithAllowsShorthand() throws Exception, LexerException,
 			ParserException {
 		Scope scope = new Scope();
 		scope.put("greeting", new MyString[] { new MyString("World"),
@@ -435,7 +435,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testWithAllowsShorthandUsingAs() throws IOException,
+	public void testWithAllowsShorthandUsingAs() throws Exception,
 			LexerException, ParserException {
 		Scope scope = new Scope();
 		scope.put("greeting", new MyString[] { new MyString("World"),
@@ -451,7 +451,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testSetModifiesTheScope() throws IOException, LexerException,
+	public void testSetModifiesTheScope() throws Exception, LexerException,
 			ParserException {
 		Scope scope = new Scope();
 		scope.put("greeting", new MyString[] { new MyString("World"),
@@ -527,5 +527,16 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		scope.put("greeting", new String[] { "Hello", "World" });
 		templateAssert("<<helloWorld(list) <<{ <<list {<<it>> }>>}>><<greeting:helloWorld()>>", "Hello World ",
 				scope, "The Input and Output should be same", "<<", ">>");
+	}
+	
+	@Test
+	public void testTemplateReaderAcceptsURLAsConstructorParameter() throws Exception {
+		File templateFile = new File("test-data/testTemplateReaderAcceptsURLAsConstructorParameter.st");
+		TemplateReader reader = new TemplateReader(templateFile.toURI().toURL(), "<<", ">>");
+		TemplateElement template = reader.readTemplate();
+		Scope scope = new Scope();
+		scope.put("greeting", new String[] { "Hello", "World" });
+		String result = template.apply(scope);
+		assertEquals("The Input and Output should be same", "Hello World ", result);
 	}
 }

@@ -2,6 +2,7 @@ package com.jaliansystems.simpletemplate.reader;
 
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -12,7 +13,7 @@ public class TextLexerTest extends LexerTestSuper {
 	@Test
 	public void testReturnsProperTokens() throws IOException, LexerException {
 		StringReader reader = new StringReader("$set $hello $java.lang.object $java$lang }$ } }\\$ }xy$lang}x");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken(null, TokenType.TT_SET, lexer.nextToken());
 		assertToken(" ", TokenType.TT_TEXT, lexer.nextToken());
 		assertToken("hello", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -32,7 +33,7 @@ public class TextLexerTest extends LexerTestSuper {
 	@Test
 	public void testEscapedKeywordsAreHandled() throws IOException, LexerException {
 		StringReader reader = new StringReader("$\\set");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken("set", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
 		assertToken(null, TokenType.TT_EOF, lexer.nextToken());
 	}
@@ -40,7 +41,7 @@ public class TextLexerTest extends LexerTestSuper {
 	@Test
 	public void testBlockStartIsHandled() throws IOException, LexerException {
 		StringReader reader = new StringReader("${ $xyz");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken(null, TokenType.TT_BLOCK_START, lexer.nextToken());
 		assertToken(" ", TokenType.TT_TEXT, lexer.nextToken());
 		assertToken("xyz", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
@@ -50,35 +51,35 @@ public class TextLexerTest extends LexerTestSuper {
 	@Test(expected=LexerException.class)
 	public void testEscapeDoesntPassInvalidIdentifiers() throws IOException, LexerException {
 		StringReader reader = new StringReader("$\\set..with");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertNull(lexer.nextToken());
 	}
 
 	@Test(expected=LexerException.class)
 	public void testInvalidIdentifierNamesWithDotAtEndThrowsExceptions() throws IOException, LexerException {
 		StringReader reader = new StringReader("$java.");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		lexer.nextToken();
 	}
 	
 	@Test(expected=LexerException.class)
 	public void testInvalidIdentifierNamesWithTwoDotsInBetweenThrowsExceptions() throws IOException, LexerException {
 		StringReader reader = new StringReader("$java..lang");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		lexer.nextToken();
 	}
 	
 	@Test(expected=LexerException.class)
 	public void testInvalidIdentifierNamesStartingWithADotThrowsExceptions() throws IOException, LexerException {
 		StringReader reader = new StringReader("$.javlang");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		lexer.nextToken();
 	}
 
 	@Test
 	public void testReadingAnIndexShouldReturnJustText() throws IOException, LexerException {
 		StringReader reader = new StringReader("$greeting[1]$");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken("greeting", TokenType.TT_START_IDENTIFIER, lexer.nextToken());
 		assertToken("[1]", TokenType.TT_TEXT, lexer.nextToken());
 	}
@@ -86,7 +87,7 @@ public class TextLexerTest extends LexerTestSuper {
 	@Test
 	public void testEachLineIsATextToken() throws Exception {
 		StringReader reader = new StringReader("line1\nline2\nline3\n");
-		AbstractLexer lexer = new TextLexer(new LexerReader(reader, "<stream>", "$", "$"));
+		AbstractLexer lexer = new TextLexer(new LexerReader(new File(".").toURI().toURL(), reader, "<stream>", "$", "$"));
 		assertToken("line1\n", TokenType.TT_TEXT, lexer.nextToken());
 		assertToken("line2\n", TokenType.TT_TEXT, lexer.nextToken());
 		assertToken("line3\n", TokenType.TT_TEXT, lexer.nextToken());
