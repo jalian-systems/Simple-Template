@@ -36,4 +36,9 @@ public class LiteralIntegerTemplate extends TemplateElement {
 		return getLineNumber() + ":" + indent + Integer.toString(value);
 	}
 
+	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + Integer.toString(value);
+	}
+
 }

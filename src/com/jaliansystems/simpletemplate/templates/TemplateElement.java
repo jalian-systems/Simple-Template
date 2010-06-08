@@ -71,6 +71,8 @@ public abstract class TemplateElement {
 	
 	public abstract String getDisplayName(String indent);
 
+	public abstract String getDebugString(String indent);
+
 	public String getFileName() {
 		return fileName;
 	}

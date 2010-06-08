@@ -52,6 +52,20 @@ public class MethodDefinitionTemplate extends TemplateElement {
 	}
 
 	@Override
+	public String getDebugString(String indent) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getLineNumber() + ":" + indent + "(method-def " + methodName + "\n") ;
+		sb.append(indent + "  " + "(paramlist\n");
+		for (String t : params) {
+			sb.append("    " + indent + t).append("\n");
+		}
+		sb.append(indent + "  " + ")\n");
+		sb.append(template.getDebugString("  " + indent));
+		sb.append(indent + ")");
+		return sb.toString();
+	}
+
+	@Override
 	public String apply(Scope scope) {
 		scope.put(methodName, this);
 		return "";

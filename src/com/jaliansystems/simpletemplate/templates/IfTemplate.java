@@ -56,4 +56,17 @@ public class IfTemplate extends TemplateElement {
 					+ indent + ")";
 		}
 	}
+
+	@Override
+	public String getDebugString(String indent) {
+		if (falseBranch != null) {
+			return getLineNumber() + ":" + indent + "(ifelse\n" + condition.getDebugString("  " + indent)
+					+ "\n" + trueBranch.getDebugString("  " + indent) + "\n"
+					+ falseBranch.getDebugString("  " + indent) + "\n" + indent + ")";
+		} else {
+			return getLineNumber() + ":" + indent + "(if\n" + condition.getDebugString("  " + indent)
+					+ "\n" + trueBranch.getDebugString("  " + indent) + "\n"
+					+ indent + ")";
+		}
+	}
 }

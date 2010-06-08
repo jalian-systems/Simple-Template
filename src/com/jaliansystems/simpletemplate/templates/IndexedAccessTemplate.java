@@ -79,6 +79,12 @@ public class IndexedAccessTemplate extends TemplateElement {
 	}
 
 	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + "(indexed-access\n"
+						+ variable.getDebugString("  " + indent) + "\n" + index.getDebugString("  " + indent) + "\n" + indent + ")";
+	}
+
+	@Override
 	public String getDisplayName(String indent) {
 		return getLineNumber() + ":" + indent + "(indexed-access\n"
 						+ variable.getDisplayName("  " + indent) + "\n" + index.getDisplayName("  " + indent) + "\n" + indent + ")";

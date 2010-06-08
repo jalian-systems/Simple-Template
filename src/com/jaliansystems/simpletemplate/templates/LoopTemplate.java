@@ -134,4 +134,9 @@ public class LoopTemplate extends TemplateElement {
 	public String getDisplayName(String indent) {
 		return getLineNumber() + ":" + indent + "(loop\n" + loopVar.getDisplayName("  " + indent) + "\n" + template.getDisplayName("  " + indent) + "\n" + indent + ")";
 	}
+
+	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + "(loop\n" + loopVar.getDebugString("  " + indent) + "\n" + template.getDebugString("  " + indent) + "\n" + indent + ")";
+	}
 }

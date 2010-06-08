@@ -46,4 +46,12 @@ public class VariableScopeTemplate extends TemplateElement {
 				(indent + ")") ;
 	}
 
+	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + "(set\n" +
+				setVar.getDebugString(indent + "  ") + "\n" +
+				(indent + "  " + alias) + "\n" +
+				(indent + ")") ;
+	}
+
 }

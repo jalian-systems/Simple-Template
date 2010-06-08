@@ -67,4 +67,14 @@ public class WithTemplate extends TemplateElement {
 				(indent + ")");
 				
 	}
+
+	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + "(with" + 
+				(alias == null ? "" : " (alias " + alias + ")") + "\n" + 
+				withVar.getDebugString("  " + indent) + 
+				template.getDebugString("  " + indent) +
+				(indent + ")");
+				
+	}
 }

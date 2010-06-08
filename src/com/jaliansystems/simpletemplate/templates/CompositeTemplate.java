@@ -58,4 +58,15 @@ public class CompositeTemplate extends TemplateElement {
 		sb.append(indent + ")");
 		return sb.toString() ;
 	}
+
+	@Override
+	public String getDebugString(String indent) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getLineNumber() + ":" + indent + "(composite\n");
+		for (TemplateElement t : children) {
+			sb.append(t.getDebugString(indent + "  ")).append('\n');
+		}
+		sb.append(indent + ")");
+		return sb.toString() ;
+	}
 }

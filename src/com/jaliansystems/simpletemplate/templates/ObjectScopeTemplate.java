@@ -41,4 +41,11 @@ public class ObjectScopeTemplate extends TemplateElement {
 							variable.getDisplayName("  " + indent) + "\n" + ")" ;
 	}
 
+	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + "(attribute-of\n" +
+							object.getDebugString("  " + indent) + "\n" +
+							variable.getDebugString("  " + indent) + "\n" + ")" ;
+	}
+
 }

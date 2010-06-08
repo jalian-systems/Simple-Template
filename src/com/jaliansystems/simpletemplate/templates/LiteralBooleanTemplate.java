@@ -36,4 +36,9 @@ public class LiteralBooleanTemplate extends TemplateElement {
 		return getLineNumber() + ":" + indent + Boolean.toString(value);
 	}
 
+	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + Boolean.toString(value);
+	}
+
 }

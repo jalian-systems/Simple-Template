@@ -92,6 +92,23 @@ public class MethodCallTemplate extends TemplateElement {
 		return sb.toString();
 	}
 
+	@Override
+	public String getDebugString(String indent) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getLineNumber() + ":" + indent + "(call " + name + "\n") ;
+		sb.append(indent + "  " + "(paramlist\n");
+		for (TemplateElement t : paramValues) {
+			sb.append(t.getDebugString("    " + indent)).append("\n");
+		}
+		sb.append(indent + "  " + ")\n");
+		if (next != null) {
+			sb.append(indent + "  " + "(next-in-chain\n");
+			sb.append(next.getDebugString("    " + indent));
+		}
+		sb.append(indent + ")");
+		return sb.toString();
+	}
+
 	public void setVariable(TemplateElement vt) {
 		paramValues.add(0, vt);
 	}

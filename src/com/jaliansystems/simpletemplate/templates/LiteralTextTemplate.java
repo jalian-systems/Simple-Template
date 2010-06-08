@@ -37,6 +37,11 @@ public class LiteralTextTemplate extends TemplateElement {
 	}
 	
 	@Override
+	public String getDebugString(String indent) {
+		return getLineNumber() + ":" + indent + "\"" + text.replaceAll("\"", "\\\\\"").replaceAll("\n", "\\\\n") + "\"";
+	}
+	
+	@Override
 	public String apply(Scope scope) {
 		return text ;
 	}
