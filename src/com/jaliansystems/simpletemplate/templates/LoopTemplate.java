@@ -12,23 +12,42 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 package com.jaliansystems.simpletemplate.templates;
 
 import static com.jaliansystems.simpletemplate.Log.warning;
 
-import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class LoopTemplate extends TemplateElement {
 
+	private static interface Collector {
+		public void collect(TemplateElement t, Scope scope);
+	}
+
+	private static class TargetCollector implements Collector {
+		private Object r;
+
+		@Override
+		public void collect(TemplateElement t, Scope scope) {
+			r = t.getTarget(scope);
+		}
+
+		public Object getValue() {
+			return r;
+		}
+
+	}
+
 	private final TemplateElement template;
 	private final TemplateElement loopVar;
 
-	public LoopTemplate(TemplateElement loopVar, TemplateElement template, String fileName, int lineNumber) {
+	public LoopTemplate(TemplateElement loopVar, TemplateElement template,
+			String fileName, int lineNumber) {
 		super(fileName, lineNumber);
 		this.loopVar = loopVar;
 		this.template = template;
@@ -36,58 +55,33 @@ public class LoopTemplate extends TemplateElement {
 
 	@Override
 	public String apply(Scope scope) {
-		StringBuffer sb = new StringBuffer();
-		Object target = loopVar.getTarget(scope);
-		if (target == null) {
-			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got null target for " + loopVar.getDisplayName(""));
-			return sb.toString();
-		}
-		if (target instanceof Iterable<?>) {
-			Iterator<?> iterator = ((Iterable<?>) target).iterator();
-			int index = 0;
-			while (iterator.hasNext()) {
-				Object o = iterator.next();
-				Scope loopScope = new Scope(scope);
-				loopScope.put("index0", index);
-				loopScope.put("index1", index + 1);
-				loopScope.put("it", o);
-				sb.append(template.apply(loopScope));
-				index++;
+		final StringBuffer sb = new StringBuffer();
+		runLoop(scope, new Collector() {
+			@Override
+			public void collect(TemplateElement t, Scope scope) {
+				sb.append(t.apply(scope));
 			}
-		} else if (target instanceof Map<?, ?>) {
-			Iterator<?> iterator = ((Map<?, ?>) target).entrySet().iterator();
-			int index = 0;
-			while (iterator.hasNext()) {
-				Entry<?, ?> next = (Entry<?, ?>) iterator.next();
-				Scope loopScope = new Scope(scope);
-				loopScope.put("index0", index);
-				loopScope.put("index1", index + 1);
-				loopScope.put("key", next.getKey());
-				loopScope.put("value", next.getValue());
-				sb.append(template.apply(loopScope));
-				index++;
-			}
-		} else if (target != null && target.getClass().isArray()) {
-			int length = Array.getLength(target);
-			for (int index = 0; index < length; index++) {
-				Object o = Array.get(target, index);
-				Scope loopScope = new Scope(scope);
-				loopScope.put("index0", index);
-				loopScope.put("index1", index + 1);
-				loopScope.put("it", o);
-				sb.append(template.apply(loopScope));
-			}
-		} else {
-			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, Arrays and Maps: got "
-					+ target.getClass() + " for " + loopVar.getDisplayName(""));
-		}
+		});
 		return sb.toString();
 	}
 
 	@Override
 	public Object getTarget(Scope scope) {
-		Object r = null ;
+		TargetCollector tc = new TargetCollector();
+		runLoop(scope, tc);
+		return tc.getValue();
+	}
+
+	private void runLoop(Scope scope, Collector collector) {
 		Object target = loopVar.getTarget(scope);
+		if (target == null) {
+			warning(getFileName(), getLineNumber(),
+					"You can loop only on Iterables, arrays and Maps: got null target for "
+							+ loopVar.getDisplayName(""));
+			return;
+		}
+		if (target != null && target.getClass().isArray())
+			target = Arrays.asList((Object[]) target);
 		if (target instanceof Iterable<?>) {
 			Iterator<?> iterator = ((Iterable<?>) target).iterator();
 			int index = 0;
@@ -97,7 +91,7 @@ public class LoopTemplate extends TemplateElement {
 				loopScope.put("index0", index);
 				loopScope.put("index1", index + 1);
 				loopScope.put("it", o);
-				r = template.getTarget(loopScope);
+				collector.collect(template, loopScope);
 				index++;
 			}
 		} else if (target instanceof Map<?, ?>) {
@@ -110,33 +104,29 @@ public class LoopTemplate extends TemplateElement {
 				loopScope.put("index1", index + 1);
 				loopScope.put("key", next.getKey());
 				loopScope.put("value", next.getValue());
-				r = template.getTarget(loopScope);
+				collector.collect(template, loopScope);
 				index++;
 			}
-		} else if (target != null && target.getClass().isArray()) {
-			int length = Array.getLength(target);
-			for (int index = 0; index < length; index++) {
-				Object o = Array.get(target, index);
-				Scope loopScope = new Scope(scope);
-				loopScope.put("index0", index);
-				loopScope.put("index1", index + 1);
-				loopScope.put("it", o);
-				r = template.getTarget(loopScope);
-			}
 		} else {
-			warning(getFileName(), getLineNumber(), "You can loop only on Iterables, arrays and Maps: got "
-					+ target.getClass() + " for " + loopVar.getDisplayName(""));
+			warning(getFileName(),
+					getLineNumber(),
+					"You can loop only on Iterables, Arrays and Maps: got "
+							+ target.getClass() + " for "
+							+ loopVar.getDisplayName(""));
 		}
-		return r ;
 	}
 
 	@Override
 	public String getDisplayName(String indent) {
-		return indent + "(loop\n" + loopVar.getDisplayName("  " + indent) + "\n" + template.getDisplayName("  " + indent) + "\n" + indent + ")";
+		return indent + "(loop\n" + loopVar.getDisplayName("  " + indent)
+				+ "\n" + template.getDisplayName("  " + indent) + "\n" + indent
+				+ ")";
 	}
 
 	@Override
 	public String getDebugString(String indent) {
-		return getLineNumber() + ":" + indent + "(loop\n" + loopVar.getDebugString("  " + indent) + "\n" + template.getDebugString("  " + indent) + "\n" + indent + ")";
+		return getLineNumber() + ":" + indent + "(loop\n"
+				+ loopVar.getDebugString("  " + indent) + "\n"
+				+ template.getDebugString("  " + indent) + "\n" + indent + ")";
 	}
 }
