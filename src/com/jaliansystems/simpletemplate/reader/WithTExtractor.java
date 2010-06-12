@@ -30,7 +30,7 @@ public final class WithTExtractor implements ITemplateExtractor {
 
 	private TemplateElement createWithTemplate(Token t, ILexer lexer)
 			throws IOException, LexerException, ParserException {
-		Token next = lexer.expect1(TokenType.TT_IDENTIFIER);
+		Token next = lexer.expect1(ExpressionExtractor.getStartTokens());
 		TemplateElement withVar = new ExpressionExtractor().extract(
 				next, lexer);
 		next = lexer.expect1r0(TokenType.TT_AS);

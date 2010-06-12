@@ -12,15 +12,17 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 package com.jaliansystems.simpletemplate;
+
 
 public class EvaluationError extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	public EvaluationError(String message) {
 		super(message);
-		setStackTrace(new StackTraceElement[0]);
+		if (System.getProperty("simpletemplate.debug") == null)
+			setStackTrace(new StackTraceElement[0]);
 	}
 }

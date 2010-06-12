@@ -628,4 +628,16 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				"<<", ">>");
 	}
 
+	@Test
+	public void testMethodCallsKeepTypeInfoBetweenCalls() throws Exception {
+		String methodDef = "$true2false(value) $ifelse value false true" ;
+		String methodCall = "$ifelse value:true2false():true2false() true false" ;
+		Scope scope = new Scope();
+		scope.put("value", true);
+		templateAssert(methodDef+methodCall, "true",
+				scope, "The Input and Output should be same");
+		scope.put("value", false);
+		templateAssert(methodDef+methodCall, "false",
+				scope, "The Input and Output should be same");
+	}
 }

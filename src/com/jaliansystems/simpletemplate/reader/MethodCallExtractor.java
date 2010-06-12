@@ -12,12 +12,13 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 package com.jaliansystems.simpletemplate.reader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.jaliansystems.simpletemplate.templates.MethodCallTemplate;
@@ -39,15 +40,13 @@ public class MethodCallExtractor implements ITemplateExtractor {
 
 	private void buildCallChain(MethodCallTemplate methodCallTemplate,
 			ILexer lexer) throws IOException, LexerException, ParserException {
-		Token token = lexer.expect1(TokenType.TT_END_TEMPLATE,
-				TokenType.TT_METHOD_CALL);
+		Token token = lexer.expect1r0(TokenType.TT_METHOD_CALL);
 		MethodCallTemplate parent = methodCallTemplate;
-		while (token.getType() == TokenType.TT_METHOD_CALL) {
+		while (token != null) {
 			MethodCallTemplate child = extractWithoutChain(token, lexer);
 			parent.setNext(child);
 			parent = child;
-			token = lexer.expect1(TokenType.TT_END_TEMPLATE,
-					TokenType.TT_METHOD_CALL);
+			token = lexer.expect1r0(TokenType.TT_METHOD_CALL);
 		}
 	}
 
@@ -65,16 +64,19 @@ public class MethodCallExtractor implements ITemplateExtractor {
 			throws IOException, LexerException, ParserException {
 		ArrayList<TemplateElement> params = new ArrayList<TemplateElement>();
 
-		Token t = lexer.expect1(TokenType.getExtractableTokens(),
-				TokenType.TT_CLOSE_PAREN, TokenType.TT_IDENTIFIER);
+		TokenType[] startTokens = ExpressionExtractor.getStartTokens();
+		TokenType[] others = Arrays.copyOf(startTokens, startTokens.length + 1);
+		others[startTokens.length] = TokenType.TT_CLOSE_PAREN;
+		Token t = lexer.expect1(TokenType.getExtractableTokens(), others);
 		while (t.getType() != TokenType.TT_CLOSE_PAREN) {
-			if (t.getType() == TokenType.TT_IDENTIFIER)
+			if (ExpressionExtractor.isStartToken(t))
 				params.add(new ExpressionExtractor().extract(t, lexer));
 			else
 				params.add(t.extract());
-			t = lexer.expect1(TokenType.TT_COMMA, TokenType.TT_CLOSE_PAREN, TokenType.TT_IDENTIFIER);
+			t = lexer.expect1(new TokenType[] { TokenType.TT_COMMA }, others);
 			if (t.getType() == TokenType.TT_COMMA)
-				t = lexer.expect1(TokenType.getExtractableTokens(), TokenType.TT_IDENTIFIER);
+				t = lexer.expect1(TokenType.getExtractableTokens(),
+						ExpressionExtractor.getStartTokens());
 		}
 		return params;
 	}

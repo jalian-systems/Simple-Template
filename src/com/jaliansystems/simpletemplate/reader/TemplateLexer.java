@@ -12,7 +12,7 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 package com.jaliansystems.simpletemplate.reader;
 
@@ -87,19 +87,19 @@ public class TemplateLexer extends AbstractLexer {
 		return new Token(TokenType.TT_EOF, fn, ln);
 	}
 
-	private Token readIdentifier(boolean escape, int ln)
-			throws IOException, LexerException {
+	private Token readIdentifier(boolean escape, int ln) throws IOException,
+			LexerException {
 		StringBuffer sb = new StringBuffer();
 		int c;
-		boolean methodCall = false ;
-		boolean start = true ;
+		boolean methodCall = false;
+		boolean start = true;
 		while ((c = reader.read()) != -1) {
 			if (start) {
 				if (c == ':') {
-					methodCall = true ;
-					continue ;
+					methodCall = true;
+					continue;
 				}
-				start = false ;
+				start = false;
 			}
 			if ((c == '.' || Character.isJavaIdentifierPart(c)) && c != '$')
 				sb.append((char) c);
@@ -132,6 +132,17 @@ public class TemplateLexer extends AbstractLexer {
 				return new Token(TokenType.TT_TO, fn, ln);
 		}
 		return checkValidIdentifier(text, ln, TokenType.TT_IDENTIFIER);
+	}
+
+	private Token checkValidMethodCall(String text, int ln)
+			throws LexerException {
+		if (text.contains(".")) {
+			throw new LexerException(reader.getFileName(),
+					reader.getLineNumber(),
+					"While reading template start token -- invalid method name '"
+							+ text + "'");
+		}
+		return new Token(TokenType.TT_METHOD_CALL, text, fn, ln);
 	}
 
 	private Token readInteger(int initial, int ln) throws IOException {

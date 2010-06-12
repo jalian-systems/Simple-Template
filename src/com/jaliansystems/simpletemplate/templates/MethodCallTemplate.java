@@ -57,18 +57,48 @@ public class MethodCallTemplate extends TemplateElement {
 		Scope methodCallScope = new Scope();
 		for (int i = 0; i < paramNames.size(); i++)
 			methodCallScope.put(paramNames.get(i), paramValues.get(i).getTarget(scope));
-		Object result = st.getTemplate().apply(methodCallScope);
-		return applyChain(result, scope);
+		Object result = st.getTemplate().getTarget(methodCallScope);
+		MethodCallTemplate nextTemplate = next ;
+		while (nextTemplate != null) {
+			nextTemplate.setVariable(new LiteralObjectTemplate(result, getFileName(), getLineNumber()));
+			result = nextTemplate.getTarget(scope);
+			nextTemplate = nextTemplate.getNext();
+		}
+		return result ;
 	}
 
-	private Object applyChain(Object result, Scope scope) {
-		MethodCallTemplate template = next ;
-		while (template != null) {
-			template.setVariable(new LiteralTextTemplate(result.toString(), getFileName(), getLineNumber()));
-			result = template.getTarget(scope);
-			template = template.getNext();
+	@Override
+	public String apply(Scope scope) {
+		Object o = scope.get(name);
+		if (o == null) {
+			Log.warning(getFileName(), getLineNumber(),
+					"Unspecified subtemplate - " + name);
+			return "";
 		}
-		return result;
+		if (!(o instanceof MethodDefinitionTemplate)) {
+			Log.warning(getFileName(), getLineNumber(),
+					"Unspecified subtemplate - " + name + " Found a " + o.getClass().getName() + " for " + name);
+			return "";
+		}
+		MethodDefinitionTemplate st = (MethodDefinitionTemplate) o;
+		List<String> paramNames = st.getParams();
+		if (paramNames.size() != paramValues.size()) {
+			Log.warning(getFileName(), getLineNumber(), "For subtemplate "
+					+ name + " expecting " + paramNames.size()
+					+ " parameters. Got: " + paramValues.size() + " parameters");
+			return "";
+		}
+		Scope methodCallScope = new Scope();
+		for (int i = 0; i < paramNames.size(); i++)
+			methodCallScope.put(paramNames.get(i), paramValues.get(i).getTarget(scope));
+		String result = st.getTemplate().apply(methodCallScope);
+		MethodCallTemplate nextTemplate = next ;
+		while (nextTemplate != null) {
+			nextTemplate.setVariable(new LiteralObjectTemplate(result, getFileName(), getLineNumber()));
+			result = nextTemplate.apply(scope);
+			nextTemplate = nextTemplate.getNext();
+		}
+		return result ;
 	}
 
 	private MethodCallTemplate getNext() {

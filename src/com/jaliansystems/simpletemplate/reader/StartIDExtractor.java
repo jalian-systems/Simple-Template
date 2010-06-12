@@ -33,7 +33,7 @@ public final class StartIDExtractor implements ITemplateExtractor {
 	private TemplateElement createStartIdTemplate(Token t, ILexer lexer)
 			throws IOException, LexerException, ParserException {
 		TemplateElement ite;
-		if (isSimpleName(t)) {
+		if (t.getType() == TokenType.TT_START_IDENTIFIER && isSimpleName(t)) {
 			Token token = lexer.expect1r0(TokenType.TT_OPEN_PAREN);
 			if (token != null)
 				return new SubtemplateExtractor().extract(t, lexer);

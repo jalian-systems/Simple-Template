@@ -33,7 +33,7 @@ public final class SetTExtractor implements ITemplateExtractor {
 		Token next = lexer.expect1(TokenType.TT_ALIAS);
 		String alias = next.getValue();
 		lexer.expect1(TokenType.TT_TO);
-		next = lexer.expect1(TokenType.TT_IDENTIFIER);
+		next = lexer.expect1(ExpressionExtractor.getStartTokens());
 		TemplateElement setVar = new ExpressionExtractor().extract(
 				next, lexer);
 		return new VariableScopeTemplate(setVar, alias,

@@ -30,18 +30,17 @@ public class IfTemplate extends TemplateElement {
 		this.falseBranch = falseBranch;
 	}
 
-	public TemplateElement getTarget(Scope scope) {
+	public Object getTarget(Scope scope) {
 		if (condition.asBinary(scope))
-			return trueBranch;
-		return falseBranch;
+			return trueBranch.getTarget(scope);
+		return falseBranch != null ? falseBranch.getTarget(scope) : null;
 	}
 
 	@Override
 	public String apply(Scope scope) {
-		TemplateElement target = getTarget(scope);
-		if (target != null)
-			return target.apply(scope);
-		return "";
+		if (condition.asBinary(scope))
+			return trueBranch.apply(scope);
+		return falseBranch != null ? falseBranch.apply(scope) : "";
 	}
 
 	@Override

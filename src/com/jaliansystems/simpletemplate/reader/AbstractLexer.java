@@ -224,7 +224,7 @@ public abstract class AbstractLexer implements ILexer {
 		return checkValidIdentifier(text, ln);
 	}
 
-	protected Token checkValidMethodCall(String text, int ln)
+	private Token checkValidMethodCall(String text, int ln)
 			throws LexerException {
 		if (text.contains(".")) {
 			throw new LexerException(reader.getFileName(),
@@ -232,7 +232,7 @@ public abstract class AbstractLexer implements ILexer {
 					"While reading template start token -- invalid method name '"
 							+ text + "'");
 		}
-		return new Token(TokenType.TT_METHOD_CALL, text, fn, ln);
+		return new Token(TokenType.TT_START_METHOD_CALL, text, fn, ln);
 	}
 
 	protected Token checkValidIdentifier(String text, int ln)

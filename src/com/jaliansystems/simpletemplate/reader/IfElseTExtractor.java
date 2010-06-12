@@ -30,9 +30,9 @@ public final class IfElseTExtractor implements ITemplateExtractor {
 
 	private static TemplateElement createIfTemplate(Token tokenGot, ILexer lexer)
 			throws IOException, LexerException, ParserException {
-		Token t = lexer.expect1(TokenType.getExtractableTokens(), TokenType.TT_IDENTIFIER);
+		Token t = lexer.expect1(TokenType.getExtractableTokens(), ExpressionExtractor.getStartTokens());
 		TemplateElement condition;
-		if (t.getType() == TokenType.TT_IDENTIFIER) {
+		if (ExpressionExtractor.isStartToken(t)) {
 			condition = new ExpressionExtractor().extract(t, lexer);
 		} else {
 			condition = t.extract();

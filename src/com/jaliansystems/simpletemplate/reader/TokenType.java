@@ -48,8 +48,9 @@ public enum TokenType {
 	TT_CLOSE_PAREN,
 	TT_OPEN_PAREN,
 	TT_COMMA,
-	TT_METHOD_CALL(new MethodCallExtractor()),
-	TT_INCLUDE(new IncludeTemplateExtractor());
+	TT_METHOD_CALL,
+	TT_INCLUDE(new IncludeTemplateExtractor()),
+	TT_START_METHOD_CALL(new StartIDExtractor());
 	
 	private static TokenType[] extractableTokenTypes;
 	
