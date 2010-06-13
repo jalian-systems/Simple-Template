@@ -24,13 +24,13 @@ import java.util.Map;
 public class AddressBookEntry {
 	private final String firstName ;
 	private final String lastName ;
+	private String homePage ;
 	private Address address ;
 	private String email ;
 	private Map<String, String> affiliations ;
 	private List<PhoneNumber> phoneNumbers ;
 
 	public AddressBookEntry(String firstName, String lastName) {
-		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -78,5 +78,13 @@ public class AddressBookEntry {
 
 	public String getLastName() {
 		return lastName;
+	}
+
+	public void setHomePage(String homePage) {
+		this.homePage = homePage;
+	}
+
+	public String getHomePage() {
+		return homePage;
 	}
 }

@@ -30,7 +30,7 @@ public class VariableTemplate extends TemplateElement {
 		this.variable = variable;
 	}
 
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		String[] tokens = getTokens(variable);
 		if (tokens.length == 0)
 			return null;

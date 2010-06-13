@@ -41,7 +41,7 @@ public class CompositeTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		Object o = null ;
 		for (TemplateElement t : children)
 			o = t.getTarget(scope);

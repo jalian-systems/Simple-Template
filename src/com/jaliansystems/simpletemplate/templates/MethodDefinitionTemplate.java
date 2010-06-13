@@ -33,7 +33,7 @@ public class MethodDefinitionTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		return null;
 	}
 

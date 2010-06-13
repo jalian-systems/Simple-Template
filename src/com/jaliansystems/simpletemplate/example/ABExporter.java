@@ -31,21 +31,7 @@ public class ABExporter {
 	private AddressBook addressBook;
 
 	public ABExporter() {
-		populate();
-	}
-
-	private void populate() {
-		addressBook = new AddressBook("Dakshinamurthy Karra");
-		AddressBookEntry abe = new AddressBookEntry("Dakshinamurthy", "Karra");
-		Address address = new Address("M.M.Layout", "Kavalbyrasandra",
-				"560 032", "India");
-		abe.setAddress(address);
-		abe.setEmail("dakshinamurthy.karra@jaliansystems.com");
-		abe.setAffiliation("Linux India", "Founding Member");
-		abe.setAffiliation("ASCII", "Founding Board Member");
-		abe.setPhoneNumber("work", "+919845058872");
-		abe.setPhoneNumber("home", "+918023432215");
-		addressBook.add(abe);
+		addressBook = AddressBook.populate();
 	}
 
 	private void export(String templateFile, String outputFile)
@@ -58,15 +44,15 @@ public class ABExporter {
 		try {
 			template = reader.readTemplate();
 		} catch (LexerException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 			System.exit(1);
 		} catch (ParserException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 			System.exit(1);
 		}
 		String result = template.apply(scope);
 
-		Writer writer = new SpaceRemovingWriter(new FileWriter(outputFile));
+		Writer writer = new FileWriter(outputFile);
 		writer.write(result);
 		writer.close();
 	}

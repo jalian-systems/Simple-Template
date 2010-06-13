@@ -28,7 +28,7 @@ public class ObjectScopeTemplate extends TemplateElement {
 	}
 	
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		Object oTarget = object.getTarget(scope);
 		Scope objectScope = new Scope(null, oTarget);
 		return variable.getTarget(objectScope);

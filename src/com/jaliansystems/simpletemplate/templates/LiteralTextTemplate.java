@@ -27,7 +27,7 @@ public class LiteralTextTemplate extends TemplateElement {
 	}
 	
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		return text;
 	}
 

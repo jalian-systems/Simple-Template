@@ -35,7 +35,7 @@ public class IndexedAccessTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		Object targetVariable = variable.getTarget(scope);
 		Object targetIndex = index.getTarget(scope);
 		if (targetVariable == null)

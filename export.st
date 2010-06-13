@@ -1,3 +1,5 @@
+$include "myexport.st"
+
 This AddressBook belongs to $addressbook.belongs$
 
 $addressbook.addresses {
@@ -15,8 +17,6 @@ $addressbook.addresses {
     }$
 
     
-    ASCII: $it.affiliations["ASCII"]$
-     
     $if it.affiliations {
         $it.affiliations {
             $key$ ===> $value$
@@ -31,5 +31,4 @@ $addressbook.addresses {
     }$
 
     The first phone number is: $set p to it.phoneNumbers[0] $p.number$
-    The second phone number is: $set p to it.phoneNumbers[1] $p.number$
 }$

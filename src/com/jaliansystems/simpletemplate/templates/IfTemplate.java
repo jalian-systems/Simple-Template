@@ -30,7 +30,7 @@ public class IfTemplate extends TemplateElement {
 		this.falseBranch = falseBranch;
 	}
 
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		if (condition.asBinary(scope))
 			return trueBranch.getTarget(scope);
 		return falseBranch != null ? falseBranch.getTarget(scope) : null;

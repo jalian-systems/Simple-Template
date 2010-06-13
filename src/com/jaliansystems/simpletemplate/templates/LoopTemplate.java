@@ -66,7 +66,7 @@ public class LoopTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		TargetCollector tc = new TargetCollector();
 		runLoop(scope, tc);
 		return tc.getValue();

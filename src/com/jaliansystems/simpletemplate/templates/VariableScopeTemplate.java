@@ -34,7 +34,7 @@ public class VariableScopeTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		return setVar.getTarget(scope);
 	}
 

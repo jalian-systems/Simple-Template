@@ -34,7 +34,7 @@ public class MethodCallTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		Object o = scope.get(name);
 		if (o == null) {
 			Log.warning(getFileName(), getLineNumber(),

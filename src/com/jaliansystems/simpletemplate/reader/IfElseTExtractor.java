@@ -28,7 +28,7 @@ public final class IfElseTExtractor implements ITemplateExtractor {
 		return createIfTemplate(t, lexer);
 	}
 
-	private static TemplateElement createIfTemplate(Token tokenGot, ILexer lexer)
+	private TemplateElement createIfTemplate(Token tokenGot, ILexer lexer)
 			throws IOException, LexerException, ParserException {
 		Token t = lexer.expect1(TokenType.getExtractableTokens(), ExpressionExtractor.getStartTokens());
 		TemplateElement condition;

@@ -46,7 +46,7 @@ public class WithTemplate extends TemplateElement {
 	}
 
 	@Override
-	public Object getTarget(Scope scope) {
+	public Object getTargetInternal(Scope scope) {
 		Object target = withVar.getTarget(scope);
 		Scope withScope;
 		if (alias == null)

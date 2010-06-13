@@ -575,15 +575,6 @@ public class TemplateReaderTest extends TemplateTestSuper {
 	}
 
 	@Test
-	public void testMyExport() throws Exception {
-		TemplateReader reader = new TemplateReader(new FileReader("export.st"),
-				"<stream>", "$", "$");
-		TemplateElement template = reader.readTemplate();
-		System.out.println(template.getDisplayName(""));
-		// System.out.println(template.apply(new Scope()));
-	}
-
-	@Test
 	public void testTemplateReaderAllowsSettingOfExpressionSeparators()
 			throws Exception {
 		Scope scope = new Scope();
