@@ -4,8 +4,45 @@ h1 {
   font-size: xx-large;
   font-family: Arial,Helvetica,sans-serif;
   line-height: 0px;
+	padding: 5px;
 }
+
+pre {
+	border-style: dashed;
+	background-color: #fbffce;
+	border-width: 1px;
+	padding: 2px;
+}
+
 body {
   margin: auto;
   width: 800px;
+  font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+}
+
+.menu {
+	color: black;
+	font: small-caps bold large "Lucida Grande", Lucida, Verdana, sans-serif;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+hr {
+	height: 3px;
+	color: black;
+	background-color: gray;
+}
+
+.menu a {
+	color: gray;
+	text-decoration: none;
+}
+
+h2 {
+	font: x-large "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	color: maroon;
+}
+
+a {
+	text-decoration: none;
 }
