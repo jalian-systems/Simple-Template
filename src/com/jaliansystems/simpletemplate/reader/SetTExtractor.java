@@ -12,7 +12,7 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
-*/
+ */
 
 package com.jaliansystems.simpletemplate.reader;
 
@@ -23,8 +23,8 @@ import com.jaliansystems.simpletemplate.templates.VariableScopeTemplate;
 
 public final class SetTExtractor implements ITemplateExtractor {
 	@Override
-	public TemplateElement extract(Token t, ILexer lexer)
-			throws IOException, LexerException, ParserException {
+	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
+			LexerException, ParserException {
 		return createSetTemplate(t, lexer);
 	}
 
@@ -33,10 +33,14 @@ public final class SetTExtractor implements ITemplateExtractor {
 		Token next = lexer.expect1(TokenType.TT_ALIAS);
 		String alias = next.getValue();
 		lexer.expect1(TokenType.TT_TO);
-		next = lexer.expect1(ExpressionExtractor.getStartTokens());
-		TemplateElement setVar = new ExpressionExtractor().extract(
-				next, lexer);
-		return new VariableScopeTemplate(setVar, alias,
-				t.getFileName(), t.getLineNumber());
+		next = lexer.expect1(TokenType.getExtractableTokens(),
+				ExpressionExtractor.getStartTokens());
+		TemplateElement setVar;
+		if (next.getType().isExtractable())
+			setVar = next.extract();
+		else
+			setVar = new ExpressionExtractor().extract(next, lexer);
+		return new VariableScopeTemplate(setVar, alias, t.getFileName(),
+				t.getLineNumber());
 	}
 }

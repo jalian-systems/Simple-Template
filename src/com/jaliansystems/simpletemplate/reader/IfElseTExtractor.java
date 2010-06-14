@@ -32,10 +32,10 @@ public final class IfElseTExtractor implements ITemplateExtractor {
 			throws IOException, LexerException, ParserException {
 		Token t = lexer.expect1(TokenType.getExtractableTokens(), ExpressionExtractor.getStartTokens());
 		TemplateElement condition;
-		if (ExpressionExtractor.isStartToken(t)) {
-			condition = new ExpressionExtractor().extract(t, lexer);
-		} else {
+		if (t.getType().isExtractable()) {
 			condition = t.extract();
+		} else {
+			condition = new ExpressionExtractor().extract(t, lexer);
 		}
 		t = lexer.expect1(TokenType.getExtractableTokens());
 		TemplateElement trueBranch = t.extract();

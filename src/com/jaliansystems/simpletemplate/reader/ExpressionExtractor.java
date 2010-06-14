@@ -101,10 +101,10 @@ public class ExpressionExtractor implements ITemplateExtractor {
 		Token nextToken = lexer.expect1(TokenType.getExtractableTokens(),
 				startTokens);
 		TemplateElement index;
-		if (isStartToken(nextToken)) {
-			index = createExpression(nextToken, lexer);
-		} else {
+		if (nextToken.getType().isExtractable()) {
 			index = nextToken.extract();
+		} else {
+			index = createExpression(nextToken, lexer);
 		}
 		template = new IndexedAccessTemplate(template, index,
 				template.getFileName(), template.getLineNumber());

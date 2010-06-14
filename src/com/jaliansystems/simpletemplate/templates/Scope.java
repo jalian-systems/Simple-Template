@@ -18,8 +18,10 @@ package com.jaliansystems.simpletemplate.templates;
 
 import java.util.HashMap;
 
-public class Scope extends HashMap<String, Object> {
+public class Scope {
 
+	private HashMap<String, Object> scopedVariables = new HashMap<String, Object>();
+	
 	private static final long serialVersionUID = 1L;
 	private final Object object;
 	private final Scope parent;
@@ -51,9 +53,13 @@ public class Scope extends HashMap<String, Object> {
 				e.printStackTrace();
 			}
 		else
-			o = get(key);
+			o = scopedVariables.get(key);
 		if (o == null && parent != null)
-			o = parent.get(key);
+			o = parent.resolve(key);
 		return o;
+	}
+
+	public void put(String name, Object value) {
+		scopedVariables.put(name, value);
 	}
 }

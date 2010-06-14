@@ -35,7 +35,7 @@ public class MethodCallTemplate extends TemplateElement {
 
 	@Override
 	public Object getTargetInternal(Scope scope) {
-		Object o = scope.get(name);
+		Object o = scope.resolve(name);
 		if (o == null) {
 			Log.warning(getFileName(), getLineNumber(),
 					"Unspecified subtemplate - " + name);
@@ -69,7 +69,7 @@ public class MethodCallTemplate extends TemplateElement {
 
 	@Override
 	public String apply(Scope scope) {
-		Object o = scope.get(name);
+		Object o = scope.resolve(name);
 		if (o == null) {
 			Log.warning(getFileName(), getLineNumber(),
 					"Unspecified subtemplate - " + name);

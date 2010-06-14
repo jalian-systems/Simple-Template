@@ -79,7 +79,7 @@ public abstract class TemplateElement {
 
 	private String getValue(Scope scope, String key, String defaultValue) {
 		String listSep = defaultValue;
-		Object o = scope.get(key);
+		Object o = scope.resolve(key);
 		if (o instanceof String) {
 			listSep = (String) o;
 		}
@@ -114,6 +114,11 @@ public abstract class TemplateElement {
 
 	public abstract String getDebugString(String indent);
 
+	@Override
+	public String toString() {
+		return getDisplayName("");
+	}
+	
 	public String getFileName() {
 		return fileName;
 	}

@@ -106,8 +106,9 @@ public class TemplateLexer extends AbstractLexer {
 			else
 				break;
 		}
-		if (c != -1)
+		if (c != -1) {
 			reader.unread(c);
+		}
 		String text = sb.toString();
 		if (methodCall)
 			return checkValidMethodCall(text, ln);

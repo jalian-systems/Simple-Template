@@ -630,4 +630,15 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		templateAssert(methodDef+methodCall, "false",
 				scope, "The Input and Output should be same");
 	}
+	
+	@Test
+	public void testColonHandledProperly() throws Exception {
+		Scope scope = new Scope();
+		scope.put("greeting", "Hello");
+
+		templateAssert("$greeting$: ", "Hello: ",
+				scope, "The Input and Output should be same");
+		templateAssert("$greeting$:", "Hello:",
+				scope, "The Input and Output should be same");
+	}
 }

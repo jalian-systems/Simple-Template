@@ -191,9 +191,10 @@ public abstract class AbstractLexer implements ILexer {
 					break;
 			}
 		}
-		if (c != -1)
-			reader.unread(c);
 		if (sb.length() > 0) {
+			if (c != -1) {
+				reader.unread(c);
+			}
 			return findToken(sb.toString(), methodCall, escape, ln);
 		}
 		if (throwException)
@@ -202,6 +203,12 @@ public abstract class AbstractLexer implements ILexer {
 					reader.getLineNumber(),
 					"While reading template start token -- unexpected "
 							+ (c == -1 ? "EOF" : "character '" + (char) c + "'"));
+		if (c != -1) {
+			reader.unread(c);
+			if (methodCall)
+				reader.unread(':');
+		} else if (methodCall)
+			reader.unread(':');
 		return null;
 	}
 

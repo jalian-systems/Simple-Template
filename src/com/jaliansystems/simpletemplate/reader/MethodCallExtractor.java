@@ -69,10 +69,10 @@ public class MethodCallExtractor implements ITemplateExtractor {
 		others[startTokens.length] = TokenType.TT_CLOSE_PAREN;
 		Token t = lexer.expect1(TokenType.getExtractableTokens(), others);
 		while (t.getType() != TokenType.TT_CLOSE_PAREN) {
-			if (ExpressionExtractor.isStartToken(t))
-				params.add(new ExpressionExtractor().extract(t, lexer));
-			else
+			if (t.getType().isExtractable())
 				params.add(t.extract());
+			else
+				params.add(new ExpressionExtractor().extract(t, lexer));
 			t = lexer.expect1(new TokenType[] { TokenType.TT_COMMA }, others);
 			if (t.getType() == TokenType.TT_COMMA)
 				t = lexer.expect1(TokenType.getExtractableTokens(),
