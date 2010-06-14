@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>SimpleTemplate - Templating can't be simpler</title>
+  
+
+  
+  <link rel="stylesheet" href="style.css" type="text/css"></head><body>
+<div style="text-align: center;"><a href="index.html">Home</a> <a href="tutorial.html">Tutorial</a><br>
+</div>
+
+<hr style="width: 100%; height: 2px;">
+<h1>$simple.template$</h1>
+
+In most programs, we need to output some structured data - be it XML, a
+property file or any other format. Generation of such data is usually
+accomplished with use of control logic interspersed with print
+statements. In these cases we are not generating random text - rather
+we are outputting &#8216;statements&#8217; in a specific language. Having a meta
+language and an engine that allows us to convert a model from a program
+into such a language greatly simplifies the effort. Template engines
+like SimpleTemplate and associated languages accomplishes that task.<br>
+
+<h2>Why SimpleTemplate?</h2>
+
+SimpleTemplate removes all the cruft that is part of other template
+engines. It does one thing - that is converting a model into another
+language - and does it well. SimpleTemplate assumes that the generated
+output is some structured data and needs another tool to format it into
+readable format if needed.<br>
+
+<h2>Motivation</h2>
+
+In one of our projects we need to generate XML output from Hibernate
+models. In our search we found StringTemplate
+(http://www.stringtemplate.org) - that suited most of our needs - but
+not quite.<br>
+
+Since the model objects are deeply nested we need a mechanism to create
+an alias to refer to a deeply nested objects.<br>
+
+We need a way to index into arrays, lists and maps. The StringTemplate
+mechanism of using rest and first to access the elements is cumbersome
+and error prone in our context.<br>
+
+StringTemplate has lot more functionality than we needed and pulling in
+Antrl to just use the templates just didn&#8217;t seem right.<br>
+
+SimpleTemplate uses a hand crafted, simple top down parser to parse the
+templates.<br>
+
+<h2>Features</h2>
+
+<ol>
+
+  <li>Simple template directives.</li>
+  <li>User selectable template directive separators.</li>
+  <li>Alias creation using with and set directives.</li>
+  <li>Support for indexing into arrays, collections, maps.</li>
+  <li>Looping on an array or a collection.</li>
+  <li>Simple include mechanism to reuse template files.</li>
+  <li>Conditional evaluation using if and ifelse. No dangling else!</li>
+  <li>Custom list separation settings (prefix, suffix and separators).</li>
+  <li>Template files can be read from file system, class path or just a
+string.</li>
+  <li>Support for methods aka. sub templates.</li>
+</ol>
+
+<h2>How does it look like?</h2>
+
+The following code just outputs the well known greeting.<br>
+
+<pre>package com.jaliansystems.simpletemplate.example;<br><br><br>import com.jaliansystems.simpletemplate.reader.TemplateReader;<br>import com.jaliansystems.simpletemplate.templates.Scope;<br>import com.jaliansystems.simpletemplate.templates.TemplateElement;<br><br>public class HelloSimpleTemplate {<br><br>public static void main(String[] args) {<br>        try {<br>            TemplateReader reader = TemplateReader.fromString("Hello $greeting$");<br>            TemplateElement template = reader.readTemplate();<br>            Scope scope = new Scope();<br>            scope.put("greeting", "Simple Template");<br>            String result = template.apply(scope);<br>            System.out.println(result);<br>        } catch (Exception e) {<br>            e.printStackTrace();<br>        }<br>    }<br>}<br><br></pre>
+
+<h2>Downloads, Sources and Support</h2>
+
+SimpleTemplate github page is at <a href="http://www.github.com/kdmurthy/Simple-Template" target="_blank">http://www.github.com/kdmurthy/Simple-Template</a>.
+You can find latest sources and downloads from there.<br>
+
+Help and support are available from the SimpleTemplate google group at <a href="http://groups.google.com/group/simpletemplate">http://groups.google.com/group/simpletemplate</a>.<br>
+
+<br>
+
+</body></html>

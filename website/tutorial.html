@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+
+
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Tutorial - Simple Template</title><link rel="stylesheet" href="style.css" type="text/css"></head><body>
+<div style="text-align: center;"><a href="index.html">Home</a> <a href="tutorial.html">Tutorial</a><br>
+</div>
+
+<hr style="width: 100%; height: 2px;">
+<h1>Tutorial</h1>
+
+<h2>Introduction</h2>
+
+SimpleTemplate generates text using templates you provide. A template
+is plain text interspersed with template directives. While the rest of
+the text is emitted as it is into the output, SimpleTemplate processes
+the template directives and replaces the directives with data from the
+model.<br>
+
+<h2>TemplateReader, Template and Scope</h2>
+
+For reading a template, you use a TemplateReader. You can create a
+TemplateReader by either using the constructor or using one of the
+static helper functions.<br>
+
+<pre>TemplateReader reader = new TemplateReader(url, startToken, endToken);<br>TemplateReader reader = TemplateReader.fromFile(fileName);<br>TemplateReader reader = TemplateReader.fromFile(fileName, startToken, endToken);<br>TemplateReader reader = TemplateReader.fromString(s);<br>TemplateReader reader = TemplateReader.fromString(s, startToken, endToken);<br>TemplateReader reader = TemplateReader.fromResource(resource);<br>TemplateReader reader = TemplateReader.fromResource(resource, startToken, endToken);<br><br>Example:<br><br>TemplateReader reader = TemplateReader.fromString(&#8220;Hello $greeting$&#8221;);<br></pre>
+In the first form, url refers to a java.lang.URL. All other methods
+invoke this constructor. By default, SimpleTemplate uses &#8220;$&#8221; as
+directive separator. You can override this by using one of the methods
+that accepts startToken and endToken parameters.<br>
+The &#8216;include&#8217; SimpleTemplate directive uses the given resource or file
+as the base for finding included templates. In case of a TemplateReader
+that is constructed using one of fromString variants, the working
+directory is used as the base instead.<br>
+Once you have a TemplateReader, use readTemplate() method to parse and extract a Template from the input.<br>
+<pre>Template template.readTemplate();<br></pre>
+Once you have a template, you need to pass the java model and get the
+results. You use a Scope object to pass the model details and apply
+method to get the results. You can put any number of objects in a scope
+using different names. Using the same name twice, replaces the previous
+object with a later one.<br>
+<pre>Scope scope = new Scope();<br>scope.put(&#8220;greeting&#8221;, &#8220;World&#8221;) ;<br>String result = template.apply(scope);<br></pre>
+The apply method processes the template and returns the result as a String. The result will contain &#8220;Hello World&#8221;.<br>
+<h2>Template Syntax</h2>
+SimpleTemplate input is just plain text interspersed with template
+directives. Any number of model variables can be passed to the template
+through the scope object.<br>
+<h2>Contexts and Data Types</h2>SimpleTemplate operates in two
+contexts. When you start reading a file it is in Text context. In Text
+context all text input is emitted into the output. SimpleTemplate moves
+into Template context when the stream reaches one of the template
+directives (i.e one of<span style="font-style: italic;"> $identifier</span>, <span style="font-style: italic;">$if</span>,
+etc.). In the Template context, SimpleTemplate reads text as tokens and
+can identify integers, booleans (true/false) and strings. Each of these
+data types, themselves, is a template. You can switch into a block
+context using <span style="font-style: italic;">${}<span style="font-style: italic;">$ </span></span>block. See <a href="#Block_Statements">Block Statements</a>.<br>
+<br>
+<h2>Attribute Access</h2>
+
+The simplest directive in a template is referencing to a model
+attribute. You can refer to an attribute reference such as name and
+email from scope:<br>
+<pre>Name is $name$ and email is $email$<br></pre>
+The $name$ and $email$ in the template will be replaced with the return
+values from the toString method of the objects put in the scope as
+&#8220;name&#8221; and &#8220;email&#8221;.<br>
+You can also access nested attributes.<br>
+<pre>Address address = new Address();<br>address.setName(&#8220;John Doe&#8221;);<br>address.setEmail(&#8220;john.doe@example.com&#8221;);<br>scope.put(&#8220;address&#8221;, address);<br></pre>
+With scope setup with a composite object like address:<br>
+<pre>Name is $address.name$ and email is $address.email$<br></pre>
+gives a result &#8220;Name is John Doe and email is john.doe@example.com&#8221;.
+SimpleTemplate just emits an empty string for the attributes that are
+null. When an attribute needs to be resolved, SimpleTemplate looks for
+methods that start with 'get', 'is' and '' it that order. For example, <span style="font-style: italic;">address.email</span> returns the value of  if it exists.<span style="font-style: italic;"><span style="font-style: italic;"><span style="font-style: italic;"></span></span></span> If it does not exist<br>
+When an attribute (nested or otherwise) refers to a
+java.util.Collection, SimpleTemplate handles it differently.
+SimpleTemplate emits a concatenation of toString values of each item
+separated by st_list_separator. Also each list item is prefixed with
+st_list_prefix and suffixed with st_list_suffix.<br>
+With scope setup as:<br>
+<pre>String[] flowers = new String[] { &#8220;Rose&#8221;, &#8220;Jasmine&#8221;, &#8220;Lily&#8221; } ;<br>scope.put(&#8220;list&#8221;, flowers);<br></pre>
+The following script:<br>
+<pre>$set st_list_separator to &#8220;--&#8221;<br>$set st_list_prefix to &#8220;&lt;flower:&#8221;<br>$set st_list_suffix to &#8220;/&gt;&#8221;<br>$list$<br></pre>
+gives a result
+&#8220;&lt;flower:Rose/&gt;--&lt;flower:Jasmine/&gt;--&lt;flower:Lily/&gt;&#8221;.
+The st_list_prefix and st_list_suffix defaults to empty strings and
+st_list_separator defaults to &#8220;,&#8221;.<br>
+<h2>Indexed Access</h2>
+You can access items from a Collection, Array or a Map using indexed access. Setting up scope as follows,<br>
+<pre>String[] flowers = new String[] { &#8220;Rose&#8221;, &#8220;Jasmine&#8221;, &#8220;Lily&#8221; } ;<br>scope.put(&#8220;flowers&#8221;, flowers);<br></pre>
+the following template<br>
+<pre>$flowers[0]$<br></pre>
+
+gives a result "Rose". Similarly, with a map set into scope:<br>
+<pre>Map&lt;String, String&gt; capitals = new HashMap&lt;String, String();<br>capitals.put("India", "New Delhi");<br>capitals.put("United States", "Washington");<br>capitals.put("Canada", "Ottawa");<br>scope.put(&#8220;capitals&#8221;, capitals);<br></pre>
+
+the following template<br>
+<pre>$capitals["United States"]$<br></pre>gives a result "Washington".
+You can even use an expression as an index. For accessing items from a
+Collection, the expression should be resolved into an integer. For
+example, with scope setup as<br>
+<pre>Map&lt;String, String&gt; capitals = new HashMap&lt;String, String();<br>capitals.put("India", "New Delhi");<br>capitals.put("United States", "Washington");<br>capitals.put("Canada", "Ottawa");<br>scope.put(&#8220;capitals&#8221;, capitals);<br>scope.put("mycountry", "India");<br></pre>
+
+
+the following template<br>
+
+<pre>$capitals[mycountry]$<br></pre>
+
+gives a result "New Delhi". You get the same result even you use a template instruction as an index. So,<br>
+<pre>$capitals[$mycountry$]$<br></pre>
+also gives a result "New Delhi".<br>
+
+
+<h2>Looping</h2>
+You can loop through a Map or a Collection with SimpleTemplate looping directive.<br>
+<pre>List of flowers available:<br>$flowers {<br>    $index1$: $it$<br>}$<br><br>$capitals {<br>    Capital of $key$ is $value$<br>}$<br></pre>
+Withing the scope of the looping over a Collection or Array, SimpleTemplate sets <span style="font-style: italic;">index0</span> to the current item index (starting with 0), <span style="font-style: italic;">index1</span> to the current item index (starting with 1) and <span style="font-style: italic;">it</span> to the item itself. For Maps, <span style="font-style: italic;">key</span> is set to key of the current entry and <span style="font-style: italic;">value</span> is set to the value.<br>
+<br>
+You can also loop through a Map using the <span style="font-style: italic;">values</span> or <span style="font-style: italic;">keySet</span> (though it is nothing to do with SimpleTemplate).<br>
+<pre>Known Capitals: $capitals.keySet { $it$ }<br></pre>
+<h2>Introducing Aliases</h2>
+Sometimes, you need to access attributes that are deeply nested in the
+model. You can introduce aliases into the current scope and reduce the
+amount of typing you need to do as well as make the template code look
+good. SimpleTemplate adds the aliases <span style="font-style: italic;">it</span>, <span style="font-style: italic;">index0</span>, <span style="font-style: italic;">index1</span>, <span style="font-style: italic;">key</span> and <span style="font-style: italic;">value</span> in the looping context. You can introduce your own aliases using <span style="font-style: italic;">set</span> and <span style="font-style: italic;">with</span> directives to SimpleTemplate.<br>
+<br>
+Suppose we have a <span style="font-style: italic;">AddressBook</span> object which has a list of <span style="font-style: italic;">AddressBookEntry</span>s. Each <span style="font-style: italic;">AddressBookEntry</span> further has a list of <span style="font-style: italic;">PhoneNumber</span>s each with a <span style="font-style: italic;">type</span> and a <span style="font-style: italic;">number</span>. For iterating through all the phone numbers in an <span style="font-style: italic;">AddressBook</span> we might write:<br>
+<pre>$addressBook.addresses {<br>    Name: $it.firstName$ $it.lastName$<br>    $it.phoneNumbers {<br>        $it.type$ phone: $it.number$<br>    }$<br>}$<br><br></pre>
+The same thing can also be written (using <span style="font-style: italic;">with</span>):<br>
+<pre>$addressBook.addresses {<br>    $with it {<br>        Name: $firstName$ $lastName$<br>        $phoneNumbers {<br>            $with it {<br>                $type$ phone: $number$<br>            }$<br>        }$<br>    }$<br>}$<br></pre>
+In this academic example the amount of the template text for the example with <span style="font-style: italic;">with</span> is more. However, in real world where you need to work with deeply nested java objects, the <span style="font-style: italic;">with</span> directive saves time and makes the template code read cleaner.<br>
+<br>
+We can also use <span style="font-style: italic;">set</span> directive to create an alias. The same code above written using <span style="font-style: italic;">set</span> :<br>
+<br>
+<pre>$addressBook.addresses {<br>    $set address to it<br>    Name: $address.firstName$ $address.lastName$<br>    $address.phoneNumbers {<br>        $with it {<br>            $type$ phone: $number$<br>        }$<br>    }$<br>}$<br></pre>
+<h2>Conditionals</h2>
+There will be times in when you want to conditionally emit text. For those cases SimpleTemplate supports <span style="font-style: italic;">if-else</span> and <span style="font-style: italic;">if</span> constructs. Most expressions can be used as conditions to test in a <span style="font-style: italic;">if</span> statement. An object that evaluates to <span style="font-style: italic;">null</span> is <span style="font-style: italic;">false</span>. A Collection, Map, Array and String returns <span style="font-style: italic;">false</span> if it is empty. All other cases the expression evaluates to be <span style="font-style: italic;">true</span>.<br>
+<br>
+Using conditionals you can check whether a Collection is empty before you process it:<br>
+<pre>This address book belongs to: $addressBook.belongsTo$<br>$ifelse $addressBook.addresses {<br>    $addressBook.addresses {<br>       $set address to it<br>       Name: $address.firstName$ $address.lastName$<br>       $address.phoneNumbers {<br>           $with it {<br>               $type$ phone: $number$<br>           }$<br>       }$<br>    }$<br>}<br>{<br>    "No address book does not have any entries"<br>}$<br></pre>
+<h2><a name="Block_Statements"></a>Block Statements</h2>
+SimpleTemplate supports two types block statements. You have already
+seen one of them - the looping constructs and conditional examples use <span style="font-style: italic;">{}$</span> blocks. The other type of block statement starts with <span style="font-style: italic;">${</span> and ends with <span style="font-style: italic;">}$</span>. The difference between these two kinds of block statements is the way they are evaluated. The <span style="font-style: italic;">{}$</span> block is evaluated as text and it escapes into the template mode when it sees any one of the template directives. The <span style="font-style: italic;">${</span> block is evaluated in template syntax. When SimpleTemplate reads a template it starts evaluating in text mode.<br>
+For examples,<br>
+<pre>${ "Hello World" }$<br></pre>
+evaluates to <span style="font-style: italic;">Hello World</span> where as,<br>
+<pre>${ {"Hello World"}$ }$<br></pre>
+evaluates to <span style="font-style: italic;">"Hello World"</span> (Note the double quotes around the text). You can use <span style="font-style: italic;">{}$</span> blocks only in a template context because in Text context the <span style="font-style: italic;">{</span> will be considered as text.<br>
+<h2>Defining and Invoking Methods</h2>
+When you are defining templates, there are times the same template code
+is repeated over and over again. You can use methods to reduce the
+repetition and make the template code clearer.<br>
+<br>
+For example,<br>
+<pre>$printAddressDetails (address) {<br>    &lt;address&gt;<br>        &lt;firstname&gt;$address.firstName$&lt;/firstname&gt;<br>        &lt;lastname&gt;$address.lastName$&lt;/lastname&gt;<br>        &lt;email&gt;$address.email$&lt;/email&gt;<br>    &lt;/address&gt;<br>}$<br></pre>
+
+Defines a method that takes one parameter - <span style="font-style: italic;">address</span>. You can invoke this method by:<br>
+<pre>$:printAddressDetails(address)$<br></pre>
+You can also invoke this method by,<br>
+<pre>$address:printAddressDetails()$<br></pre>
+When you invoke the method using the first form the evaluated value of the expression before <span style="font-style: italic;">:</span> is passed to the method as the first parameter.<br>
+Your methods can take any number of parameters. SimpleTemplate matches
+the number of parameters and throws an exception if they do not match.
+You can also chain multiple methods - each one taking the return value
+of the previous one. So,<br>
+<pre>$italics(s) ${ "&lt;i&gt;" $s$ "&lt;/i&gt;" }$<br>$bold(s) ${ "&lt;b&gt;" $s$ "&lt;/b&gt;" }$<br><br>${ $set hello to "Hello" $hello:bold():italics()$ }$<br></pre>
+Gives an out put of "&lt;i&gt;&lt;b&gt;Hello&lt;/b&gt;&lt;/i&gt;".<br>
+<h2>Reusing templates using include</h2>
+The ultimate reuse is however, to use a complete template or methods in
+another template. SimpleTemplate provides a inclusion mechanism to
+achieve this.<br>
+<br>
+<h3>
+File: address.st</h3>
+<pre>$printAddressDetails (address) {<br>    &lt;address&gt;<br>        &lt;firstname&gt;$address.firstName$&lt;/firstname&gt;<br>        &lt;lastname&gt;$address.lastName$&lt;/lastname&gt;<br>        &lt;email&gt;$address.email$&lt;/email&gt;<br>    &lt;/address&gt;<br>}$<br></pre>
+<h3>File: template.st</h3>
+<pre>$include "address.st"<br>$addressBook.addresses {<br>    $it:printAddressDetails()$<br>}$<br></pre>
+With both the files in the same directory, processing template.st includes the definition of <span style="font-style: italic;">printAddressDetails</span> method and the result will contain the address details.<br>
+<h2>Next Steps</h2>
+This concludes this tutorial. The downloads includes the examples that
+are discussed in this tutorial in the examples directory along with a
+build file. You can find help and support on <a href="http://groups.google.com/group/simpletemplate">SimpleTemplate google groups</a>.<br>
+<h2>Just one more thing...</h2>
+When developing SimpleTemplate I started with a class heirarchy that
+contained a TemplateElement, CompositeTemplateElement,
+SimpleTemplateElement etc. In the end, clubbing all of them together
+made better sense. So everything in SimpleTemplate is a TemplateElement
+- either it is a block statement or an if statement. And any of them
+can be used any where. Play around - it is fun to find things that work
+and that do not work (because the Parser imposes restrictions).<br>
+<br>
+
+</body></html>
