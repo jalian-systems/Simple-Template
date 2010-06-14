@@ -17,13 +17,12 @@
 -->
 
 <project name='simple-template' default='deploy' basedir='.'>
-	<property name="simpletemplate-version" value="1.0" />
+	<property name="simpletemplate-version" value="1.0.0" />
 	<property name="junit.jar" location="/usr/share/java/junit-4.6/junit.jar"/>
 	<property name="report.dir" location="test-reports"/>
 
 	<target name='clean'>
         <delete dir='ant-target'/>
-        <delete file="simpletemplate.jar"/>
 	</target>
 
 	<target name='clean-all' depends='clean'>
@@ -53,11 +52,10 @@
     <target name='compile' description="Compiles all the sources">
         <mkdir dir='${class.dir}'/>
         <copy todir='${class.dir}'>
-            <fileset dir='src' excludes='**/*.java'/>
+            <fileset dir='src' excludes='**/*.java **/example/**'/>
         </copy>
-        <javac destdir='${class.dir}' debug='on' optimize='off' deprecation='on'>
-            <src path='src'/>
-        </javac>
+        <javac srcdir='src' destdir='${class.dir}' debug='on' optimize='off' deprecation='on'
+           excludes="com/jaliansystems/simpletemplate/example/**"/>
 	</target>
 
 	<target name='tests' depends="compile-tests" description="Runs all unit tests">
@@ -89,6 +87,7 @@
 				<include name="README"/>
 				<include name="LICENSE.txt"/>
             </zipfileset>
+            <zipfileset dir='src/com/jaliansystems/simpletemplate/example' prefix='simpletemplate-${simpletemplate-version}/examples'/>
 		</zip>
 	</target>
 

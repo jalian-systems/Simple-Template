@@ -14,7 +14,7 @@
  *   limitations under the License.
 */
 
-package com.jaliansystems.simpletemplate.example;
+package com.jaliansystems.simpletemplate.example.ABExport;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -39,7 +39,7 @@ public class ABExporter {
 		TemplateReader reader = new TemplateReader(new FileReader(templateFile), templateFile, "$", "$");
 		reader.setEvaluationMode(EvaluationMode.STRICT);
 		Scope scope = new Scope();
-		scope.put("addressbook", addressBook);
+		scope.put("addressBook", addressBook);
 		TemplateElement template = null;
 		try {
 			template = reader.readTemplate();
@@ -63,7 +63,7 @@ public class ABExporter {
 	public static void main(String[] args) {
 		ABExporter exporter = new ABExporter();
 		try {
-			exporter.export("export.st", "export.out");
+			exporter.export("addressbook.st", "addressbook.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
