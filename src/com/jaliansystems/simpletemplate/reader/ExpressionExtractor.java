@@ -36,7 +36,6 @@ public class ExpressionExtractor implements ITemplateExtractor {
 	private static List<TokenType> asList = new ArrayList<TokenType>(
 			Arrays.asList(startTokens));
 
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
 			LexerException, ParserException {
 		ensureIsOneOfStartTokens(t);

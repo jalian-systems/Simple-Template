@@ -24,7 +24,6 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public final class StartIDExtractor implements ITemplateExtractor {
 
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
 			LexerException, ParserException {
 		return createStartIdTemplate(t, lexer);

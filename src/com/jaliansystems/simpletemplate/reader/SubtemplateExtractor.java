@@ -25,7 +25,6 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class SubtemplateExtractor implements ITemplateExtractor {
 
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
 			LexerException, ParserException {
 		String name = t.getValue();

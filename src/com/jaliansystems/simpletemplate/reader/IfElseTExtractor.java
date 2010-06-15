@@ -22,7 +22,6 @@ import com.jaliansystems.simpletemplate.templates.IfTemplate;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public final class IfElseTExtractor implements ITemplateExtractor {
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer)
 			throws IOException, LexerException, ParserException {
 		return createIfTemplate(t, lexer);

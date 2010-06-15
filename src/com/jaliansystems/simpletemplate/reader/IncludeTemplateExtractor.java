@@ -24,7 +24,6 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class IncludeTemplateExtractor implements ITemplateExtractor {
 
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException, LexerException, ParserException {
 		Token token = lexer.expect1(TokenType.TT_STRING);
 		URL url = new URL(lexer.getReader().getContextURL(), token.getValue());

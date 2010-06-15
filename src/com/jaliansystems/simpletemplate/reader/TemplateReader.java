@@ -103,7 +103,6 @@ public class TemplateReader implements ITemplateReader {
 		Log.setMode(mode);
 	}
 
-	@Override
 	public TemplateElement readTemplate() throws IOException, LexerException,
 			ParserException {
 		CompositeTemplate ct = new CompositeTemplate(lexerReader.getFileName(),

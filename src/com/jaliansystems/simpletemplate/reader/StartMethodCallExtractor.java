@@ -23,7 +23,6 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class StartMethodCallExtractor implements ITemplateExtractor {
 
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
 			LexerException, ParserException {
 		return createStartIdTemplate(t, lexer);

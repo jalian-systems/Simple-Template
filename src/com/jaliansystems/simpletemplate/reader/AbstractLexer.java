@@ -61,7 +61,6 @@ public abstract class AbstractLexer implements ILexer {
 		return laToken;
 	}
 
-	@Override
 	public void pushbackLACharacters() throws IOException {
 		if (laToken != null) {
 			reader.reset();

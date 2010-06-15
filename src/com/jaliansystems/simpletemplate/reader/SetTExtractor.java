@@ -22,7 +22,6 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 import com.jaliansystems.simpletemplate.templates.VariableScopeTemplate;
 
 public final class SetTExtractor implements ITemplateExtractor {
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
 			LexerException, ParserException {
 		return createSetTemplate(t, lexer);

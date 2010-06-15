@@ -26,7 +26,6 @@ import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class MethodCallExtractor implements ITemplateExtractor {
 
-	@Override
 	public TemplateElement extract(Token t, ILexer lexer) throws IOException,
 			LexerException, ParserException {
 		lexer.expect1(TokenType.TT_OPEN_PAREN);

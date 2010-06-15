@@ -32,7 +32,6 @@ public class LoopTemplate extends TemplateElement {
 	private static class TargetCollector implements Collector {
 		private Object r;
 
-		@Override
 		public void collect(TemplateElement t, Scope scope) {
 			r = t.getTarget(scope);
 		}
@@ -57,7 +56,6 @@ public class LoopTemplate extends TemplateElement {
 	public String apply(Scope scope) {
 		final StringBuffer sb = new StringBuffer();
 		runLoop(scope, new Collector() {
-			@Override
 			public void collect(TemplateElement t, Scope scope) {
 				sb.append(t.apply(scope));
 			}
