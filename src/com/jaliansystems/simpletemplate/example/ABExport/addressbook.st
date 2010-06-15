@@ -4,12 +4,12 @@
     <belongs>$addressBook.belongs$</belongs>
     $addressBook.addresses {
         <entry>
-            <firstname>$it.firstName$</firstName>
+            <firstName>$it.firstName$</firstName>
             <lastName>$it.lastName$</lastName>
             <phoneNumber>
-                $it.phoneNumbers {
-                    <$it.type$>$it.number$</$it.type$>
-                }$
+	                $it.phoneNumbers {
+	                    <$it.type$>$it.number$</$it.type$>
+	                }$
             </phoneNumber>
         </entry>
     }$
