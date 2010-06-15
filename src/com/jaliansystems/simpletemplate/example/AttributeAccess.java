@@ -50,6 +50,7 @@ public class AttributeAccess {
 			simpleAccess();
 			accessThroughComposite();
 			listAccess();
+			listAccessDefault();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,6 +58,17 @@ public class AttributeAccess {
 
 	private static void listAccess() throws Exception {
 		TemplateReader reader = TemplateReader.fromString("$set st_list_separator to \"--\"$set st_list_prefix to \"<flower:\"$set st_list_suffix to \"/>\"$flowers$");
+		Scope scope = new Scope();
+		String[] flowers = new String[] { "Rose", "Jasmine", "Lily" } ;
+		scope.put("flowers", flowers);
+
+		TemplateElement template = reader.readTemplate();
+		String result = template.apply(scope);
+		System.out.println("Result " + result);
+	}
+
+	private static void listAccessDefault() throws Exception {
+		TemplateReader reader = TemplateReader.fromString("$flowers$");
 		Scope scope = new Scope();
 		String[] flowers = new String[] { "Rose", "Jasmine", "Lily" } ;
 		scope.put("flowers", flowers);
