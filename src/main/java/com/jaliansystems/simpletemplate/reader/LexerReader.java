@@ -67,9 +67,17 @@ public class LexerReader {
 		if (b == '\n')
 			lineNumber++;
 		if (isMarked) {
+			if(nMarked >= markBuffer.length)
+				increseMarkBuffer();
 			markBuffer[nMarked++] = b;
 		}
 		return b;
+	}
+
+	private void increseMarkBuffer() {
+		int[] newBuffer = new int[markBuffer.length + 1024];
+		System.arraycopy(markBuffer, 0, newBuffer, 0, markBuffer.length);
+		markBuffer = newBuffer;
 	}
 
 	public void unread(int c) throws IOException {

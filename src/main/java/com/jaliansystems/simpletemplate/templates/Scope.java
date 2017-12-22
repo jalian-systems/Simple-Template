@@ -22,7 +22,6 @@ public class Scope {
 
 	private HashMap<String, Object> scopedVariables = new HashMap<String, Object>();
 	
-	private static final long serialVersionUID = 1L;
 	private final Object object;
 	private final Scope parent;
 

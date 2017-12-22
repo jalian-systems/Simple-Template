@@ -15,3 +15,10 @@ src/export.st
 test-reports
 src/URLTesting.java
 report
+.gradle/
+build.gradle
+build/
+.classpath
+.project
+.settings/
+
