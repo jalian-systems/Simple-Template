@@ -16,7 +16,6 @@ test-reports
 src/URLTesting.java
 report
 .gradle/
-build.gradle
 build/
 .classpath
 .project

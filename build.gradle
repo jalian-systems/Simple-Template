@@ -1,0 +1,155 @@
+// PROJECT_NAME is defined in settings.gradle
+group 'com.jaliansystems'
+version '1.1-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'eclipse'
+apply plugin: 'distribution'
+
+ext {
+    pomFile = file("${project.buildDir}/generated-pom.xml")
+    isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
+}
+
+repositories {
+	mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+	classifier 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+signing {
+    required { signatory != null && project.ext.isReleaseVersion }
+    sign configurations.archives
+}
+
+publishing {
+    repositories {
+        maven {
+            if (project.ext.isReleaseVersion) {
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            } else {
+                url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            }
+
+            credentials {
+                username = mvnUser
+                password = mvnPassword
+            }
+        }
+    }
+
+	publications {
+		jar(MavenPublication) {
+			pom.withXml {
+				asNode().with {
+					appendNode('packaging', 'jar')
+					appendNode('name', 'simple-template')
+					appendNode('description', 'simple-template does one thing - that is converting a model into another language - and does it well.')
+					appendNode('url', 'https://github.com/jalian-systems/Simple-Template')
+					appendNode('scm').with {
+						appendNode('url', 'https://github.com/jalian-systems/Simple-Template')
+						appendNode('connection', 'https://github.com/jalian-systems/Simple-Template')
+					}
+					appendNode('issueManagement').with {
+						appendNode('url', 'https://github.com/jalian-systems/Simple-Template/issues')
+						appendNode('system', 'GitHub')
+					}
+					appendNode('licenses').with {
+						appendNode('license').with {
+							appendNode('name', 'Apache License')
+							appendNode('url', 'http://www.apache.org/licenses/')
+						}
+					}
+					appendNode('organization').with {
+						appendNode('name', 'Jalian Systems Pvt. Ltd.')
+						appendNode('url', 'http://jaliansystems.com')
+					}
+					appendNode('developers').with {
+						appendNode('developer').with {
+							appendNode('id', 'dakshinamurthy.karra')
+							appendNode('name', 'Dakshinamurthy Karra')
+							appendNode('email', 'dakshinamurthy.karra@jaliansystems.com')
+							appendNode('organization', 'Jalian Systems Pvt. Ltd.')
+							appendNode('organizationUrl', 'http://jaliansystems.com')
+							appendNode('timezone', 'IST (UTC +5:30)')
+						}
+					}
+				}
+			}
+
+			from components.java
+
+			tasks.withType(Jar) {
+				from(project.projectDir) {
+					include 'LICENSE.txt'
+					into 'META-INF'
+				}
+			}
+
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+
+            // Sign the pom.xml and artifacts.
+            if (signing.required) {
+                // Sign the pom.xml.
+                pom.withXml {
+                    writeTo(project.ext.pomFile)
+                    def pomAscFile = signing.sign(project.ext.pomFile).signatureFiles[0]
+                    artifact(pomAscFile) {
+                        classifier = null
+                        extension = 'pom.asc'
+                    }
+                    project.ext.pomFile.delete()
+                }
+
+                // Sign the artifacts.
+                project.tasks.signArchives.signatureFiles.each {
+                    artifact(it) {
+                        def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                        if (matcher.find()) {
+                            classifier = matcher.group(1)
+                        } else {
+                            classifier = null
+                        }
+                        extension = 'jar.asc'
+                    }
+                }
+            }
+		}
+	}
+}
+
+model {
+    tasks.publishJarPublicationToMavenLocal {
+        dependsOn(project.tasks.signArchives)
+    }
+    tasks.publishJarPublicationToMavenRepository {
+        dependsOn(project.tasks.signArchives)
+    }
+}
