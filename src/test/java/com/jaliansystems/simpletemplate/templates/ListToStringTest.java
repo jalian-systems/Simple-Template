@@ -22,6 +22,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
+
 public class ListToStringTest {
 
 	@Test

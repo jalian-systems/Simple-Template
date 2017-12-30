@@ -18,7 +18,7 @@ package com.jaliansystems.simpletemplate.reader;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.Scope;
+import com.jaliansystems.simpletemplate.Scope;
 
 
 public class TemplateEvaluationTest extends TemplateTestSuper {

@@ -20,10 +20,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.CompositeTemplate;
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.VariableScopeTemplate;
-import com.jaliansystems.simpletemplate.templates.VariableTemplate;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.Template;
+import com.jaliansystems.simpletemplate.internal.templates.VariableScopeTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
 
 
 public class VariableScopeTemplateTest {
@@ -34,7 +34,7 @@ public class VariableScopeTemplateTest {
 		VariableTemplate template = new VariableTemplate("alias.line1", null, 0);
 		VariableScopeTemplate vst = new VariableScopeTemplate(withVar, "alias", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate(null, 0);
+		Template ct = new Template(null, 0);
 		ct.add(vst);
 		ct.add(template);
 		

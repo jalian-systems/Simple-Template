@@ -23,6 +23,11 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
+import com.jaliansystems.simpletemplate.internal.reader.LexerException;
+import com.jaliansystems.simpletemplate.internal.reader.LexerReader;
+import com.jaliansystems.simpletemplate.internal.reader.TemplateLexer;
+import com.jaliansystems.simpletemplate.internal.reader.TokenType;
+
 public class TemplateLexerTest extends LexerTestSuper {
 
 	@Test

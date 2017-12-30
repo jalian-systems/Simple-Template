@@ -23,8 +23,8 @@ import java.io.Writer;
 import com.jaliansystems.simpletemplate.EvaluationMode;
 import com.jaliansystems.simpletemplate.reader.LexerException;
 import com.jaliansystems.simpletemplate.reader.ParserException;
-import com.jaliansystems.simpletemplate.reader.TemplateReader;
-import com.jaliansystems.simpletemplate.templates.Scope;
+import com.jaliansystems.simpletemplate.TemplateReader;
+import com.jaliansystems.simpletemplate.Scope;
 import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class ABExporter {

@@ -25,11 +25,11 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.CompositeTemplate;
-import com.jaliansystems.simpletemplate.templates.LiteralTextTemplate;
-import com.jaliansystems.simpletemplate.templates.LoopTemplate;
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.VariableTemplate;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.Template;
+import com.jaliansystems.simpletemplate.internal.templates.LiteralTextTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.LoopTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
 
 
 public class LoopTemplateTest {
@@ -45,7 +45,7 @@ public class LoopTemplateTest {
 		VariableTemplate vtIndex1 = new VariableTemplate("index1", null, 0);
 		VariableTemplate vtItem = new VariableTemplate("it", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate(null, 0);
+		Template ct = new Template(null, 0);
 		ct.add(vtIndex0);
 		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtIndex1);
@@ -70,7 +70,7 @@ public class LoopTemplateTest {
 		VariableTemplate vtIndex1 = new VariableTemplate("index1", null, 0);
 		VariableTemplate vtItem = new VariableTemplate("it", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate(null, 0);
+		Template ct = new Template(null, 0);
 		ct.add(vtIndex0);
 		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtIndex1);
@@ -101,7 +101,7 @@ public class LoopTemplateTest {
 		VariableTemplate vtKey = new VariableTemplate("key", null, 0);
 		VariableTemplate vtValue = new VariableTemplate("value", null, 0);
 		
-		CompositeTemplate ct = new CompositeTemplate(null, 0);
+		Template ct = new Template(null, 0);
 		ct.add(vtIndex0);
 		ct.add(new LiteralTextTemplate(" ", null, 0));
 		ct.add(vtIndex1);

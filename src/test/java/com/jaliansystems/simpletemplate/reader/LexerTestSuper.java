@@ -18,6 +18,9 @@ package com.jaliansystems.simpletemplate.reader;
 
 import static org.junit.Assert.assertEquals;
 
+import com.jaliansystems.simpletemplate.internal.reader.Token;
+import com.jaliansystems.simpletemplate.internal.reader.TokenType;
+
 public class LexerTestSuper {
 
 	public void assertToken(String expectedText, TokenType expectedType, Token actual) {

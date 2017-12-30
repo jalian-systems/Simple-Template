@@ -22,11 +22,15 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.IndexedAccessTemplate;
-import com.jaliansystems.simpletemplate.templates.MethodCallTemplate;
-import com.jaliansystems.simpletemplate.templates.ObjectScopeTemplate;
-import com.jaliansystems.simpletemplate.templates.TemplateElement;
-import com.jaliansystems.simpletemplate.templates.VariableTemplate;
+import com.jaliansystems.simpletemplate.internal.reader.ExpressionExtractor;
+import com.jaliansystems.simpletemplate.internal.reader.LexerReader;
+import com.jaliansystems.simpletemplate.internal.reader.TemplateLexer;
+import com.jaliansystems.simpletemplate.internal.reader.Token;
+import com.jaliansystems.simpletemplate.internal.templates.IndexedAccessTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.MethodCallTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.ObjectScopeTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.TemplateElement;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
 
 
 public class ExpressionExtractorTest {

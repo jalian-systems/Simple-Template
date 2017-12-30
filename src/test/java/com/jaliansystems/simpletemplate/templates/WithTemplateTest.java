@@ -20,9 +20,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.VariableTemplate;
-import com.jaliansystems.simpletemplate.templates.WithTemplate;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.WithTemplate;
 
 
 public class WithTemplateTest {

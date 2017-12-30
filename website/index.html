@@ -71,7 +71,7 @@ string.</li>
 
 The following code just outputs the well known greeting.<br>
 
-<pre>package com.jaliansystems.simpletemplate.example;<br><br><br>import com.jaliansystems.simpletemplate.reader.TemplateReader;<br>import com.jaliansystems.simpletemplate.templates.Scope;<br>import com.jaliansystems.simpletemplate.templates.TemplateElement;<br><br>public class HelloSimpleTemplate {<br><br>public static void main(String[] args) {<br>        try {<br>            TemplateReader reader = TemplateReader.fromString("Hello $greeting$");<br>            TemplateElement template = reader.readTemplate();<br>            Scope scope = new Scope();<br>            scope.put("greeting", "Simple Template");<br>            String result = template.apply(scope);<br>            System.out.println(result);<br>        } catch (Exception e) {<br>            e.printStackTrace();<br>        }<br>    }<br>}<br><br></pre>
+<pre>package com.jaliansystems.simpletemplate.example;<br><br><br>import com.jaliansystems.simpletemplate.TemplateReader;<br>import com.jaliansystems.simpletemplate.Scope;<br>import com.jaliansystems.simpletemplate.templates.TemplateElement;<br><br>public class HelloSimpleTemplate {<br><br>public static void main(String[] args) {<br>        try {<br>            TemplateReader reader = TemplateReader.fromString("Hello $greeting$");<br>            TemplateElement template = reader.readTemplate();<br>            Scope scope = new Scope();<br>            scope.put("greeting", "Simple Template");<br>            String result = template.apply(scope);<br>            System.out.println(result);<br>        } catch (Exception e) {<br>            e.printStackTrace();<br>        }<br>    }<br>}<br><br></pre>
 
 <h2>Downloads, Sources and Support</h2>
 

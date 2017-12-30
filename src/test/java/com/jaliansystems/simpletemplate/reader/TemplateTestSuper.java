@@ -21,8 +21,10 @@ import static org.junit.Assert.assertEquals;
 import java.io.Reader;
 import java.io.StringReader;
 
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.TemplateElement;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.TemplateReader;
+import com.jaliansystems.simpletemplate.internal.reader.ITemplateReader;
+import com.jaliansystems.simpletemplate.internal.templates.TemplateElement;
 
 public class TemplateTestSuper {
 

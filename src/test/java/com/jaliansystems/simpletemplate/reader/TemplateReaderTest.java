@@ -24,10 +24,13 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.CompositeTemplate;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.Template;
+import com.jaliansystems.simpletemplate.TemplateReader;
+import com.jaliansystems.simpletemplate.internal.reader.LexerException;
+import com.jaliansystems.simpletemplate.internal.reader.ParserException;
+import com.jaliansystems.simpletemplate.internal.templates.TemplateElement;
 import com.jaliansystems.simpletemplate.templates.Person;
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.TemplateElement;
 
 public class TemplateReaderTest extends TemplateTestSuper {
 
@@ -36,7 +39,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello World"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		assertEquals("Expect plain raw text", "Hello World",
 				template.apply(new Scope()));
 	}
@@ -46,7 +49,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello \\$World"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		assertEquals("Expect escaped dollors", "Hello $World",
 				template.apply(new Scope()));
 	}
@@ -56,7 +59,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello \\nWorld\\\nNextLine"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		assertEquals("Expect escaped dollors", "Hello \nWorldNextLine",
 				template.apply(new Scope()));
 	}
@@ -66,7 +69,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $name$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		scope.put("name", "GitHub");
@@ -79,7 +82,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $\\with$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		scope.put("with", "GitHub");
@@ -92,7 +95,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"${ \"Hello \" $\\with$ }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		scope.put("with", "GitHub");
@@ -105,7 +108,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $person.name$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -122,7 +125,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				"Hello $person.name$. This is a $person.name$ greeting"),
 				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		Person person = new Person();
 		person.setName("GitHub");
@@ -137,7 +140,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $person.name[2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -151,7 +154,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $person.names[1][2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -167,7 +170,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $person.names [ 1 ] [2]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -182,7 +185,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $person.name[index]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -198,7 +201,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $person.name[indices[2]]$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -214,7 +217,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				"Hello $if person.minor { $person.name$ is a Kid }$"),
 				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -232,7 +235,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				"Hello $if person.minor\n { $person.name$ is a Kid \\}\\$ }$"),
 				"<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		assertEquals("Expect escaped dollors", "Hello ", template.apply(scope));
 		Person person = new Person();
@@ -250,7 +253,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				"Hello $with person { $name$ is a Kid }$"), "<stream>", "$",
 				"$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		Person person = new Person();
 		person.setName("GitHub");
@@ -267,7 +270,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 				"Hello $set name to person.name $name$ is a Kid"), "<stream>",
 				"$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		Person person = new Person();
 		person.setName("GitHub");
@@ -283,7 +286,7 @@ public class TemplateReaderTest extends TemplateTestSuper {
 		TemplateReader reader = new TemplateReader(new StringReader(
 				"Hello $names { $it$, }$"), "<stream>", "$", "$");
 		TemplateElement template = reader.readTemplate();
-		assertTrue(template instanceof CompositeTemplate);
+		assertTrue(template instanceof Template);
 		Scope scope = new Scope();
 		scope.put("names", new String[] { "Linus Torvalds", "Ken Thomson",
 				"Dennis Richie" });

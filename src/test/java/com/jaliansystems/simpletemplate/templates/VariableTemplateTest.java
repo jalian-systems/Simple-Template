@@ -24,9 +24,11 @@ import java.util.HashMap;
 import org.junit.After;
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.EvaluationError;
 import com.jaliansystems.simpletemplate.EvaluationMode;
-import com.jaliansystems.simpletemplate.Log;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.internal.reader.Log;
+import com.jaliansystems.simpletemplate.internal.templates.EvaluationError;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
 
 public class VariableTemplateTest {
 	

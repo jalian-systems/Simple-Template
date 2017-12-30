@@ -24,11 +24,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.IndexedAccessTemplate;
-import com.jaliansystems.simpletemplate.templates.LiteralIntegerTemplate;
-import com.jaliansystems.simpletemplate.templates.LiteralTextTemplate;
-import com.jaliansystems.simpletemplate.templates.Scope;
-import com.jaliansystems.simpletemplate.templates.VariableTemplate;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.internal.templates.IndexedAccessTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.LiteralIntegerTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.LiteralTextTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
 
 
 public class IndexedAccessTemplateTest {

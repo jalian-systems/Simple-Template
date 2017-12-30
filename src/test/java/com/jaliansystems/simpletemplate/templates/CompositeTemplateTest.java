@@ -20,17 +20,17 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.CompositeTemplate;
-import com.jaliansystems.simpletemplate.templates.LiteralIntegerTemplate;
-import com.jaliansystems.simpletemplate.templates.LiteralTextTemplate;
-import com.jaliansystems.simpletemplate.templates.Scope;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.Template;
+import com.jaliansystems.simpletemplate.internal.templates.LiteralIntegerTemplate;
+import com.jaliansystems.simpletemplate.internal.templates.LiteralTextTemplate;
 
 
 public class CompositeTemplateTest {
 
 	@Test
 	public void testCompositeTemplate() {
-		CompositeTemplate ct = new CompositeTemplate(null, 0);
+		Template ct = new Template(null, 0);
 		ct.add(new LiteralTextTemplate("This is a composite template with ", null, 0));
 		ct.add(new LiteralIntegerTemplate(3, null, 0));
 		ct.add(new LiteralTextTemplate(" elements", null, 0));

@@ -20,8 +20,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.LiteralIntegerTemplate;
-import com.jaliansystems.simpletemplate.templates.Scope;
+import com.jaliansystems.simpletemplate.Scope;
+import com.jaliansystems.simpletemplate.internal.templates.LiteralIntegerTemplate;
 
 public class LiteralIntegerTemplateTest {
 

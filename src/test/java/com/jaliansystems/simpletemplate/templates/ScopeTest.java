@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.jaliansystems.simpletemplate.templates.Scope;
+import com.jaliansystems.simpletemplate.Scope;
 
 
 public class ScopeTest {
