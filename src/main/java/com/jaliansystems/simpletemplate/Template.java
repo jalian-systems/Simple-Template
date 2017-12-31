@@ -569,10 +569,11 @@ public class Template extends TemplateElement {
 	}
 
 	/**
-	 * Applying the definitions in the {@linkplain HashMap map } to the template and
+	 * Applying the definitions in the {@linkplain java.util.Map map } to the template and
 	 * return the resultant String
 	 * 
 	 * @param scope Scope
+     * @return the resolved template as a String
 	 */
 	public String apply(Map<String, Object> scope) {
 		StringBuffer buffer = new StringBuffer();

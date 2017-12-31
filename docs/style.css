@@ -27,6 +27,10 @@ body {
 	padding-top: 5px;
 }
 
+.menu a, .menu span {
+	padding-left: 15px;
+}
+
 hr {
 	height: 3px;
 	color: black;
@@ -35,7 +39,7 @@ hr {
 
 .menu a {
 	color: gray;
-	text-decoration: none;
+	text-decoration: underline;
 }
 
 h2 {

@@ -25,6 +25,12 @@ import com.jaliansystems.simpletemplate.Scope;
 
 public class ScopeTest {
 
+	public static final class ObjectExtension {
+		public String getKey() {
+			return "Objects Value" ;
+		}
+	}
+
 	@Test
 	public void testChecksInItsScopeBeforeParents() throws Exception {
 		Scope parent = new Scope();
@@ -47,12 +53,7 @@ public class ScopeTest {
 	public void testScopeWithAObjectChecksTheObjectBeforeTheParent() throws Exception {
 		Scope parent = new Scope();
 		parent.put("Key", "Parents Value");
-		Scope child = new Scope(parent, new Object() {
-			@SuppressWarnings("unused")
-			public String getKey() {
-				return "Objects Value" ;
-			}
-		});
+		Scope child = new Scope(parent, new ObjectExtension());
 		assertEquals("Objects value is checked before the parents", "Objects Value", child.resolve("key"));
 	}
 }

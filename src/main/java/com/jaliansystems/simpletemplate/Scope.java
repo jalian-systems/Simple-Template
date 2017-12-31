@@ -56,7 +56,7 @@ public class Scope {
 	
 	/**
 	 * @deprecated used internally
-	 * @param parent
+	 * @param parent parent scope
 	 */
 	public Scope(Scope parent) {
 		this(parent, null);
@@ -65,8 +65,8 @@ public class Scope {
 	/**
 	 * @deprecated used internally
 	 * 
-	 * @param parent
-	 * @param object
+	 * @param parent parent scope
+	 * @param object instance containing data
 	 */
 	public Scope(Scope parent, Object object) {
 		this.parent = parent;
@@ -76,8 +76,8 @@ public class Scope {
 	/**
 	 * @deprecated used internally
 	 * 
-	 * @param key
-	 * @return
+	 * @param key variable name
+	 * @return return the resolved object from the scope.
 	 */
 	public Object resolve(String key) {
 		if (key.startsWith("_") && parent != null)

@@ -153,3 +153,10 @@ model {
         dependsOn(project.tasks.signArchives)
     }
 }
+
+task updateDocs(type: Copy) {
+	from 'build/docs/javadoc'
+	into 'docs/javadoc'
+}
+
+build.dependsOn(updateDocs)

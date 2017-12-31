@@ -32,6 +32,18 @@ import com.jaliansystems.simpletemplate.internal.templates.VariableTemplate;
 
 public class VariableTemplateTest {
 	
+	public static final class ObjectExtension2 {
+		public boolean isMinor() {
+			return true ;
+		}
+	}
+
+	public static final class ObjectExtension {
+		public String getGreeting() {
+			return "Hello World" ;
+		}
+	}
+
 	@After
 	public void resetLog() {
 		Log.setMode(EvaluationMode.RELAXED);
@@ -50,12 +62,7 @@ public class VariableTemplateTest {
 	public void testWithAccessThroughObject() {
 		VariableTemplate svt = new VariableTemplate("helloWorld.greeting", null, 0);
 		Scope scope = new Scope();
-		scope.put("helloWorld", new Object() {
-			@SuppressWarnings("unused")
-			public String getGreeting() {
-				return "Hello World" ;
-			}
-		});
+		scope.put("helloWorld", new ObjectExtension());
 		String result = svt.apply(scope);
 		assertEquals("Hello World", result);
 	}
@@ -64,12 +71,7 @@ public class VariableTemplateTest {
 	public void testWithAccessThroughObjectWithIs() {
 		VariableTemplate svt = new VariableTemplate("person.minor", null, 0);
 		Scope scope = new Scope();
-		scope.put("person", new Object() {
-			@SuppressWarnings("unused")
-			public boolean isMinor() {
-				return true ;
-			}
-		});
+		scope.put("person", new ObjectExtension2());
 		String result = svt.apply(scope);
 		assertEquals("true", result);
 	}
