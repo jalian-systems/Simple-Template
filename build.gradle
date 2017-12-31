@@ -8,6 +8,20 @@ apply plugin: 'signing'
 apply plugin: 'eclipse'
 apply plugin: 'distribution'
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'me.trnl:github-release-gradle-plugin:0.1'
+    }
+}
+
+apply plugin: 'git'
+apply plugin: 'console'
+apply plugin: 'github'
+apply plugin: 'release'
+
 ext {
     pomFile = file("${project.buildDir}/generated-pom.xml")
     isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
@@ -143,6 +157,45 @@ publishing {
             }
 		}
 	}
+}
+
+github {
+    /* Wiki repo will be calculated from this. */
+    repo = 'git@github.com:jalian-systems/Simple-Template.git'
+
+    release {
+        /* Use {} brackets for lazy evaluation */
+        tag = { "r$project.release.version" }
+        name = { "$project.release.version" }
+    }
+}
+
+release {
+    /* Let's check that everything is committed */
+    doFirst {
+        if (!project.git.status().isEmpty()) {
+            throw new GradleException('You have uncommitted changes.')
+        }
+    }
+
+    /* Ask user for a release version, suggesting some default variant. */
+    version = { console.prompt(' > Please enter release version:', project.version - '-SNAPSHOT') }
+    tag = { "r$project.release.version" }
+    commitMessage = { "Release $project.release.version" }
+
+    /* Files and projects that needs to be updated with a new release version. */
+    update {
+        file project.file('build.gradle')
+    }
+
+    /* Spec for next version. As above, asking user input. */
+    next {
+        version = { console.prompt(' > Please enter next version:', bumpVersion(project.release.version)) }
+        commitMessage = { "Bumping version to $project.release.next.version" }
+    }
+
+    /* Tasks that needs to be performed during release. Will be done after tag step. */
+    dependsOn draftGhRelease
 }
 
 model {
