@@ -13,7 +13,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'me.trnl:github-release-gradle-plugin:0.1'
+		classpath 'com.antwerkz.github:github-release-gradle-plugin:1.1.0'
+        // classpath 'me.trnl:github-release-gradle-plugin:0.1'
     }
 }
 
