@@ -8,21 +8,6 @@ apply plugin: 'signing'
 apply plugin: 'eclipse'
 apply plugin: 'distribution'
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-		classpath 'com.antwerkz.github:github-release-gradle-plugin:1.1.0'
-        // classpath 'me.trnl:github-release-gradle-plugin:0.1'
-    }
-}
-
-apply plugin: 'git'
-apply plugin: 'console'
-apply plugin: 'github'
-apply plugin: 'release'
-
 ext {
     pomFile = file("${project.buildDir}/generated-pom.xml")
     isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
@@ -54,8 +39,16 @@ artifacts {
 }
 
 signing {
-    required { signatory != null && project.ext.isReleaseVersion }
-    sign configurations.archives
+    required { signatory != null }
+	println configurations.archives.allArtifacts
+	configurations.archives.with {
+		artifacts.remove artifacts.find { it.archiveTask.is(distZip) }
+	}
+	configurations.archives.with {
+		artifacts.remove artifacts.find { it.archiveTask.is(distTar) }
+	}
+	println configurations.archives.allArtifacts
+	sign configurations.archives
 }
 
 publishing {
@@ -78,6 +71,7 @@ publishing {
 		jar(MavenPublication) {
 			pom.withXml {
 				asNode().with {
+					remove(children().find { it.name().getLocalPart() == 'packaging' })
 					appendNode('packaging', 'jar')
 					appendNode('name', 'simple-template')
 					appendNode('description', 'simple-template does one thing - that is converting a model into another language - and does it well.')
@@ -145,58 +139,19 @@ publishing {
 
                 // Sign the artifacts.
                 project.tasks.signArchives.signatureFiles.each {
-                    artifact(it) {
-                        def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
-                        if (matcher.find()) {
-                            classifier = matcher.group(1)
-                        } else {
-                            classifier = null
-                        }
-                        extension = 'jar.asc'
-                    }
+					artifact(it) {
+						def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+						if (matcher.find()) {
+							classifier = matcher.group(1)
+						} else {
+							classifier = null
+						}
+						extension = 'jar.asc'
+					}
                 }
             }
 		}
 	}
-}
-
-github {
-    /* Wiki repo will be calculated from this. */
-    repo = 'git@github.com:jalian-systems/Simple-Template.git'
-
-    release {
-        /* Use {} brackets for lazy evaluation */
-        tag = { "r$project.release.version" }
-        name = { "$project.release.version" }
-    }
-}
-
-release {
-    /* Let's check that everything is committed */
-    doFirst {
-        if (!project.git.status().isEmpty()) {
-            throw new GradleException('You have uncommitted changes.')
-        }
-    }
-
-    /* Ask user for a release version, suggesting some default variant. */
-    version = { console.prompt(' > Please enter release version:', project.version - '-SNAPSHOT') }
-    tag = { "r$project.release.version" }
-    commitMessage = { "Release $project.release.version" }
-
-    /* Files and projects that needs to be updated with a new release version. */
-    update {
-        file project.file('build.gradle')
-    }
-
-    /* Spec for next version. As above, asking user input. */
-    next {
-        version = { console.prompt(' > Please enter next version:', bumpVersion(project.release.version)) }
-        commitMessage = { "Bumping version to $project.release.next.version" }
-    }
-
-    /* Tasks that needs to be performed during release. Will be done after tag step. */
-    dependsOn draftGhRelease
 }
 
 model {
