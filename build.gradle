@@ -1,6 +1,6 @@
 // PROJECT_NAME is defined in settings.gradle
 group 'com.jaliansystems'
-version '1.1-SNAPSHOT'
+version '1.1'
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
@@ -39,15 +39,13 @@ artifacts {
 }
 
 signing {
-    required { signatory != null }
-	println configurations.archives.allArtifacts
+    required { signatory != null && isReleaseVersion }
 	configurations.archives.with {
 		artifacts.remove artifacts.find { it.archiveTask.is(distZip) }
 	}
 	configurations.archives.with {
 		artifacts.remove artifacts.find { it.archiveTask.is(distTar) }
 	}
-	println configurations.archives.allArtifacts
 	sign configurations.archives
 }
 
@@ -71,7 +69,9 @@ publishing {
 		jar(MavenPublication) {
 			pom.withXml {
 				asNode().with {
-					remove(children().find { it.name().getLocalPart() == 'packaging' })
+					def packagingNode = children().find { it.name().getLocalPart() == 'packaging' }
+					if(packagingNode != null)
+						remove(children().find { it.name().getLocalPart() == 'packaging' })
 					appendNode('packaging', 'jar')
 					appendNode('name', 'simple-template')
 					appendNode('description', 'simple-template does one thing - that is converting a model into another language - and does it well.')
