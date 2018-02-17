@@ -86,7 +86,7 @@ public class TextLexer extends AbstractLexer {
 			}
 			sb.append((char) c);
 		}
-		if (sb.length() > 0) {
+		if (sb.length() >= 0) {
 			if (c != -1)
 				reader.unread(c);
 			return new Token(TokenType.TT_TEXT, sb.toString(), fn, ln);
